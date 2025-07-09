@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/ynoacamino/infrastructure/services/auth/config"
+	"github.com/ynoacamino/infra-sustainable-classrooms/services/auth/config"
 )
 
 type ConnectDBConfig interface {

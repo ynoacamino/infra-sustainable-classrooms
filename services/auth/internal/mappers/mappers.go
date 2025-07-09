@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 
 	"github.com/jackc/pgx/v5/pgtype"
-	auth "github.com/ynoacamino/infrastructure/services/auth/gen/auth"
-	authdb "github.com/ynoacamino/infrastructure/services/auth/gen/database"
+	auth "github.com/ynoacamino/infra-sustainable-classrooms/services/auth/gen/auth"
+	authdb "github.com/ynoacamino/infra-sustainable-classrooms/services/auth/gen/database"
 )
 
 func timestampToMillis(timestamp pgtype.Timestamptz) int64 {

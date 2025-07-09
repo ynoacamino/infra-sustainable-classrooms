@@ -6,7 +6,7 @@ import (
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/ynoacamino/infrastructure/services/auth/internal/ports"
+	"github.com/ynoacamino/infra-sustainable-classrooms/services/auth/internal/ports"
 )
 
 // transactionManager implementa TransactionManager

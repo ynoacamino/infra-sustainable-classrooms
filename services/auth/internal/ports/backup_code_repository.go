@@ -3,7 +3,7 @@ package ports
 import (
 	"context"
 
-	authdb "github.com/ynoacamino/infrastructure/services/auth/gen/database"
+	authdb "github.com/ynoacamino/infra-sustainable-classrooms/services/auth/gen/database"
 )
 
 // BackupCodeRepository define las operaciones de persistencia para códigos de respaldo

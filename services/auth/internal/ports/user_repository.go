@@ -3,7 +3,7 @@ package ports
 import (
 	"context"
 
-	authdb "github.com/ynoacamino/infrastructure/services/auth/gen/database"
+	authdb "github.com/ynoacamino/infra-sustainable-classrooms/services/auth/gen/database"
 )
 
 // UserRepository define las operaciones de persistencia para usuarios

@@ -8,4 +8,4 @@ echo "🚀 Generando código del microservicio de autenticación con TOTP..."
 cd /home/ynoacamino/dev/infrastructure/services/auth
 
 # Generar el código usando goa gen
-goa gen github.com/ynoacamino/infrastructure/services/auth/design/api
+goa gen github.com/ynoacamino/infra-sustainable-classrooms/services/auth/design/api

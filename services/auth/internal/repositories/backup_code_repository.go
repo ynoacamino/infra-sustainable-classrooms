@@ -3,8 +3,8 @@ package repositories
 import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
-	authdb "github.com/ynoacamino/infrastructure/services/auth/gen/database"
-	"github.com/ynoacamino/infrastructure/services/auth/internal/ports"
+	authdb "github.com/ynoacamino/infra-sustainable-classrooms/services/auth/gen/database"
+	"github.com/ynoacamino/infra-sustainable-classrooms/services/auth/internal/ports"
 )
 
 // backupCodeRepository implementa BackupCodeRepository

@@ -1,8 +1,8 @@
 package repositories
 
 import (
-	authdb "github.com/ynoacamino/infrastructure/services/auth/gen/database"
-	"github.com/ynoacamino/infrastructure/services/auth/internal/ports"
+	authdb "github.com/ynoacamino/infra-sustainable-classrooms/services/auth/gen/database"
+	"github.com/ynoacamino/infra-sustainable-classrooms/services/auth/internal/ports"
 )
 
 // UserRepository implementa ports.UserRepository usando embedding directo
