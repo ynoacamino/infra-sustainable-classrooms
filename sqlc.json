@@ -1,0 +1,17 @@
+{
+  "version": "2",
+  "sql": [
+    {
+      "engine": "postgresql",
+      "queries": "services/auth/design/queries",
+      "schema": "db/schemas",
+      "gen": {
+        "go": {
+          "package": "authdb",
+          "out": "services/auth/gen/database",
+          "sql_package": "pgx/v5"
+        }
+      }
+    }
+  ]
+}
