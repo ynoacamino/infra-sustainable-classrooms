@@ -7,8 +7,8 @@ import (
 	"sync"
 	"time"
 
-	auth "github.com/ynoacamino/infrastructure/services/auth/gen/auth"
-	authsvr "github.com/ynoacamino/infrastructure/services/auth/gen/http/auth/server"
+	auth "github.com/ynoacamino/infra-sustainable-classrooms/services/auth/gen/auth"
+	authsvr "github.com/ynoacamino/infra-sustainable-classrooms/services/auth/gen/http/auth/server"
 	"goa.design/clue/debug"
 	"goa.design/clue/log"
 	goahttp "goa.design/goa/v3/http"

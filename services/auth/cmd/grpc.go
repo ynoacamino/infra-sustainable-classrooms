@@ -7,9 +7,9 @@ import (
 	"net/url"
 	"sync"
 
-	auth "github.com/ynoacamino/infrastructure/services/auth/gen/auth"
-	authpb "github.com/ynoacamino/infrastructure/services/auth/gen/grpc/auth/pb"
-	authsvr "github.com/ynoacamino/infrastructure/services/auth/gen/grpc/auth/server"
+	auth "github.com/ynoacamino/infra-sustainable-classrooms/services/auth/gen/auth"
+	authpb "github.com/ynoacamino/infra-sustainable-classrooms/services/auth/gen/grpc/auth/pb"
+	authsvr "github.com/ynoacamino/infra-sustainable-classrooms/services/auth/gen/grpc/auth/server"
 	"goa.design/clue/debug"
 	"goa.design/clue/log"
 	"google.golang.org/grpc"

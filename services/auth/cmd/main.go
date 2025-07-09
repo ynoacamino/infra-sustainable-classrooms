@@ -9,11 +9,11 @@ import (
 	"sync"
 	"syscall"
 
-	"github.com/ynoacamino/infrastructure/services/auth/config"
-	auth "github.com/ynoacamino/infrastructure/services/auth/gen/auth"
-	authapi "github.com/ynoacamino/infrastructure/services/auth/internal/controllers"
-	"github.com/ynoacamino/infrastructure/services/auth/internal/database"
-	"github.com/ynoacamino/infrastructure/services/auth/internal/repositories"
+	"github.com/ynoacamino/infra-sustainable-classrooms/services/auth/config"
+	auth "github.com/ynoacamino/infra-sustainable-classrooms/services/auth/gen/auth"
+	authapi "github.com/ynoacamino/infra-sustainable-classrooms/services/auth/internal/controllers"
+	"github.com/ynoacamino/infra-sustainable-classrooms/services/auth/internal/database"
+	"github.com/ynoacamino/infra-sustainable-classrooms/services/auth/internal/repositories"
 	"goa.design/clue/debug"
 	"goa.design/clue/log"
 )
