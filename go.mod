@@ -5,6 +5,7 @@ go 1.24.4
 require (
 	github.com/jackc/pgx/v5 v5.7.5
 	github.com/pquerna/otp v1.5.0
+	github.com/stretchr/testify v1.10.0
 	goa.design/clue v1.2.1
 	goa.design/goa/v3 v3.21.1
 	golang.org/x/crypto v0.39.0
@@ -28,7 +29,7 @@ require (
 	github.com/manveru/faker v0.0.0-20171103152722-9fbc68a78c4d // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rogpeppe/go-internal v1.14.1 // indirect
-	github.com/stretchr/testify v1.10.0 // indirect
+	github.com/stretchr/objx v0.5.2 // indirect
 	go.opentelemetry.io/otel v1.36.0 // indirect
 	go.opentelemetry.io/otel/trace v1.36.0 // indirect
 	golang.org/x/mod v0.25.0 // indirect
