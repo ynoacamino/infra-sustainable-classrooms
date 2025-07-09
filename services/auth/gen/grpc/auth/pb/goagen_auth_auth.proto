@@ -1,0 +1,95 @@
+// Code generated with goa v3.21.1, DO NOT EDIT.
+//
+// auth protocol buffer definition
+//
+// Command:
+// $ goa gen
+// github.com/ynoacamino/infra-sustainable-classrooms/services/auth/design/api
+// -o ./services/auth/
+
+syntax = "proto3";
+
+package auth;
+
+option go_package = "/authpb";
+
+// Authentication microservice with OTP support
+service Auth {
+	// Validate user session and get user information - for gRPC inter-service
+// communication
+	rpc ValidateUser (ValidateUserRequest) returns (ValidateUserResponse);
+	// Get user information by user ID - for gRPC inter-service communication
+	rpc GetUserByID (GetUserByIDRequest) returns (GetUserByIDResponse);
+}
+
+message ValidateUserRequest {
+	// Session token for validation
+	string session_token = 1;
+}
+
+message ValidateUserResponse {
+	// Session validity status
+	bool valid = 1;
+	// Complete user information if session is valid
+	User user = 2;
+	// Session information if valid
+	Session session = 3;
+}
+// User information
+message User {
+	// User unique identifier
+	sint64 id = 1;
+	// Phone number or email
+	string identifier = 2;
+	// Account creation timestamp in milliseconds
+	sint64 created_at = 3;
+	// Last login timestamp in milliseconds
+	optional sint64 last_login = 4;
+	// Account verification status
+	bool is_verified = 5;
+	// Additional user metadata
+	map<string, string> metadata = 6;
+}
+// User session information
+message Session {
+	// Session unique identifier
+	sint64 id = 1;
+	// Associated user ID
+	sint64 user_id = 2;
+	// Session creation timestamp in milliseconds
+	sint64 created_at = 3;
+	// Session expiration timestamp in milliseconds
+	sint64 expires_at = 4;
+	// Last access timestamp in milliseconds
+	optional sint64 last_accessed = 5;
+	// Session active status
+	bool is_active = 6;
+	// Browser/app user agent
+	optional string user_agent = 7;
+	// Client IP address
+	optional string ip_address = 8;
+	// Device identifier
+	optional string device_id = 9;
+	// Platform (web, ios, android)
+	optional string platform = 10;
+}
+
+message GetUserByIDRequest {
+	// User ID to retrieve
+	sint64 user_id = 1;
+}
+
+message GetUserByIDResponse {
+	// User unique identifier
+	sint64 id = 1;
+	// Phone number or email
+	string identifier = 2;
+	// Account creation timestamp in milliseconds
+	sint64 created_at = 3;
+	// Last login timestamp in milliseconds
+	optional sint64 last_login = 4;
+	// Account verification status
+	bool is_verified = 5;
+	// Additional user metadata
+	map<string, string> metadata = 6;
+}
