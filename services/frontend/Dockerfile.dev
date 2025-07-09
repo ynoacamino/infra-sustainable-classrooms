@@ -1,0 +1,14 @@
+FROM docker.io/library/node:22.16-alpine
+
+RUN apk add --no-cache libc6-compat
+
+WORKDIR /app
+
+RUN corepack enable
+
+COPY services/frontend/package.json services/frontend/pnpm-lock.yaml ./
+
+RUN pnpm install
+
+
+CMD ["pnpm", "run", "dev"]
