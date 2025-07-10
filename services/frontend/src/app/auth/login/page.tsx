@@ -2,10 +2,10 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import LayoutLogin from '@/modules/core/layouts/LayoutLogin';
-import { LoginForm } from '@/modules/auth/components/LoginForm';
-import { authService } from '@/lib/auth';
 import Link from 'next/link';
+import { authService } from '@/services/auth/auth';
+import LayoutLogin from '@/layout/shared/layout-login';
+import { LoginForm } from '@/components/auth/forms/login-form';
 
 export default function LoginPage() {
   const router = useRouter();

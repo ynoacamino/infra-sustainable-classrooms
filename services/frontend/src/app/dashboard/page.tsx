@@ -2,13 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import LayoutStudent from '@/modules/core/layouts/LayoutStudent';
-import H1 from '@/modules/core/ui/h1';
-import Section from '@/modules/core/ui/section';
-import { Courses } from '@/modules/courses/components/Courses';
-import { Grades } from '@/modules/courses/components/Grades';
-import { authService } from '@/lib/auth';
-import type { User } from '@/modules/auth/types/user';
+import LayoutStudent from '@/layout/shared/layout-student';
+import H1 from '@/ui/h1';
+import Section from '@/ui/section';
+import { Courses } from '@/components/courses/student/courses-list';
+import { Grades } from '@/components/courses/student/grades';
+import { authService } from '@/services/auth/auth';
+import type { User } from '@/types/auth/user';
 
 export default function DashboardPage() {
   const router = useRouter();

@@ -1,9 +1,9 @@
+import { authService } from '@/services/auth/auth';
 import { NextResponse } from 'next/server';
-import { getUser } from '@/modules/auth/lib/authServer';
 
 export async function GET() {
   try {
-    const user = await getUser();
+    const user = await authService.getUser();
 
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 401 });
