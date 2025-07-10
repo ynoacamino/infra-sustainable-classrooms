@@ -46,6 +46,8 @@ services:
       dockerfile: services/auth/Dockerfile
     container_name: auth-service
     restart: unless-stopped
+    ports:
+      - "8080:8080"
     env_file:
       - ./services/auth/.env
     depends_on:
