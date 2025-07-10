@@ -2,10 +2,10 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import LayoutLogin from '@/modules/core/layouts/LayoutLogin';
-import { RegisterForm } from '@/modules/auth/components/RegisterForm';
-import { authService } from '@/lib/auth';
 import Link from 'next/link';
+import LayoutLogin from '@/layout/shared/layout-login';
+import { authService } from '@/services/auth/auth';
+import { RegisterForm } from '@/components/auth/forms/register-form';
 
 export default function RegisterPage() {
   const router = useRouter();

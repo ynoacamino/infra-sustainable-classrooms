@@ -1,6 +1,6 @@
+import { authService } from '@/services/auth/auth';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { login } from '@/modules/auth/lib/authServer';
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { email, password } = loginSchema.parse(body);
 
-    const user = await login({ email, password });
+    const user = await authService.login({ email, password });
 
     if (!user) {
       return NextResponse.json(

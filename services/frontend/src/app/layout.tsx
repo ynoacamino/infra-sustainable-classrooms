@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import '@fontsource-variable/lexend';
-import './globals.css';
+import '@/app/globals.css';
 
 export const metadata: Metadata = {
   title: 'Study Central',
