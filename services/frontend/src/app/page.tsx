@@ -1,11 +1,14 @@
-import { Button } from "@/components/ui/button";
+'use client';
 
-export default function Home() {
-  return (
-    <div className="">
-      <Button>
-        Click Me
-      </Button>
-    </div>
-  );
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+
+export default function RootPage() {
+  const router = useRouter();
+
+  useEffect(() => {
+    router.replace('/dashboard');
+  }, [router]);
+
+  return null;
 }
