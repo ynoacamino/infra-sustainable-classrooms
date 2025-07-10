@@ -1,0 +1,11 @@
+*/**/node_modules
+*/**/.env*
+*/**/dist
+*/**/build
+*/**/coverage
+*/**/logs
+*/**/tmp
+*/**/temp
+*/**/cache
+*/**/bower_components
+*/**/jspm_packages
