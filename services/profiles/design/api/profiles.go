@@ -41,11 +41,9 @@ var _ = Service("profiles", func() {
 			Field(7, "avatar_url", String, "Profile picture URL")
 			Field(8, "bio", String, "Biography/description")
 			Field(9, "grade_level", String, "Grade level (1-12, undergraduate, graduate)")
-			Field(10, "school_name", String, "School/University name")
-			Field(11, "major", String, "Major/field of study")
-			Field(12, "subjects", ArrayOf(String), "Enrolled subjects/courses")
+			Field(10, "major", String, "Major/field of study")
 
-			Required("session_token", "user_id", "first_name", "last_name", "email", "grade_level", "school_name")
+			Required("session_token", "user_id", "first_name", "last_name", "email", "grade_level")
 		})
 
 		Result(StudentProfileResponse)
@@ -76,12 +74,9 @@ var _ = Service("profiles", func() {
 			Field(6, "phone", String, "Phone number")
 			Field(7, "avatar_url", String, "Profile picture URL")
 			Field(8, "bio", String, "Biography/description")
-			Field(9, "department", String, "Department name")
-			Field(10, "position", String, "Position/title")
-			Field(11, "subjects_taught", ArrayOf(String), "Subjects/courses taught")
-			Field(12, "school_name", String, "School/University name")
+			Field(9, "position", String, "Position/title")
 
-			Required("session_token", "user_id", "first_name", "last_name", "email", "department", "position", "subjects_taught")
+			Required("session_token", "user_id", "first_name", "last_name", "email", "position")
 		})
 
 		Result(TeacherProfileResponse)
@@ -98,8 +93,8 @@ var _ = Service("profiles", func() {
 	})
 
 	// === PROFILE RETRIEVAL ===
-	Method("GetMyProfile", func() {
-		Description("Get current user's complete profile")
+	Method("GetCompleteProfile", func() {
+		Description("Get user's complete profile")
 
 		Payload(func() {
 			Field(1, "session_token", String, "Authentication session token")
@@ -116,6 +111,38 @@ var _ = Service("profiles", func() {
 			Response(StatusOK)
 			Response("unauthorized", StatusUnauthorized)
 			Response("profile_not_found", StatusNotFound)
+		})
+
+		GRPC(func() {
+			Response(CodeOK)
+			Response("unauthorized", CodePermissionDenied)
+			Response("profile_not_found", CodeNotFound)
+		})
+	})
+
+	Method("GetPublicProfileById", func() {
+		Description("Get public profile information by user ID")
+
+		Payload(func() {
+			Field(1, "user_id", Int64, "User ID to retrieve profile for")
+
+			Required("user_id")
+		})
+
+		Result(PublicProfileResponse)
+
+		HTTP(func() {
+			GET("/public/{user_id}")
+			Param("user_id", Int64, "User ID to retrieve profile for")
+
+			Response(StatusOK)
+			Response("profile_not_found", StatusNotFound)
+			Response("invalid_input", StatusBadRequest)
+		})
+		GRPC(func() {
+			Response(CodeOK)
+			Response("profile_not_found", CodeNotFound)
+			Response("invalid_input", CodeInvalidArgument)
 		})
 	})
 
@@ -134,10 +161,7 @@ var _ = Service("profiles", func() {
 			Field(6, "avatar_url", String, "Updated profile picture URL")
 			Field(7, "bio", String, "Updated biography")
 			Field(8, "major", String, "Updated major (students)")
-			Field(9, "subjects", ArrayOf(String), "Updated subjects (students)")
-			Field(10, "department", String, "Updated department (teachers)")
-			Field(11, "position", String, "Updated position (teachers)")
-			Field(12, "subjects_taught", ArrayOf(String), "Updated subjects taught (teachers)")
+			Field(9, "position", String, "Updated position (teachers)")
 
 			Required("session_token")
 		})
@@ -173,24 +197,6 @@ var _ = Service("profiles", func() {
 			Response(CodeOK)
 			Response("profile_not_found", CodeNotFound)
 			Response("permission_denied", CodePermissionDenied)
-		})
-	})
-
-	Method("GetUserBasicInfo", func() {
-		Description("Get basic user information for inter-service communication")
-
-		Payload(func() {
-			Field(1, "user_id", Int64, "User ID")
-
-			Required("user_id")
-		})
-
-		Result(BasicUserInfo)
-
-		// This method is only for gRPC inter-service communication
-		GRPC(func() {
-			Response(CodeOK)
-			Response("profile_not_found", CodeNotFound)
 		})
 	})
 })
