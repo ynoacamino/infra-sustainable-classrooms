@@ -1,4 +1,4 @@
-import ModeSwitch from '@/components/post/admin/mode-switch';
+import ModeSwitch from '@/components/post/teacher/mode-switch';
 import { useViewOrEdit } from '@/hooks/post/use-view-or-edit';
 import { useEffect } from 'react';
 

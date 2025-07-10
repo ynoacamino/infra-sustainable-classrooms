@@ -1,5 +1,5 @@
-import Editor from '@/components/post/admin/editor';
-import Preview from '@/components/post/admin/preview';
+import Editor from '@/components/post/teacher/editor';
+import Preview from '@/components/post/teacher/preview';
 import { cn } from '@/lib/shared/utils';
 import { Button } from '@/ui/button';
 import { Link } from '@/ui/link';

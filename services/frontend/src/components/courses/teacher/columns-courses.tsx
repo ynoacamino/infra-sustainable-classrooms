@@ -1,5 +1,4 @@
 import type { ColumnDef } from '@tanstack/react-table';
-import { CoursesCellStatus } from './CoursesCellStatus';
 import { MoreHorizontal } from 'lucide-react';
 import type { Course, CourseStatus } from '@/types/courses/courses';
 import {
@@ -11,6 +10,7 @@ import {
 } from '@/ui/dropdown-menu';
 import { Button } from '@/ui/button';
 import { Link } from '@/ui/link';
+import { CoursesCellStatus } from '@/components/courses/teacher/course-cell-status';
 
 export const columns: ColumnDef<Course>[] = [
   {

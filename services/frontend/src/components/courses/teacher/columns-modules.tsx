@@ -1,4 +1,4 @@
-import { CourseModuleType } from '@/components/courses/admin/CourseModuleType';
+import { CourseModuleType } from '@/components/courses/teacher/course-module-type';
 import type {
   CourseModule,
   CourseModuleType as ModuleType,

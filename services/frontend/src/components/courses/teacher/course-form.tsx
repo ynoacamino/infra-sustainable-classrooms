@@ -1,7 +1,7 @@
 import {
   courseFormFields,
   coursesFormSchema,
-} from '@/lib/courses/admin/forms/courses-form';
+} from '@/lib/courses/teacher/courses-form';
 import { Button } from '@/ui/button';
 import { Form, FormField } from '@/ui/form';
 import { InferItem } from '@/ui/infer-field';

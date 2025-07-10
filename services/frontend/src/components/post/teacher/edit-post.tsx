@@ -1,6 +1,6 @@
 import ModeSwitch, {
   ModeSwitchSkeleton,
-} from '@/components/post/admin/mode-switch';
+} from '@/components/post/teacher/mode-switch';
 import { useOnePost } from '@/hooks/post/use-posts';
 import { useViewOrEdit } from '@/hooks/post/use-view-or-edit';
 import { useEffect } from 'react';

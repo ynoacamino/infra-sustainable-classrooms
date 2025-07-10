@@ -1,4 +1,4 @@
-import { columns } from '@/components/courses/admin/columns-modules';
+import { columns } from '@/components/courses/teacher/columns-modules';
 import type { CourseModule } from '@/types/courses/courses';
 import { DataTable } from '@/ui/data-table';
 
