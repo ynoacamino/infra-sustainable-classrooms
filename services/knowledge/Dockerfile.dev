@@ -1,0 +1,18 @@
+# Build stage
+FROM docker.io/library/golang:latest AS builder
+
+RUN apt-get update && apt-get install -y \
+    git \
+    ca-certificates \
+    tzdata \
+    curl
+
+WORKDIR /app
+
+RUN go install github.com/bokwoon95/wgo@latest
+
+COPY go.mod go.sum ./
+
+RUN go mod download
+
+CMD ["wgo", "run", "./services/knowledge/cmd/"]
