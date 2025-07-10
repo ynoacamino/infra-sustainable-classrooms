@@ -1,0 +1,16 @@
+_format_version: "3.0"
+_transform: true
+
+services:
+  - name: auth-service
+    host: auth-service
+    port: 8080
+    protocol: http
+    routes:
+      - name: login-route
+        paths:
+          - /auth
+        strip_path: false
+        methods:
+          - GET
+          - POST
