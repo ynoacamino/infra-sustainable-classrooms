@@ -55,6 +55,22 @@ services:
         condition: service_healthy
     networks:
       - infrastructure-network
+  
+  profiles-service:
+    build:
+      context: .
+      dockerfile: services/profiles/Dockerfile.dev
+    container_name: profiles-service
+    restart: unless-stopped
+    env_file:
+      - ./services/profiles/.env.dev
+    volumes:
+      - ./services:/app/services
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - infrastructure-network
 
 volumes:
   postgres_data:
