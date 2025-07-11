@@ -19,7 +19,6 @@ const (
 	DBG       = "DBG"
 	APP_ENV   = "APP_ENV"
 
-	TOTP_ISSUER       = "TOTP_ISSUER"
 	AUTH_GRPC_ADDRESS = "AUTH_GRPC_ADDRESS"
 
 	MINIO_ENDPOINT   = "MINIO_ENDPOINT"
@@ -57,6 +56,9 @@ type Config struct {
 	Environment string
 	Ctx         context.Context
 
+	// gRPC configuration
+	AuthGRPCAddress string
+
 	// MinIO configuration
 	MinioEndpoint  string
 	MinioAccessKey string
@@ -82,7 +84,9 @@ func NewConfig() (*Config, error) {
 	// Optional configurations with defaults
 	httpPort := getEnvOrDefault(HTTP_PORT, "8080")
 	grpcPort := getEnvOrDefault(GRPC_PORT, "9090")
-	totpIssuer := getEnvOrDefault(TOTP_ISSUER, "Auth Service")
+
+	// gRPC configuration
+	authGRPCAddress := getEnvOrDefault(AUTH_GRPC_ADDRESS, fmt.Sprintf("auth-service:%s", grpcPort))
 
 	// Parse boolean and numeric values
 	debug := parseBoolOrDefault(DBG, false)
@@ -113,20 +117,20 @@ func NewConfig() (*Config, error) {
 	goaLog.Print(ctx, goaLog.KV{K: "http-port", V: httpPort})
 	goaLog.Print(ctx, goaLog.KV{K: "grpc-port", V: grpcPort})
 	goaLog.Print(ctx, goaLog.KV{K: "environment", V: environment})
-	goaLog.Print(ctx, goaLog.KV{K: "totp-issuer", V: totpIssuer})
 
 	return &Config{
-		DatabaseURL:    databaseURL,
-		HTTPPort:       httpPort,
-		GRPCPort:       grpcPort,
-		Debug:          debug,
-		Environment:    environment,
-		Ctx:            ctx,
-		MaxConns:       max_conns,
-		MinConns:       min_conns,
-		MinioEndpoint:  minioEndpoint,
-		MinioAccessKey: minioAccessKey,
-		MinioSecretKey: minioSecretKey,
+		DatabaseURL:     databaseURL,
+		HTTPPort:        httpPort,
+		GRPCPort:        grpcPort,
+		Debug:           debug,
+		Environment:     environment,
+		Ctx:             ctx,
+		MaxConns:        max_conns,
+		MinConns:        min_conns,
+		AuthGRPCAddress: authGRPCAddress,
+		MinioEndpoint:   minioEndpoint,
+		MinioAccessKey:  minioAccessKey,
+		MinioSecretKey:  minioSecretKey,
 	}, nil
 }
 

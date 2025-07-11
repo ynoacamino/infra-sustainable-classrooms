@@ -3,7 +3,7 @@ package connections
 import (
 	"fmt"
 
-	"github.com/ynoacamino/infra-sustainable-classrooms/services/profiles/config"
+	"github.com/ynoacamino/infra-sustainable-classrooms/services/video-learning/config"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
