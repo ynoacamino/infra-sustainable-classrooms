@@ -1,7 +1,7 @@
 -- Tabla de categorías de videos
 CREATE TABLE IF NOT EXISTS video_categories (
     id BIGSERIAL PRIMARY KEY,
-    name VARCHAR(100) NOT NULL UNIQUE,
+    name VARCHAR(100) NOT NULL UNIQUE
 );
 
 -- Tabla de videos
@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS video (
     likes INTEGER DEFAULT 0 NOT NULL,
     video_obj_name VARCHAR(50),
     thumb_obj_name VARCHAR(50),
-    category_id BIGINT NOT NULL REFERENCES video_categories (id) ON DELETE RESTRICT,
+    category_id BIGINT NOT NULL REFERENCES video_categories (id) ON DELETE RESTRICT
 );
 
 CREATE INDEX IF NOT EXISTS idx_video_title ON video (title);
@@ -22,7 +22,7 @@ CREATE INDEX IF NOT EXISTS idx_video_title ON video (title);
 -- Tabla de etiquetas de videos
 CREATE TABLE IF NOT EXISTS video_tags (
     id BIGSERIAL PRIMARY KEY,
-    name VARCHAR(50) NOT NULL UNIQUE,
+    name VARCHAR(50) NOT NULL UNIQUE
 );
 
 -- Tabla de asociación entre videos y etiquetas
@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS video_comments (
     user_id BIGINT NOT NULL,
     title VARCHAR(150) NOT NULL,
     content TEXT NOT NULL,
-    publish_date TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    publish_date TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
 );
 
 -- Tabla de respuestas a comentarios
@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS video_comment_replies (
     comment_id BIGINT NOT NULL REFERENCES video_comments (id) ON DELETE CASCADE,
     user_id BIGINT NOT NULL,
     content TEXT NOT NULL,
-    publish_date TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    publish_date TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
 );
 
 -- Tabla de asociación entre usuarios y categorias preferidas
