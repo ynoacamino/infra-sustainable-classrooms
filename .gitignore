@@ -141,3 +141,6 @@ vite.config.ts.timestamp-*
 services/**/gen/**/*
 .direnv
 .envrc
+
+# Coverage files
+*/**/coverage.*
