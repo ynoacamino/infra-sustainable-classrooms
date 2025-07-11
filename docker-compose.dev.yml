@@ -63,6 +63,18 @@ services:
       timeout: 20s
       retries: 3
 
+  minio-init:
+    image: minio/mc:latest
+    container_name: minio-init
+    depends_on:
+      minio:
+        condition: service_healthy
+    networks:
+      - infrastructure-network
+    volumes:
+      - ./minio/init_buckets.sh:/init_buckets.sh:ro
+    entrypoint: sh /init_buckets.sh
+
   redis:
     image: redis:alpine
     container_name: redis
