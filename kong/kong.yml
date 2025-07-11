@@ -41,3 +41,17 @@ services:
           - POST
           - PUT
           - DELETE
+  - name: video-learning-service
+    host: video-learning-service
+    port: 8080
+    protocol: http
+    routes:
+      - name: video-learning-route
+        paths:
+          - /video-learning
+        strip_path: false
+        methods:
+          - GET
+          - POST
+          - PUT
+          - DELETE

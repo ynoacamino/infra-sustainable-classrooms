@@ -48,6 +48,18 @@
           "sql_package": "pgx/v5"
         }
       }
+    },
+    {
+      "engine": "postgresql",
+      "queries": "services/video_learning/design/queries",
+      "schema": "db/init/video_learning_db.sql",
+      "gen": {
+        "go": {
+          "package": "video_learningdb",
+          "out": "services/video_learning/gen/database",
+          "sql_package": "pgx/v5"
+        }
+      }
     }
   ]
 }
