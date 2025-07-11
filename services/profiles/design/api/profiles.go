@@ -185,9 +185,8 @@ var _ = Service("profiles", func() {
 
 		Payload(func() {
 			Field(1, "user_id", Int64, "User ID to validate")
-			Field(2, "required_role", String, "Required role")
 
-			Required("user_id", "required_role")
+			Required("user_id")
 		})
 
 		Result(RoleValidationResponse)
