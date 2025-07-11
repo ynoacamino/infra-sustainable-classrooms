@@ -19,6 +19,8 @@ const (
 	GRPC_PORT = "GRPC_PORT"
 	DBG       = "DBG"
 	APP_ENV   = "APP_ENV"
+
+	AUTH_GRPC_ADDRESS = "AUTH_GRPC_ADDRESS"
 )
 
 type DBConfig struct {
@@ -26,6 +28,10 @@ type DBConfig struct {
 	Ctx              context.Context
 	MaxConns         int
 	MinConns         int
+}
+
+type ConnectGRPCConfig struct {
+	GrpcAddress string
 }
 
 type Config struct {
@@ -39,6 +45,9 @@ type Config struct {
 	Debug       bool
 	Environment string
 	Ctx         context.Context
+
+	// gRPC configuration
+	AuthGRPCAddress string
 
 	TOTPIssuer      string
 	SessionDuration time.Duration
@@ -67,6 +76,9 @@ func NewConfig() (*Config, error) {
 	httpPort := getEnvOrDefault(HTTP_PORT, "8080")
 	grpcPort := getEnvOrDefault(GRPC_PORT, "9090")
 
+	// gRPC configuration
+	authGRPCAddress := getEnvOrDefault(AUTH_GRPC_ADDRESS, fmt.Sprintf("localhost:%s", grpcPort))
+
 	// Parse boolean and numeric values
 	debug := parseBoolOrDefault(DBG, false)
 
@@ -85,14 +97,15 @@ func NewConfig() (*Config, error) {
 	goaLog.Print(ctx, goaLog.KV{K: "environment", V: environment})
 
 	return &Config{
-		DatabaseURL: databaseURL,
-		HTTPPort:    httpPort,
-		GRPCPort:    grpcPort,
-		Debug:       debug,
-		Environment: environment,
-		Ctx:         ctx,
-		MaxConns:    max_conns,
-		MinConns:    min_conns,
+		DatabaseURL:     databaseURL,
+		HTTPPort:        httpPort,
+		GRPCPort:        grpcPort,
+		Debug:           debug,
+		Environment:     environment,
+		Ctx:             ctx,
+		MaxConns:        max_conns,
+		MinConns:        min_conns,
+		AuthGRPCAddress: authGRPCAddress,
 	}, nil
 }
 
