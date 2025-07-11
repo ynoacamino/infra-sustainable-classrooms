@@ -10,14 +10,16 @@ type profilessrvc struct {
 	profileRepo        ports.ProfileRepository
 	studentProfileRepo ports.StudentProfileRepository
 	teacherProfileRepo ports.TeacherProfileRepository
+	authServiceRepo    ports.AuthServiceRepository
 }
 
-func NewProfilesService(
+func NewProfiles(
 	repoManager *repositories.RepositoryManager,
 ) profiles.Service {
 	return &profilessrvc{
 		profileRepo:        repoManager.ProfileRepo,
 		studentProfileRepo: repoManager.StudentProfileRepo,
 		teacherProfileRepo: repoManager.TeacherProfileRepo,
+		authServiceRepo:    repoManager.AuthServiceRepo,
 	}
 }
