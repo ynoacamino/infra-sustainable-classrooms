@@ -14,3 +14,15 @@ services:
         methods:
           - GET
           - POST
+  - name: profiles-service
+    host: profiles-service
+    port: 8080
+    protocol: http
+    routes:
+      - name: profiles-route
+        paths:
+          - /profiles
+        strip_path: false
+        methods:
+          - GET
+          - POST
