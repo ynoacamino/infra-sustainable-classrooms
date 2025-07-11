@@ -1,10 +1,10 @@
-package database
+package connections
 
 import (
 	"fmt"
 
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/ynoacamino/infra-sustainable-classrooms/services/auth/config"
+	"github.com/ynoacamino/infra-sustainable-classrooms/services/profiles/config"
 )
 
 type ConnectDBConfig interface {
