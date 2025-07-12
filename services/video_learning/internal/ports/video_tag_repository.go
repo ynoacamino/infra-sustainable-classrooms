@@ -6,6 +6,7 @@ import (
 	videolearningdb "github.com/ynoacamino/infra-sustainable-classrooms/services/video_learning/gen/database"
 )
 
+// VideoTagRepository define las operaciones de persistencia para etiquetas de videos
 type VideoTagRepository interface {
 	// Tag CRUD operations
 	GetOrCreateTag(ctx context.Context, name string) (videolearningdb.VideoTag, error)

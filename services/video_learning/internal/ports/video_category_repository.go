@@ -6,6 +6,7 @@ import (
 	videolearningdb "github.com/ynoacamino/infra-sustainable-classrooms/services/video_learning/gen/database"
 )
 
+// VideoCategoryRepository define las operaciones de persistencia para categorías de videos
 type VideoCategoryRepository interface {
 	// Category CRUD operations
 	CreateCategory(ctx context.Context, name string) (videolearningdb.VideoCategory, error)
