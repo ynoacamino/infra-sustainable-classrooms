@@ -1,5 +1,31 @@
 import { cn } from '@/lib/shared/utils';
 
+/**
+ * Input component
+ *
+ * A styled input component with consistent design system integration.
+ * Provides focus states, validation styling, and file input support.
+ *
+ * @param props - Input component props
+ * @param props.className - Additional CSS classes
+ * @param props.type - Input type (text, email, password, file, etc.)
+ * @returns The rendered input component
+ *
+ * @example
+ * ```tsx
+ * <Input type="text" placeholder="Enter your name" />
+ *
+ * <Input type="email" placeholder="Enter your email" />
+ *
+ * <Input type="file" accept="image/*" />
+ *
+ * <Input
+ *   type="password"
+ *   placeholder="Enter password"
+ *   aria-invalid={hasError}
+ * />
+ * ```
+ */
 function Input({ className, type, ...props }: React.ComponentProps<'input'>) {
   return (
     <input

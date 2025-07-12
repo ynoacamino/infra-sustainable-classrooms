@@ -4,6 +4,7 @@ import { authService } from '@/services/auth/service';
 import type {
   GenerateSecretPayload,
   VerifyTOTPPayload,
+  VerifyBackupCodePayload,
 } from '@/types/auth/payload';
 import { cookies } from 'next/headers';
 
@@ -25,6 +26,11 @@ export async function generateSecretAction(payload: GenerateSecretPayload) {
 export async function verifyTotpAction(payload: VerifyTOTPPayload) {
   const auth = await authService(cookies());
   return await auth.verifyTOTP(payload);
+}
+
+export async function verifyBackupCodeAction(payload: VerifyBackupCodePayload) {
+  const auth = await authService(cookies());
+  return await auth.verifyBackupCode(payload);
 }
 
 export async function logoutAction() {

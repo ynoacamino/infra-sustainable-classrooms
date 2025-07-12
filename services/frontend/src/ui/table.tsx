@@ -1,5 +1,33 @@
 import { cn } from '@/lib/shared/utils';
 
+/**
+ * Table component
+ *
+ * A styled table component with consistent design system integration.
+ * Includes responsive overflow handling and border styling.
+ *
+ * @param props - Table component props
+ * @param props.className - Additional CSS classes
+ * @returns The rendered table component
+ *
+ * @example
+ * ```tsx
+ * <Table>
+ *   <TableHeader>
+ *     <TableRow>
+ *       <TableHead>Name</TableHead>
+ *       <TableHead>Email</TableHead>
+ *     </TableRow>
+ *   </TableHeader>
+ *   <TableBody>
+ *     <TableRow>
+ *       <TableCell>John Doe</TableCell>
+ *       <TableCell>john@example.com</TableCell>
+ *     </TableRow>
+ *   </TableBody>
+ * </Table>
+ * ```
+ */
 function Table({ className, ...props }: React.ComponentProps<'table'>) {
   return (
     <div
@@ -15,6 +43,25 @@ function Table({ className, ...props }: React.ComponentProps<'table'>) {
   );
 }
 
+/**
+ * TableHeader component
+ *
+ * Header section of a table, typically containing column headers.
+ *
+ * @param props - Table header props
+ * @param props.className - Additional CSS classes
+ * @returns The rendered table header component
+ *
+ * @example
+ * ```tsx
+ * <TableHeader>
+ *   <TableRow>
+ *     <TableHead>Column 1</TableHead>
+ *     <TableHead>Column 2</TableHead>
+ *   </TableRow>
+ * </TableHeader>
+ * ```
+ */
 function TableHeader({ className, ...props }: React.ComponentProps<'thead'>) {
   return (
     <thead
@@ -25,6 +72,25 @@ function TableHeader({ className, ...props }: React.ComponentProps<'thead'>) {
   );
 }
 
+/**
+ * TableBody component
+ *
+ * Body section of a table containing the main data rows.
+ *
+ * @param props - Table body props
+ * @param props.className - Additional CSS classes
+ * @returns The rendered table body component
+ *
+ * @example
+ * ```tsx
+ * <TableBody>
+ *   <TableRow>
+ *     <TableCell>Data 1</TableCell>
+ *     <TableCell>Data 2</TableCell>
+ *   </TableRow>
+ * </TableBody>
+ * ```
+ */
 function TableBody({ className, ...props }: React.ComponentProps<'tbody'>) {
   return (
     <tbody
@@ -35,6 +101,25 @@ function TableBody({ className, ...props }: React.ComponentProps<'tbody'>) {
   );
 }
 
+/**
+ * TableFooter component
+ *
+ * Footer section of a table, typically containing summary information.
+ *
+ * @param props - Table footer props
+ * @param props.className - Additional CSS classes
+ * @returns The rendered table footer component
+ *
+ * @example
+ * ```tsx
+ * <TableFooter>
+ *   <TableRow>
+ *     <TableCell>Total</TableCell>
+ *     <TableCell>$100.00</TableCell>
+ *   </TableRow>
+ * </TableFooter>
+ * ```
+ */
 function TableFooter({ className, ...props }: React.ComponentProps<'tfoot'>) {
   return (
     <tfoot
@@ -48,6 +133,27 @@ function TableFooter({ className, ...props }: React.ComponentProps<'tfoot'>) {
   );
 }
 
+/**
+ * TableRow component
+ *
+ * Individual row within a table. Supports hover states and selection styling.
+ *
+ * @param props - Table row props
+ * @param props.className - Additional CSS classes
+ * @returns The rendered table row component
+ *
+ * @example
+ * ```tsx
+ * <TableRow>
+ *   <TableCell>Cell 1</TableCell>
+ *   <TableCell>Cell 2</TableCell>
+ * </TableRow>
+ *
+ * <TableRow data-state="selected">
+ *   <TableCell>Selected row</TableCell>
+ * </TableRow>
+ * ```
+ */
 function TableRow({ className, ...props }: React.ComponentProps<'tr'>) {
   return (
     <tr
@@ -61,6 +167,21 @@ function TableRow({ className, ...props }: React.ComponentProps<'tr'>) {
   );
 }
 
+/**
+ * TableHead component
+ *
+ * Header cell component for table columns. Used within TableHeader rows.
+ *
+ * @param props - Table head props
+ * @param props.className - Additional CSS classes
+ * @returns The rendered table head component
+ *
+ * @example
+ * ```tsx
+ * <TableHead>Column Name</TableHead>
+ * <TableHead className="text-right">Price</TableHead>
+ * ```
+ */
 function TableHead({ className, ...props }: React.ComponentProps<'th'>) {
   return (
     <th
@@ -74,6 +195,21 @@ function TableHead({ className, ...props }: React.ComponentProps<'th'>) {
   );
 }
 
+/**
+ * TableCell component
+ *
+ * Data cell component for table content. Used within TableBody rows.
+ *
+ * @param props - Table cell props
+ * @param props.className - Additional CSS classes
+ * @returns The rendered table cell component
+ *
+ * @example
+ * ```tsx
+ * <TableCell>Cell content</TableCell>
+ * <TableCell className="text-right">$99.99</TableCell>
+ * ```
+ */
 function TableCell({ className, ...props }: React.ComponentProps<'td'>) {
   return (
     <td
@@ -87,6 +223,26 @@ function TableCell({ className, ...props }: React.ComponentProps<'td'>) {
   );
 }
 
+/**
+ * TableCaption component
+ *
+ * Caption component for providing a table description or title.
+ *
+ * @param props - Table caption props
+ * @param props.className - Additional CSS classes
+ * @returns The rendered table caption component
+ *
+ * @example
+ * ```tsx
+ * <Table>
+ *   <TableCaption>A list of recent transactions</TableCaption>
+ *   <TableHeader>
+ *     <!-- header content -->
+ *   </TableHeader>
+ *   <!-- body content -->
+ * </Table>
+ * ```
+ */
 function TableCaption({
   className,
   ...props

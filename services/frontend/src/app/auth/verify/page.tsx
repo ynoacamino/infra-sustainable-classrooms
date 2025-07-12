@@ -22,6 +22,12 @@ export default async function LoginPage() {
             Sign up
           </Link>
         </p>
+        <p className="text-sm text-gray-600">
+          Don&apos;t have access to your code?{' '}
+          <Link href="/auth/backup" className="text-blue-500 hover:underline">
+            Use backup code
+          </Link>
+        </p>
       </div>
     </>
   );
