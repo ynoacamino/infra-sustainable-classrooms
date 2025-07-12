@@ -348,6 +348,12 @@ func (s *authsrvc) VerifyTOTP(ctx context.Context, p *auth.VerifyTOTPPayload) (r
 		return nil, auth.InvalidOtp("invalid TOTP code")
 	}
 
+	user, err = s.userRepo.VerifyUser(ctx, user.ID)
+	if err != nil {
+		log.Printf(ctx, "Error verifying user: %v", err)
+		return nil, auth.ServiceUnavailable("failed to verify user")
+	}
+
 	sessionToken, err := s.generateSessionToken()
 	if err != nil {
 		log.Printf(ctx, "Error generating session token: %v", err)
