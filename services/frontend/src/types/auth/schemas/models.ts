@@ -3,7 +3,8 @@ import z from 'zod';
 export const UserIdentifier = z
   .string()
   .min(3, 'Identifier must be at least 3 characters long')
-  .max(100, 'Identifier must be at most 100 characters long');
+  .max(100, 'Identifier must be at most 100 characters long')
+  .describe('User identifier (username/email)');
 
 export const TOTPSecretSchema = z.object({
   totp_url: z.string().url(),

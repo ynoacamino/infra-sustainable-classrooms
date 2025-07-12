@@ -1,4 +1,4 @@
-import type { ErrorResult } from '@/services/shared/errors/base';
+import type { ErrorResultType } from '@/types/shared/services/errors';
 
 export type SuccessResult<T> = {
   success: true;
@@ -7,7 +7,7 @@ export type SuccessResult<T> = {
 
 export type NotSuccessResult = {
   success: false;
-  error: ErrorResult;
+  error: ErrorResultType;
 };
 
 export type Result<T> = SuccessResult<T> | NotSuccessResult;

@@ -9,7 +9,6 @@ import {
   IconMessageReportFilled,
   IconMessage,
   IconMessageFilled,
-  IconSchool,
 } from '@tabler/icons-react';
 
 export const routesConfig = {
@@ -25,10 +24,6 @@ export const routesConfig = {
     {
       path: '/dashboard/post',
       name: 'Posts',
-    },
-    {
-      path: '/teacher',
-      name: "I'm teacher",
     },
   ],
   teacherRoutes: [
@@ -55,12 +50,6 @@ export const routesConfig = {
       name: 'Posts',
       icon: IconMessage,
       iconSelect: IconMessageFilled,
-    },
-    {
-      path: '/dashboard',
-      name: "I'm student",
-      icon: IconSchool,
-      iconSelect: IconSchool,
     },
     {
       icon: IconMessageReport,

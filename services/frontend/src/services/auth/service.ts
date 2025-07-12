@@ -77,7 +77,6 @@ class AuthService extends Service {
 // Factory function to create an instance of AuthService with the interceptor
 export const authService = async (cookies: Promise<ReadonlyRequestCookies>) => {
   const service = new AuthService();
-  const token = (await cookies).get('session')?.value;
-  service.addInterceptor(new AuthInterceptor(token));
+  service.addInterceptor(new AuthInterceptor(await cookies));
   return service;
 };

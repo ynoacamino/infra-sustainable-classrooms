@@ -1,3 +1,5 @@
+'use client';
+
 import { useGrades } from '@/hooks/courses/use-grades';
 import type { Grade as GradeProps } from '@/types/courses/grades';
 

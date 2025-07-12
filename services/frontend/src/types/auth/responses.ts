@@ -1,4 +1,4 @@
-import type { User } from '@/types/auth/schemas/models';
+import type { User } from '@/types/auth/models';
 
 export interface AuthResponse {
   success: boolean;

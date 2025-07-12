@@ -1,31 +1,21 @@
-'use client';
-
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { authService } from '@/services/auth/auth';
-import LayoutLogin from '@/layout/shared/layout-login';
-import { LoginForm } from '@/components/auth/forms/login-form';
+import { redirect } from 'next/navigation';
+import { authService } from '@/services/auth/service';
+import { cookies } from 'next/headers';
+import { VerifyForm } from '@/components/auth/forms/verify-form';
 
-export default function LoginPage() {
-  const router = useRouter();
-
-  useEffect(() => {
-    // Check if user is already logged in
-    const checkAuth = async () => {
-      const user = await authService.getUser();
-      if (user) {
-        router.replace('/dashboard');
-      }
-    };
-    checkAuth();
-  }, [router]);
+export default async function LoginPage() {
+  const auth = await authService(cookies());
+  const res = await auth.getUserProfile();
+  if (res.success) {
+    redirect('/dashboard');
+  }
 
   return (
-    <LayoutLogin>
+    <>
       <h1 className="font-bold text-3xl">Welcome back</h1>
       <div className="flex flex-col gap-y-2 items-center w-full">
-        <LoginForm />
+        <VerifyForm />
         <p className="mt-4 text-sm text-gray-600">
           Don&apos;t have an account?{' '}
           <Link href="/auth/register" className="text-blue-500 hover:underline">
@@ -33,6 +23,6 @@ export default function LoginPage() {
           </Link>
         </p>
       </div>
-    </LayoutLogin>
+    </>
   );
 }
