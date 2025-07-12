@@ -3,6 +3,7 @@ package ports
 import (
 	"context"
 
+	"github.com/jackc/pgx/v5/pgtype"
 	videolearningdb "github.com/ynoacamino/infra-sustainable-classrooms/services/video_learning/gen/database"
 )
 
@@ -15,8 +16,9 @@ type VideoRepository interface {
 
 	// Video search and filtering
 	SearchVideos(ctx context.Context, params videolearningdb.SearchVideosParams) ([]videolearningdb.SearchVideosRow, error)
-	GetVideosByCategory(ctx context.Context, params videolearningdb.GetVideosByCategoryParams) ([]videolearningdb.GetVideosByCategoryRow, error)
-	GetSimilarVideos(ctx context.Context, params videolearningdb.GetSimilarVideosParams) ([]videolearningdb.GetSimilarVideosRow, error)
+	GetVideosByCategory(ctx context.Context, id int64) ([]videolearningdb.GetVideosByCategoryRow, error)
+	GetSimilarVideos(ctx context.Context, id int64) ([]videolearningdb.GetSimilarVideosRow, error)
+	GetRecentVideos(ctx context.Context, interval pgtype.Interval) ([]videolearningdb.GetRecentVideosRow, error)
 
 	// Video interactions
 	IncrementVideoViews(ctx context.Context, params videolearningdb.IncrementVideoViewsParams) error

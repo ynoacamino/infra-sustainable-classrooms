@@ -65,18 +65,6 @@ var Comment = Type("Comment", func() {
 	Required("id", "author", "date", "title", "body")
 })
 
-// CommentReply type for comment replies
-var CommentReply = Type("CommentReply", func() {
-	Description("Comment reply information")
-
-	Field(1, "id", Int64, "Reply unique identifier")
-	Field(2, "author", String, "Reply author")
-	Field(3, "date", Int64, "Reply publish date in milliseconds")
-	Field(4, "body", String, "Reply content")
-
-	Required("id", "author", "date", "body")
-})
-
 // VideoCategory type for video categories
 var VideoCategory = Type("VideoCategory", func() {
 	Description("Video category information")
@@ -97,17 +85,6 @@ var VideoTag = Type("VideoTag", func() {
 	Required("id", "name")
 })
 
-// UserCategoryLike type for user category preferences
-var UserCategoryLike = Type("UserCategoryLike", func() {
-	Description("User category preference information")
-
-	Field(1, "user_id", Int64, "User unique identifier")
-	Field(2, "category_id", Int64, "Category unique identifier")
-	Field(3, "likes", Int, "Number of likes for this category")
-
-	Required("user_id", "category_id", "likes")
-})
-
 // UploadResponse type for file upload responses
 var UploadResponse = Type("UploadResponse", func() {
 	Description("File upload response")
@@ -116,16 +93,6 @@ var UploadResponse = Type("UploadResponse", func() {
 	Field(2, "presigned_url", String, "Presigned URL for accessing the file")
 
 	Required("object_name")
-})
-
-// ThumbnailResponse type for thumbnail generation responses
-var ThumbnailResponse = Type("ThumbnailResponse", func() {
-	Description("Thumbnail generation response")
-
-	Field(1, "thumbnail_object_name", String, "Minio object name for thumbnail")
-	Field(2, "presigned_url", String, "Presigned URL for accessing the thumbnail")
-
-	Required("thumbnail_object_name", "presigned_url")
 })
 
 // SimpleResponse type for simple success/message responses
@@ -157,18 +124,6 @@ var CommentList = Type("CommentList", func() {
 	Field(2, "total", Int, "Total number of comments")
 
 	Required("comments", "total")
-})
-
-// UserSession type for user session information (from profiles microservice)
-var UserSession = Type("UserSession", func() {
-	Description("User session information from profiles microservice")
-
-	Field(1, "user_id", Int64, "User unique identifier")
-	Field(2, "username", String, "Username")
-	Field(3, "email", String, "User email")
-	Field(4, "session_valid", Boolean, "Session validity status")
-
-	Required("user_id", "username", "session_valid")
 })
 
 // === INTER-SERVICE COMMUNICATION TYPES ===

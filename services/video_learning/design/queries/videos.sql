@@ -2,6 +2,7 @@
 INSERT INTO
     video (
         title,
+        user_id,
         description,
         views,
         likes,
@@ -9,7 +10,16 @@ INSERT INTO
         thumb_obj_name,
         category_id
     )
-VALUES ($1, $2, $3, $4, $5, $6, $7)
+VALUES (
+        $1,
+        $2,
+        $3,
+        $4,
+        $5,
+        $6,
+        $7,
+        $8
+    )
 RETURNING
     *;
 
@@ -26,10 +36,17 @@ FROM video v
     JOIN video_categories vc ON v.category_id = vc.id
 WHERE
     v.category_id = $1
-ORDER BY (v.views * 0.5 + v.likes * 0.5) DESC
+ORDER BY (v.likes + v.views) DESC
 LIMIT $2
 OFFSET
     $3;
+
+-- name: GetRecentVideos :many
+SELECT v.*, vc.name as category_name
+FROM video v
+    JOIN video_categories vc ON v.category_id = vc.id
+WHERE
+    v.created_at >= NOW() - INTERVAL $1;
 
 -- name: SearchVideos :many
 SELECT DISTINCT
@@ -48,7 +65,7 @@ WHERE (
         $2::bigint IS NULL
         OR v.category_id = $2
     )
-ORDER BY (v.views * 0.5 + v.likes * 0.5) DESC
+ORDER BY (v.likes + v.views) DESC
 LIMIT $3
 OFFSET
     $4;
@@ -64,8 +81,15 @@ WHERE
         FROM video
         WHERE
             id = $1
-    )
-ORDER BY (v.views * 0.5 + v.likes * 0.5) DESC
+    );
+
+-- name: GetVideosByUser :many
+SELECT v.*, vc.name as category_name
+FROM video v
+    JOIN video_categories vc ON v.category_id = vc.id
+WHERE
+    v.user_id = $1
+ORDER BY v.created_at DESC
 LIMIT $2
 OFFSET
     $3;

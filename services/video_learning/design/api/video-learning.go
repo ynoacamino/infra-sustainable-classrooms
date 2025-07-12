@@ -71,11 +71,7 @@ var _ = Service("video_learning", func() {
 
 		Payload(func() {
 			Field(1, "session_token", String, "User session token")
-			Field(2, "page", Int, "Page number for pagination", func() {
-				Default(1)
-				Minimum(1)
-			})
-			Field(3, "page_size", Int, "Number of videos per page", func() {
+			Field(2, "ammount", Int, "How many videos to get", func() {
 				Default(20)
 				Minimum(1)
 				Maximum(100)
@@ -433,11 +429,7 @@ var _ = Service("video_learning", func() {
 			Field(2, "category_id", Int64, "Category ID", func() {
 				Minimum(1)
 			})
-			Field(3, "page", Int, "Page number for pagination", func() {
-				Default(1)
-				Minimum(1)
-			})
-			Field(4, "page_size", Int, "Number of videos per page", func() {
+			Field(3, "amount", Int, "How many videos to get", func() {
 				Default(20)
 				Minimum(1)
 				Maximum(100)
@@ -467,11 +459,7 @@ var _ = Service("video_learning", func() {
 			Field(2, "video_id", Int64, "Video ID to find similar videos for", func() {
 				Minimum(1)
 			})
-			Field(3, "page", Int, "Page number for pagination", func() {
-				Default(1)
-				Minimum(1)
-			})
-			Field(4, "page_size", Int, "Number of videos per page", func() {
+			Field(3, "amount", Int, "How many similar videos to get", func() {
 				Default(10)
 				Minimum(1)
 				Maximum(50)

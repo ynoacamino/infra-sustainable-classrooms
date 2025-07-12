@@ -12,6 +12,7 @@ CREATE INDEX IF NOT EXISTS idx_video_categories_name ON video_categories (name);
 CREATE TABLE IF NOT EXISTS video (
     id BIGSERIAL PRIMARY KEY,
     title VARCHAR(150) NOT NULL,
+    user_id BIGINT NOT NULL,
     description TEXT,
     views INTEGER DEFAULT 0 NOT NULL,
     likes INTEGER DEFAULT 0 NOT NULL,
