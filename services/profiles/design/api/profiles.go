@@ -26,6 +26,8 @@ var _ = Service("profiles", func() {
 	Error("invalid_role", String, "Invalid role specified")
 
 	// === STUDENT PROFILE CREATION ===
+	// DONE in frontend
+	// NOT TESTED
 	Method("CreateStudentProfile", func() {
 		Description("Create a new student profile with basic information")
 
@@ -60,6 +62,8 @@ var _ = Service("profiles", func() {
 	})
 
 	// === TEACHER PROFILE CREATION ===
+	// DONE in frontend
+	// NOT TESTED
 	Method("CreateTeacherProfile", func() {
 		Description("Create a new teacher profile with basic information")
 
@@ -93,6 +97,8 @@ var _ = Service("profiles", func() {
 	})
 
 	// === PROFILE RETRIEVAL ===
+	// DONE in frontend
+	// NOT TESTED
 	Method("GetCompleteProfile", func() {
 		Description("Get user's complete profile")
 
@@ -120,6 +126,9 @@ var _ = Service("profiles", func() {
 		})
 	})
 
+	// === PUBLIC PROFILE RETRIEVAL ===
+	// DONE in frontend
+	// NOT TESTED
 	Method("GetPublicProfileById", func() {
 		Description("Get public profile information by user ID")
 
@@ -147,6 +156,8 @@ var _ = Service("profiles", func() {
 	})
 
 	// === PROFILE UPDATES ===
+	// DONE in frontend
+	// NOT TESTED
 	Method("UpdateProfile", func() {
 		Description("Update basic profile information")
 
@@ -180,6 +191,7 @@ var _ = Service("profiles", func() {
 	})
 
 	// === INTER-SERVICE COMMUNICATION (gRPC only) ===
+	// Not used in frontend, only for inter-service communication
 	Method("ValidateUserRole", func() {
 		Description("Validate user role for inter-service communication")
 

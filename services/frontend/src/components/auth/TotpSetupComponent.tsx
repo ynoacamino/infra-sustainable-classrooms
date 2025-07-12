@@ -234,8 +234,8 @@ export function TotpSetupComponent({
 
       {/* Action Buttons */}
       <div className="flex justify-between pt-6 border-t">
+        {/* TODO: Delete cookies except session token */}
         <Link href="/auth/register">Back to Registration</Link>
-
         <Link href="/auth/verify">Continue to Verification</Link>
       </div>
     </div>

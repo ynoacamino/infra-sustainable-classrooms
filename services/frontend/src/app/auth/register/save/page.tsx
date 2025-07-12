@@ -20,11 +20,6 @@ export default async function SaveTotpPage() {
     redirect('/auth/register');
   }
 
-  // delete cookies after use
-  (await cookies()).delete('totp_url');
-  (await cookies()).delete('backup_codes');
-  (await cookies()).delete('issuer');
-
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">

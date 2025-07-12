@@ -1,7 +1,7 @@
 import type { Interceptor } from '@/types/shared/services/interceptors';
 import type { ReadonlyRequestCookies } from 'next/dist/server/web/spec-extension/adapters/request-cookies';
 
-export class AuthInterceptor implements Interceptor {
+export class SessionInterceptor implements Interceptor {
   private token: string;
   constructor(private cookies: ReadonlyRequestCookies) {
     this.token = this.cookies.get('session')?.value || '';

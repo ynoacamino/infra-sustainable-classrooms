@@ -1,0 +1,50 @@
+import {
+  StudentProfileSchema,
+  TeacherProfileSchema,
+} from '@/types/profiles/schemas/models';
+import z from 'zod';
+
+export const CreateStudentProfilePayloadSchema = StudentProfileSchema.omit({
+  // This is a cookie
+  // session: z.string(),
+  created_at: true,
+  updated_at: true,
+  is_active: true,
+});
+
+export const CreateTeacherProfilePayloadSchema = TeacherProfileSchema.omit({
+  // This is a cookie
+  // session: z.string(),
+  created_at: true,
+  updated_at: true,
+  is_active: true,
+});
+
+export const GetPublicProfileByIdPayloadSchema = z.object({
+  // This is a cookie
+  // session: z.string(),
+  user_id: z
+    .number()
+    .int('User ID must be an integer')
+    .describe('User identifier'),
+});
+
+const UpdateStudentSchema = StudentProfileSchema.omit({
+  user_id: true,
+  created_at: true,
+  updated_at: true,
+  is_active: true,
+  // Is it a bug? On the server, this is not required
+  grade_level: true,
+}).partial();
+const UpdateTeacherSchema = TeacherProfileSchema.omit({
+  user_id: true,
+  created_at: true,
+  updated_at: true,
+  is_active: true,
+}).partial();
+
+export const UpdateProfilePayloadSchema = z.union([
+  UpdateStudentSchema,
+  UpdateTeacherSchema,
+]);

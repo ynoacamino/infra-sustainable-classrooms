@@ -9,11 +9,10 @@ export const verifyFormFields: Field<keyof z.infer<typeof verifyFormSchema>>[] =
   [
     {
       name: 'identifier',
-      label: 'Email or Username',
-      type: SupportedFields.TEXT,
+      label: 'Email',
+      type: SupportedFields.EMAIL,
       placeholder: 'e.g. example@example.com',
-      description:
-        'Enter your email address or username to verify your account.',
+      description: 'Enter your email address associated with your account.',
     },
     {
       name: 'totp_code',
