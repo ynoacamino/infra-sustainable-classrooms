@@ -12,6 +12,9 @@ type videolearningsrvc struct {
 	videoCommentRepo     ports.VideoCommentRepository
 	videoRepo            ports.VideoRepository
 	videoTagRepo         ports.VideoTagRepository
+	cacheRepo            ports.CacheRepository
+	storageRepo          ports.StorageRepository
+	repoManager          *repositories.RepositoryManager
 }
 
 func NewVideoLearning(
@@ -23,5 +26,8 @@ func NewVideoLearning(
 		videoCommentRepo:     repoManager.VideoCommentRepo,
 		videoRepo:            repoManager.VideoRepo,
 		videoTagRepo:         repoManager.VideoTagRepo,
+		cacheRepo:            repoManager.CacheRepo,
+		storageRepo:          repoManager.StorageRepo,
+		repoManager:          repoManager,
 	}
 }

@@ -3,6 +3,8 @@ package repositories
 import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/minio/minio-go/v7"
+	"github.com/redis/go-redis/v9"
 	"github.com/ynoacamino/infra-sustainable-classrooms/services/video_learning/internal/ports"
 )
 
@@ -13,18 +15,22 @@ type RepositoryManager struct {
 	VideoCommentRepo     ports.VideoCommentRepository
 	VideoTagRepo         ports.VideoTagRepository
 	UserCategoryLikeRepo ports.UserCategoryLikeRepository
+	CacheRepo            ports.CacheRepository
+	StorageRepo          ports.StorageRepository
 	TxManager            TransactionManager
 	pool                 *pgxpool.Pool
 }
 
 // NewRepositoryManager crea una nueva instancia del manejador de repositorios
-func NewRepositoryManager(pool *pgxpool.Pool) *RepositoryManager {
+func NewRepositoryManager(pool *pgxpool.Pool, redisClient *redis.Client, minioClient *minio.Client) *RepositoryManager {
 	return &RepositoryManager{
 		VideoRepo:            NewVideoRepository(pool),
 		VideoCategoryRepo:    NewVideoCategoryRepository(pool),
 		VideoCommentRepo:     NewVideoCommentRepository(pool),
 		VideoTagRepo:         NewVideoTagRepository(pool),
 		UserCategoryLikeRepo: NewUserCategoryLikeRepository(pool),
+		CacheRepo:            NewCacheRepository(redisClient),
+		StorageRepo:          NewStorageRepository(minioClient),
 		TxManager:            NewTransactionManager(pool),
 		pool:                 pool,
 	}
