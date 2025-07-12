@@ -38,17 +38,18 @@ func main() {
 	log.Printf(ctx, "database connection established")
 
 	grpccoon, err := connections.ConnectGRPC(config.ConnectGRPCConfig{
-		GrpcAddress: cfg.AuthGRPCAddress,
+		GrpcAddress: cfg.ProfilesGRPCAddress,
 	})
-	
-	reposManager := repositories.NewRepositoryManager(pool, grpccoon)
+	if err != nil {
+		log.Fatal(ctx, fmt.Errorf("failed to connect to gRPC server: %w", err))
+	}
+	defer grpccoon.Close()
 
 	// Initialize repository manager
-	repoManager := repositories.NewRepositoryManager(pool, grpcConn)
-	defer repoManager.Close()
+	reposManager := repositories.NewRepositoryManager(pool, grpccoon)
+	defer reposManager.Close()
 
-	// Initialize service with repository manager
-	var textSvc text.Service = textapi.NewText(repoManager)
+	var textSvc text.Service = textapi.NewText(reposManager)
 
 	var textEndpoints *text.Endpoints
 	textEndpoints = text.NewEndpoints(textSvc)
@@ -62,4 +63,30 @@ func main() {
 		signal.Notify(c, syscall.SIGINT, syscall.SIGTERM)
 		errc <- fmt.Errorf("%s", <-c)
 	}()
+
+	var wg sync.WaitGroup
+	ctx, cancel := context.WithCancel(ctx)
+
+	{
+		addr := fmt.Sprintf("http://0.0.0.0:%s", cfg.HTTPPort)
+		u, err := url.Parse(addr)
+		if err != nil {
+			log.Fatalf(ctx, err, "invalid URL %#v\n", addr)
+		}
+		handleHTTPServer(ctx, u, textEndpoints, &wg, errc, cfg.Debug)
+	}
+
+	{
+		addr := fmt.Sprintf("grpc://0.0.0.0:%s", cfg.GRPCPort)
+		u, err := url.Parse(addr)
+		if err != nil {
+			log.Fatalf(ctx, err, "invalid URL %#v\n", addr)
+		}
+		handleGRPCServer(ctx, u, textEndpoints, &wg, errc, cfg.Debug)
+	}
+
+	log.Printf(ctx, "exiting (%v)", <-errc)
+	cancel()
+	wg.Wait()
+	log.Printf(ctx, "exited")
 }

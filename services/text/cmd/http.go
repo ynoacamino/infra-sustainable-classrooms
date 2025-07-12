@@ -38,6 +38,7 @@ func handleHTTPServer(ctx context.Context, u *url.URL, textEndpoints *text.Endpo
 		handler = debug.HTTP()(handler)
 	}
 	handler = log.HTTP(ctx)(handler)
+	// handler = addReverseProxyHeaders(handler)
 
 	srv := &http.Server{
 		Addr:              u.Host,
@@ -79,3 +80,18 @@ func errorHandler(logCtx context.Context) func(context.Context, http.ResponseWri
 		log.Printf(logCtx, "ERROR: %s", err.Error())
 	}
 }
+
+// func addReverseProxyHeaders(next http.Handler) http.Handler {
+// 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+// 		if realIP := r.Header.Get("X-Forwarded-For"); realIP != "" {
+// 			r.Header.Set("X-Real-IP", realIP)
+// 		}
+
+// 		w.Header().Set("X-Content-Type-Options", "nosniff")
+// 		w.Header().Set("X-Frame-Options", "DENY")
+// 		w.Header().Set("X-XSS-Protection", "1; mode=block")
+// 		w.Header().Set("Vary", "Origin, Accept-Encoding")
+
+// 		next.ServeHTTP(w, r)
+// 	})
+// }
