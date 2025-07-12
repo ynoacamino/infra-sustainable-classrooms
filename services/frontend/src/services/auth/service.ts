@@ -14,11 +14,11 @@ import {
   VerifyTOTPPayloadSchema,
 } from '@/types/auth/schemas/payload';
 import type { AsyncResult } from '@/types/shared/services/result';
+import type { ReadonlyRequestCookies } from 'next/dist/server/web/spec-extension/adapters/request-cookies';
 
 class AuthService extends Service {
   constructor() {
     super('auth');
-    this.addInterceptor(new AuthInterceptor());
   }
 
   async generateSecret(
@@ -74,4 +74,10 @@ class AuthService extends Service {
   }
 }
 
-export const authService = new AuthService();
+// Factory function to create an instance of AuthService with the interceptor
+export const authService = async (cookies: Promise<ReadonlyRequestCookies>) => {
+  const service = new AuthService();
+  const token = (await cookies).get('session')?.value;
+  service.addInterceptor(new AuthInterceptor(token));
+  return service;
+};
