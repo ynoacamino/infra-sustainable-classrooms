@@ -27,6 +27,8 @@ var _ = Service("auth", func() {
 	Error("unauthorized", String, "Unauthorized access")
 
 	// Authentication methods
+	// DONE in frontend
+	// NOT TESTED
 	Method("GenerateSecret", func() {
 		Description("Generate TOTP secret for new user registration")
 
@@ -51,6 +53,8 @@ var _ = Service("auth", func() {
 		})
 	})
 
+	// DONE in frontend
+	// NOT TESTED
 	Method("VerifyTOTP", func() {
 		Description("Verify TOTP code and authenticate user")
 
@@ -79,6 +83,8 @@ var _ = Service("auth", func() {
 		})
 	})
 
+	// DONE in frontend
+	// NOT TESTED
 	Method("VerifyBackupCode", func() {
 		Description("Verify backup recovery code as alternative to TOTP")
 
@@ -107,6 +113,8 @@ var _ = Service("auth", func() {
 		})
 	})
 
+	// DONE in frontend
+	// NOT TESTED
 	Method("RefreshSession", func() {
 		Description("Refresh user session using existing token")
 
@@ -129,6 +137,7 @@ var _ = Service("auth", func() {
 		})
 	})
 
+	// Not valid for frontend, only for gRPC inter-service communication
 	Method("ValidateUser", func() {
 		Description("Validate user session and get user information - for gRPC inter-service communication")
 
@@ -146,6 +155,7 @@ var _ = Service("auth", func() {
 		})
 	})
 
+	// Not valid for frontend, only for gRPC inter-service communication
 	Method("GetUserByID", func() {
 		Description("Get user information by user ID - for gRPC inter-service communication")
 
@@ -166,6 +176,8 @@ var _ = Service("auth", func() {
 		})
 	})
 
+	// DONE in frontend
+	// NOT TESTED
 	Method("Logout", func() {
 		Description("Logout user and invalidate session")
 
@@ -185,6 +197,8 @@ var _ = Service("auth", func() {
 		})
 	})
 
+	// DONE in frontend
+	// NOT TESTED
 	Method("GetUserProfile", func() {
 		Description("Get authenticated user profile")
 		Payload(func() {

@@ -55,7 +55,7 @@ function InferItem<
           } else if (props.type === SupportedFields.TEXTAREA) {
             return <Textarea {...props} />;
           } else if (props.type === SupportedFields.OTP) {
-            <TwoDividedInputOpt {...props} />;
+            return <TwoDividedInputOpt {...props} />;
           } else if (props.type === SupportedFields.FILE) {
             return (
               <Input

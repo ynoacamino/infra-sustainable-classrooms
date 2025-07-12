@@ -6,26 +6,29 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { InferItem } from '@/ui/infer-field';
 import { Button } from '@/ui/button';
-import { authFormFields, authFormSchema } from '@/lib/auth/forms/auth-form';
-import { generateSecretAction } from '@/actions/auth/actions';
+import { verifyTotpAction } from '@/actions/auth/actions';
+import {
+  verifyFormFields,
+  verifyFormSchema,
+} from '@/lib/auth/forms/verify-form';
 import { toast } from 'sonner';
-import { redirect, RedirectType } from 'next/navigation';
 
-function RegisterForm() {
-  const form = useForm<z.infer<typeof authFormSchema>>({
-    resolver: zodResolver(authFormSchema),
+function VerifyForm() {
+  const form = useForm<z.infer<typeof verifyFormSchema>>({
+    resolver: zodResolver(verifyFormSchema),
     defaultValues: {
       identifier: '',
     },
   });
-  const onSubmit = async (values: z.infer<typeof authFormSchema>) => {
-    const res = await generateSecretAction(values);
-    if (res.success) {
-      toast.success('Login successful!');
-      redirect('/auth/register/save', RedirectType.push);
-    } else {
-      toast.error(`Login failed. Please try again. ${res.error.message}`);
+  const onSubmit = async (values: z.infer<typeof verifyFormSchema>) => {
+    const res = await verifyTotpAction(values);
+    if (!res.success) {
+      form.setError('root', { message: res.error.message });
+      toast.error(res.error.message);
+      return;
     }
+    form.reset();
+    toast.success('Login successful');
   };
   return (
     <Form {...form}>
@@ -33,7 +36,7 @@ function RegisterForm() {
         onSubmit={form.handleSubmit(onSubmit)}
         className="flex flex-col gap-y-4 w-full px-4 sm:px-6 md:px-8 max-w-3xl pb-20"
       >
-        {authFormFields.map((field) => (
+        {verifyFormFields.map((field) => (
           <FormField
             key={`form-register-${field.name}`}
             control={form.control}
@@ -43,12 +46,16 @@ function RegisterForm() {
             )}
           />
         ))}
-        <Button type="submit" className="self-center">
-          Register
+        <Button
+          type="submit"
+          className="self-center"
+          disabled={form.formState.isSubmitting}
+        >
+          Login
         </Button>
       </form>
     </Form>
   );
 }
 
-export { RegisterForm };
+export { VerifyForm };

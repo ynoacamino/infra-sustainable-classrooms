@@ -1,3 +1,5 @@
+'use client';
+
 import { useCourses } from '@/hooks/courses/use-courses';
 import { type Course as CourseProps } from '@/types/courses/courses';
 import { Link } from '@/ui/link';
@@ -38,6 +40,8 @@ function Course({
       <Image
         src={imageUrl}
         alt={title}
+        width={500}
+        height={300}
         className="w-full aspect-video object-cover rounded-[12px] max-w-sm justify-self-end bg-gray-300"
       />
     </div>

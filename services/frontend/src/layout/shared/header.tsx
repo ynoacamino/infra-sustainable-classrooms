@@ -1,10 +1,9 @@
-'use client';
-
 import { IconWifi, IconBell } from '@tabler/icons-react';
-import Link from 'next/link';
-import type { User } from '@/types/auth/user';
 import { routesConfig } from '@/config/shared/routes';
 import { HeaderAuth } from '@/layout/auth/header-auth';
+import { Link } from '@/ui/link';
+import { Button } from '@/ui/button';
+import type { User } from '@/types/auth/models';
 
 interface HeaderProps {
   user: User;
@@ -28,9 +27,9 @@ export default function Header({ user }: HeaderProps) {
             {route.name}
           </Link>
         ))}
-        <button className="rounded-full bg-zinc-300 w-9 aspect-square flex items-center justify-center hover:bg-zinc-400/50 transition-colors">
+        <Button className="rounded-full bg-zinc-300 w-9 aspect-square flex items-center justify-center hover:bg-zinc-400/50 transition-colors">
           <IconBell size={18} stroke={2} />
-        </button>
+        </Button>
         <div className="min-w-30">
           <HeaderAuth user={user} />
         </div>
