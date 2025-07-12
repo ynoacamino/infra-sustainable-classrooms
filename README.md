@@ -128,7 +128,7 @@ Authentication microservice with the following features:
 
 ### Backend
 
-* **Go 1.24.1** - Primary language
+* **Go 1.24.4** - Primary language
 * **Goa v3** - API framework with code generation
 * **PostgreSQL 16** - Main database
 * **SQLC** - Type-safe SQL code generation

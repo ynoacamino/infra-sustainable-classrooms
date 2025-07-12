@@ -27,6 +27,18 @@
     },
     {
       "engine": "postgresql",
+      "queries": "services/knowledge/design/queries",
+      "schema": "db/init/knowledge_db.sql",
+      "gen": {
+        "go": {
+          "package": "knowledgedb",
+          "out": "services/knowledge/gen/database",
+          "sql_package": "pgx/v5"
+        }
+      }
+    },
+    {
+      "engine": "postgresql",
       "queries": "services/text/design/queries",
       "schema": "db/init/text_db.sql",
       "gen": {

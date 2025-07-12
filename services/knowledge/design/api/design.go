@@ -19,7 +19,7 @@ var _ = API("knowledge", func() {
 
 		Host("localhost", func() {
 			Description("Development HTTP server")
-			URI("http://localhost:8081")
+			URI("http://localhost:8080")
 		})
 	})
 
@@ -30,7 +30,7 @@ var _ = API("knowledge", func() {
 
 		Host("localhost", func() {
 			Description("Development gRPC server")
-			URI("grpc://localhost:9091")
+			URI("grpc://localhost:9090")
 		})
 	})
 
