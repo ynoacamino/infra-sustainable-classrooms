@@ -35,11 +35,7 @@ SELECT v.*, vc.name as category_name
 FROM video v
     JOIN video_categories vc ON v.category_id = vc.id
 WHERE
-    v.category_id = $1
-ORDER BY (v.likes + v.views) DESC
-LIMIT $2
-OFFSET
-    $3;
+    v.category_id = $1;
 
 -- name: GetRecentVideos :many
 SELECT v.*, vc.name as category_name

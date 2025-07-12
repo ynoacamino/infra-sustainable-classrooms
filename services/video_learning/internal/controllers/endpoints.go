@@ -61,19 +61,36 @@ func (s *videolearningsrvc) GetRecommendations(ctx context.Context, p *videolear
 		return nil, videolearning.InvalidSession("invalid session")
 	}
 
-	// Get user's category preferences
-	categoryLikes, err := s.userCategoryLikeRepo.GetUserCategoryLikes(ctx, userID)
+	// Get all recent videos from the last 7 days
+	interval := pgtype.Interval{
+		Days:  7,
+		Valid: true,
+	}
+	recentVideos, err := s.videoRepo.GetRecentVideos(ctx, interval)
 	if err != nil {
-		interval := pgtype.Interval{
-			Days:  7, // :)
-			Valid: true,
-		}
-		recentVideos, err := s.videoRepo.GetRecentVideos(ctx, interval)
-		if err != nil {
-			return nil, videolearning.ServiceUnavailable("failed to get recommendations")
+		return nil, videolearning.ServiceUnavailable("failed to get recommendations")
+	}
+
+	// If we have fewer or equal videos than requested, return all of them
+	if len(recentVideos) <= p.Ammount {
+		var apiVideos []*videolearning.Video
+		for _, video := range recentVideos {
+			apiVideo, err := s.convertVideoToAPIVideo(ctx, video)
+			if err != nil {
+				continue
+			}
+			apiVideos = append(apiVideos, apiVideo)
 		}
 
-		// Randomly select videos
+		return &videolearning.VideoList{
+			Videos: apiVideos,
+		}, nil
+	}
+
+	// Get user's category preferences
+	categoryLikes, err := s.userCategoryLikeRepo.GetUserCategoryLikes(ctx, userID)
+	if err != nil || len(categoryLikes) == 0 {
+		// If no preferences found, randomly select from recent videos
 		selectedVideos := randomSelectVideos(recentVideos, p.Ammount)
 
 		var apiVideos []*videolearning.Video
@@ -116,15 +133,22 @@ func (s *videolearningsrvc) GetRecommendations(ctx context.Context, p *videolear
 		}
 	}
 
-	// Get all categories to find category IDs by name
-	allCategories, err := s.videoCategoryRepo.GetAllCategories(ctx)
-	if err != nil {
-		return nil, videolearning.ServiceUnavailable("failed to get categories")
+	// Group recent videos by category
+	videosByCategory := make(map[int64][]videolearningdb.GetRecentVideosRow)
+	for _, video := range recentVideos {
+		videosByCategory[video.CategoryID] = append(videosByCategory[video.CategoryID], video)
 	}
 
-	categoryMap := make(map[string]int64)
-	for _, cat := range allCategories {
-		categoryMap[cat.Name] = cat.ID
+	// Create a map from category names to category IDs from user likes
+	categoryNameToID := make(map[string]int64)
+	for _, catLike := range categoryLikes {
+		// Find the category ID by looking through videos with matching category name
+		for _, video := range recentVideos {
+			if video.CategoryName == catLike.Name {
+				categoryNameToID[catLike.Name] = video.CategoryID
+				break
+			}
+		}
 	}
 
 	// Distribute amount across categories proportionally
@@ -136,8 +160,14 @@ func (s *videolearningsrvc) GetRecommendations(ctx context.Context, p *videolear
 			break
 		}
 
-		categoryID, exists := categoryMap[catLike.Name]
+		categoryID, exists := categoryNameToID[catLike.Name]
 		if !exists {
+			continue
+		}
+
+		// Check if we have videos in this category
+		categoryVideos, hasVideos := videosByCategory[categoryID]
+		if !hasVideos || len(categoryVideos) == 0 {
 			continue
 		}
 
@@ -149,16 +179,6 @@ func (s *videolearningsrvc) GetRecommendations(ctx context.Context, p *videolear
 		}
 		if videoCount == 0 {
 			videoCount = 1 // At least 1 video per category
-		}
-
-		// Get videos from this category
-		categoryVideos, err := s.videoRepo.GetVideosByCategory(ctx, videolearningdb.GetVideosByCategoryParams{
-			CategoryID: categoryID,
-			Limit:      int32(videoCount * 2), // Get more to allow for random selection
-			Offset:     0,
-		})
-		if err != nil {
-			continue
 		}
 
 		// Randomly select from category videos
@@ -174,6 +194,34 @@ func (s *videolearningsrvc) GetRecommendations(ctx context.Context, p *videolear
 			}
 			allRecommendedVideos = append(allRecommendedVideos, apiVideo)
 			remaining--
+		}
+	}
+
+	// If we still have remaining slots and there are unassigned videos, fill randomly
+	if remaining > 0 {
+		var allUnassignedVideos []videolearningdb.GetRecentVideosRow
+		usedVideoIDs := make(map[int64]bool)
+
+		// Mark used videos
+		for _, video := range allRecommendedVideos {
+			usedVideoIDs[video.ID] = true
+		}
+
+		// Collect unused videos
+		for _, video := range recentVideos {
+			if !usedVideoIDs[video.ID] {
+				allUnassignedVideos = append(allUnassignedVideos, video)
+			}
+		}
+
+		// Randomly select from unused videos
+		selectedRemainingVideos := randomSelectVideos(allUnassignedVideos, remaining)
+		for _, video := range selectedRemainingVideos {
+			apiVideo, err := s.convertVideoToAPIVideo(ctx, video)
+			if err != nil {
+				continue
+			}
+			allRecommendedVideos = append(allRecommendedVideos, apiVideo)
 		}
 	}
 
@@ -206,28 +254,15 @@ func (s *videolearningsrvc) GetVideo(ctx context.Context, p *videolearning.GetVi
 	totalViews := int(video.Views) + cachedViews
 	totalLikes := int(video.Likes) + cachedLikes
 
-	// Generate presigned URLs
+	// Generate presigned URLs with caching
 	var videoURL, thumbnailURL string
 
 	if video.VideoObjName.Valid && video.VideoObjName.String != "" {
-		videoURL, _ = s.storageRepo.GeneratePresignedURL(ctx, "video-learning-videos-confirmed", video.VideoObjName.String, 2*time.Hour)
+		videoURL, _ = s.getOrGeneratePresignedURL(ctx, "video-learning-videos-confirmed", video.VideoObjName.String, 4*time.Hour)
 	}
 
 	if video.ThumbObjName.Valid && video.ThumbObjName.String != "" {
-		thumbnailURL, _ = s.storageRepo.GeneratePresignedURL(ctx, "video-learning-thumbnails-confirmed", video.ThumbObjName.String, 24*time.Hour)
-	}
-
-	// Get similar videos
-	similarVideosData, _ := s.videoRepo.GetSimilarVideos(ctx, p.VideoID)
-	selectedSimilar := randomSelectVideos(similarVideosData, 5) // Get max 5 similar videos
-
-	var similarVideos []*videolearning.Video
-	for _, simVideo := range selectedSimilar {
-		apiVideo, err := s.convertVideoToAPIVideo(ctx, simVideo)
-		if err != nil {
-			continue
-		}
-		similarVideos = append(similarVideos, apiVideo)
+		thumbnailURL, _ = s.getOrGeneratePresignedURL(ctx, "video-learning-thumbnails-confirmed", video.ThumbObjName.String, 24*time.Hour)
 	}
 
 	// Get author name from profile service
@@ -238,22 +273,26 @@ func (s *videolearningsrvc) GetVideo(ctx context.Context, p *videolearning.GetVi
 		author = fmt.Sprintf("%s %s", publicProfile.FirstName, publicProfile.LastName)
 	}
 
-	// Mock tags (in production, you'd query the video_video_tags table)
-	tags := []string{"education", "learning"}
+	tags, err := s.videoTagRepo.GetTagsByVideoID(ctx, p.VideoID)
+
+	if err != nil {
+		return nil, videolearning.ServiceUnavailable("failed to get video tags")
+	}
+
+	apiTags := s.convertTagsToAPITags(ctx, tags)
 
 	return &videolearning.VideoDetails{
-		ID:            video.ID,
-		Title:         video.Title,
-		Description:   video.Description.String,
-		Author:        author,
-		Views:         totalViews,
-		Likes:         totalLikes,
-		VideoURL:      videoURL,
-		ThumbnailURL:  thumbnailURL,
-		UploadDate:    video.CreatedAt.Time.UnixMilli(),
-		Category:      video.CategoryName,
-		Tags:          tags,
-		SimilarVideos: similarVideos,
+		ID:           video.ID,
+		Title:        video.Title,
+		Description:  video.Description.String,
+		Author:       author,
+		Views:        totalViews,
+		Likes:        totalLikes,
+		VideoURL:     videoURL,
+		ThumbnailURL: thumbnailURL,
+		UploadDate:   video.CreatedAt.Time.UnixMilli(),
+		Category:     video.CategoryName,
+		Tags:         apiTags,
 	}, nil
 }
 
@@ -296,12 +335,8 @@ func (s *videolearningsrvc) GetVideosByCategory(ctx context.Context, p *videolea
 		return nil, videolearning.InvalidSession("invalid session")
 	}
 
-	// Get videos by category (get more than needed for random selection)
-	categoryVideos, err := s.videoRepo.GetVideosByCategory(ctx, videolearningdb.GetVideosByCategoryParams{
-		CategoryID: p.CategoryID,
-		Limit:      int32(p.Amount * 2), // Get more videos to allow random selection
-		Offset:     0,
-	})
+	// Get videos by category
+	categoryVideos, err := s.videoRepo.GetVideosByCategory(ctx, p.CategoryID)
 	if err != nil {
 		return nil, videolearning.ServiceUnavailable("failed to get videos by category")
 	}
@@ -442,10 +477,10 @@ func (s *videolearningsrvc) GetOwnVideos(ctx context.Context, p *videolearning.G
 		totalViews := int(video.Views) + cachedViews
 		totalLikes := int(video.Likes) + cachedLikes
 
-		// Generate thumbnail URL
+		// Generate thumbnail URL with caching
 		thumbnailURL := ""
 		if video.ThumbObjName.Valid && video.ThumbObjName.String != "" {
-			presignedURL, err := s.storageRepo.GeneratePresignedURL(ctx, "video-learning-thumbnails-confirmed", video.ThumbObjName.String, 24*time.Hour)
+			presignedURL, err := s.getOrGeneratePresignedURL(ctx, "video-learning-thumbnails-confirmed", video.ThumbObjName.String, 24*time.Hour)
 			if err == nil {
 				thumbnailURL = presignedURL
 			}
@@ -761,12 +796,14 @@ func (s *videolearningsrvc) DeleteVideo(ctx context.Context, p *videolearning.De
 		return nil, videolearning.PermissionDenied("you can only delete your own videos")
 	}
 
-	// Delete files from storage
+	// Delete files from storage and clear cached URLs
 	if video.VideoObjName.Valid {
 		s.storageRepo.DeleteFile(ctx, "video-learning-videos-confirmed", video.VideoObjName.String)
+		s.clearCachedPresignedURL(ctx, "video-learning-videos-confirmed", video.VideoObjName.String)
 	}
 	if video.ThumbObjName.Valid {
 		s.storageRepo.DeleteFile(ctx, "video-learning-thumbnails-confirmed", video.ThumbObjName.String)
+		s.clearCachedPresignedURL(ctx, "video-learning-thumbnails-confirmed", video.ThumbObjName.String)
 	}
 
 	// Delete video from database

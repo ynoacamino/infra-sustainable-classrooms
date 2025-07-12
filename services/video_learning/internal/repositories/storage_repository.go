@@ -24,6 +24,7 @@ func (s *storageRepository) UploadFile(ctx context.Context, bucket string, objec
 	opts := minio.PutObjectOptions{
 		ContentType: contentType,
 	}
+
 	_, err := s.client.PutObject(ctx, bucket, objectName, reader, objectSize, opts)
 	return err
 }

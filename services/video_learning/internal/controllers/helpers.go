@@ -51,6 +51,14 @@ func (s *videolearningsrvc) validateTeacherRole(ctx context.Context, sessionToke
 	return profile, nil
 }
 
+func (s *videolearningsrvc) convertTagsToAPITags(ctx context.Context, tags []videolearningdb.VideoTag) []string {
+	apiTags := make([]string, len(tags))
+	for i, tag := range tags {
+		apiTags[i] = tag.Name
+	}
+	return apiTags
+}
+
 // convertVideoToAPIVideo converts database video row to API video struct
 func (s *videolearningsrvc) convertVideoToAPIVideo(ctx context.Context, video interface{}) (*videolearning.Video, error) {
 	var id int64
@@ -108,10 +116,10 @@ func (s *videolearningsrvc) convertVideoToAPIVideo(ctx context.Context, video in
 	totalViews := int(views) + cachedViews
 	totalLikes := int(likes) + cachedLikes
 
-	// Generate thumbnail URL
+	// Generate thumbnail URL with caching
 	thumbnailURL := ""
 	if thumbObjName.Valid && thumbObjName.String != "" {
-		presignedURL, err := s.storageRepo.GeneratePresignedURL(ctx, "video-learning-thumbnails-confirmed", thumbObjName.String, 24*time.Hour)
+		presignedURL, err := s.getOrGeneratePresignedURL(ctx, "video-learning-thumbnails-confirmed", thumbObjName.String, 24*time.Hour)
 		if err == nil {
 			thumbnailURL = presignedURL
 		}
@@ -232,7 +240,7 @@ func randomSelectVideos[T any](videos []T, amount int) []T {
 
 	// Select first 'amount' videos
 	result := make([]T, amount)
-	for i := 0; i < amount; i++ {
+	for i := range amount {
 		result[i] = videos[indices[i]]
 	}
 
@@ -256,4 +264,43 @@ func sanitizeFilename(filename string) string {
 		}
 	}
 	return string(result)
+}
+
+// getCachedPresignedURL gets a cached presigned URL from Redis
+func (s *videolearningsrvc) getCachedPresignedURL(ctx context.Context, bucket, objectName string) (string, error) {
+	key := fmt.Sprintf("presigned_url:%s:%s", bucket, objectName)
+	return s.cacheRepo.Get(ctx, key)
+}
+
+// setCachedPresignedURL stores a presigned URL in Redis with expiration
+func (s *videolearningsrvc) setCachedPresignedURL(ctx context.Context, bucket, objectName, url string, expiration time.Duration) error {
+	key := fmt.Sprintf("presigned_url:%s:%s", bucket, objectName)
+	// Set cache expiration to 90% of URL expiration to ensure we refresh before URL expires
+	cacheExpiration := time.Duration(float64(expiration) * 0.9)
+	return s.cacheRepo.Set(ctx, key, url, cacheExpiration)
+}
+
+// getOrGeneratePresignedURL gets a cached presigned URL or generates a new one
+func (s *videolearningsrvc) getOrGeneratePresignedURL(ctx context.Context, bucket, objectName string, expiration time.Duration) (string, error) {
+	// Try to get from cache first
+	if cachedURL, err := s.getCachedPresignedURL(ctx, bucket, objectName); err == nil && cachedURL != "" {
+		return cachedURL, nil
+	}
+
+	// Generate new presigned URL
+	url, err := s.storageRepo.GeneratePresignedURL(ctx, bucket, objectName, expiration)
+	if err != nil {
+		return "", err
+	}
+
+	// Cache the URL
+	s.setCachedPresignedURL(ctx, bucket, objectName, url, expiration)
+
+	return url, nil
+}
+
+// clearCachedPresignedURL removes a cached presigned URL from Redis
+func (s *videolearningsrvc) clearCachedPresignedURL(ctx context.Context, bucket, objectName string) error {
+	key := fmt.Sprintf("presigned_url:%s:%s", bucket, objectName)
+	return s.cacheRepo.Delete(ctx, key)
 }

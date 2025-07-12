@@ -16,7 +16,7 @@ type VideoRepository interface {
 
 	// Video search and filtering
 	SearchVideos(ctx context.Context, params videolearningdb.SearchVideosParams) ([]videolearningdb.SearchVideosRow, error)
-	GetVideosByCategory(context.Context, videolearningdb.GetVideosByCategoryParams) ([]videolearningdb.GetVideosByCategoryRow, error)
+	GetVideosByCategory(ctx context.Context, id int64) ([]videolearningdb.GetVideosByCategoryRow, error)
 	GetVideosByUser(ctx context.Context, params videolearningdb.GetVideosByUserParams) ([]videolearningdb.GetVideosByUserRow, error)
 	GetSimilarVideos(ctx context.Context, id int64) ([]videolearningdb.GetSimilarVideosRow, error)
 	GetRecentVideos(ctx context.Context, interval pgtype.Interval) ([]videolearningdb.GetRecentVideosRow, error)
