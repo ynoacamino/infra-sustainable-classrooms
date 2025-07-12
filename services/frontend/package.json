@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "docs:gen": "typedoc --entryPointStrategy Expand src"
+    "docs:gen": "typedoc"
   },
   "dependencies": {
     "@fontsource-variable/lexend": "^5.2.9",
