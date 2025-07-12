@@ -21,7 +21,7 @@ export default function Header({ profile }: HeaderProps) {
           <Link
             key={route.path}
             href={route.path}
-            className="hover:text-primary transition-colors duration-75"
+            className="transition-colors duration-75"
             aria-label={route.name}
           >
             {route.name}
