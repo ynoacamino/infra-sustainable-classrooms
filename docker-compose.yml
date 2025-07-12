@@ -84,6 +84,20 @@ services:
     networks:
       - infrastructure-network
 
+  video_learning-service:
+    build:
+      context: .
+      dockerfile: services/video_learning/Dockerfile
+    container_name: video_learning-service
+    restart: unless-stopped
+    env_file:
+      - ./services/video_learning/.env
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - infrastructure-network
+
   frontend-service:
     build:
       context: .

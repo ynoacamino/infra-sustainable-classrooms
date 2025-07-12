@@ -12,5 +12,8 @@ goa gen github.com/ynoacamino/infra-sustainable-classrooms/services/text/design/
 echo "Generating code for knowledge service..."
 goa gen github.com/ynoacamino/infra-sustainable-classrooms/services/knowledge/design/api -o ./services/knowledge/
 
+echo "Generating code for video_learning service..."
+goa gen github.com/ynoacamino/infra-sustainable-classrooms/services/video_learning/design/api -o ./services/video_learning/
+
 echo "Generating SQL code..."
 sqlc generate
