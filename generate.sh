@@ -1,4 +1,8 @@
 rm -rf ./sercices/auth/gen
+rm -rf ./sercices/profiles/gen
+rm -rf ./sercices/text/gen
+rm -rf ./sercices/knowledge/gen
+rm -rf ./sercices/video_learning/gen
 
 echo "Generating code for auth service..."
 goa gen github.com/ynoacamino/infra-sustainable-classrooms/services/auth/design/api -o ./services/auth/
