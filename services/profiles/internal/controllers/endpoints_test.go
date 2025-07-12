@@ -190,7 +190,6 @@ func TestCreateStudentProfile_Success(t *testing.T) {
 	// Act
 	result, err := service.CreateStudentProfile(context.Background(), &profiles.CreateStudentProfilePayload{
 		SessionToken: "valid-session-token",
-		UserID:       1,
 		FirstName:    "John",
 		LastName:     "Doe",
 		Email:        "john.doe@example.com",
@@ -226,7 +225,6 @@ func TestCreateStudentProfile_InvalidSession(t *testing.T) {
 	// Act
 	result, err := service.CreateStudentProfile(context.Background(), &profiles.CreateStudentProfilePayload{
 		SessionToken: "invalid-session-token",
-		UserID:       1,
 		FirstName:    "John",
 		LastName:     "Doe",
 		Email:        "john.doe@example.com",
@@ -254,7 +252,6 @@ func TestCreateStudentProfile_ProfileAlreadyExists(t *testing.T) {
 	// Act
 	result, err := service.CreateStudentProfile(context.Background(), &profiles.CreateStudentProfilePayload{
 		SessionToken: "valid-session-token",
-		UserID:       1,
 		FirstName:    "John",
 		LastName:     "Doe",
 		Email:        "john.doe@example.com",
@@ -291,7 +288,6 @@ func TestCreateTeacherProfile_Success(t *testing.T) {
 	// Act
 	result, err := service.CreateTeacherProfile(context.Background(), &profiles.CreateTeacherProfilePayload{
 		SessionToken: "valid-session-token",
-		UserID:       1,
 		FirstName:    "Jane",
 		LastName:     "Smith",
 		Email:        "jane.smith@example.com",
@@ -325,7 +321,6 @@ func TestCreateTeacherProfile_InvalidSession(t *testing.T) {
 	// Act
 	result, err := service.CreateTeacherProfile(context.Background(), &profiles.CreateTeacherProfilePayload{
 		SessionToken: "invalid-session-token",
-		UserID:       1,
 		FirstName:    "Jane",
 		LastName:     "Smith",
 		Email:        "jane.smith@example.com",
@@ -634,7 +629,6 @@ func TestCreateStudentProfile_CreateProfileFails(t *testing.T) {
 	// Act
 	result, err := service.CreateStudentProfile(context.Background(), &profiles.CreateStudentProfilePayload{
 		SessionToken: "valid-session-token",
-		UserID:       1,
 		FirstName:    "John",
 		LastName:     "Doe",
 		Email:        "john.doe@example.com",
@@ -667,7 +661,6 @@ func TestCreateStudentProfile_CreateStudentProfileFails(t *testing.T) {
 	// Act
 	result, err := service.CreateStudentProfile(context.Background(), &profiles.CreateStudentProfilePayload{
 		SessionToken: "valid-session-token",
-		UserID:       1,
 		FirstName:    "John",
 		LastName:     "Doe",
 		Email:        "john.doe@example.com",
@@ -698,7 +691,6 @@ func TestCreateTeacherProfile_CreateProfileFails(t *testing.T) {
 	// Act
 	result, err := service.CreateTeacherProfile(context.Background(), &profiles.CreateTeacherProfilePayload{
 		SessionToken: "valid-session-token",
-		UserID:       1,
 		FirstName:    "Jane",
 		LastName:     "Smith",
 		Email:        "jane.smith@example.com",
@@ -731,7 +723,6 @@ func TestCreateTeacherProfile_CreateTeacherProfileFails(t *testing.T) {
 	// Act
 	result, err := service.CreateTeacherProfile(context.Background(), &profiles.CreateTeacherProfilePayload{
 		SessionToken: "valid-session-token",
-		UserID:       1,
 		FirstName:    "Jane",
 		LastName:     "Smith",
 		Email:        "jane.smith@example.com",
@@ -869,7 +860,6 @@ func TestCreateStudentProfile_CheckProfileExistsFails(t *testing.T) {
 	// Act
 	result, err := service.CreateStudentProfile(context.Background(), &profiles.CreateStudentProfilePayload{
 		SessionToken: "valid-session-token",
-		UserID:       1,
 		FirstName:    "John",
 		LastName:     "Doe",
 		Email:        "john.doe@example.com",
@@ -898,7 +888,6 @@ func TestCreateTeacherProfile_CheckProfileExistsFails(t *testing.T) {
 	// Act
 	result, err := service.CreateTeacherProfile(context.Background(), &profiles.CreateTeacherProfilePayload{
 		SessionToken: "valid-session-token",
-		UserID:       1,
 		FirstName:    "Jane",
 		LastName:     "Smith",
 		Email:        "jane.smith@example.com",

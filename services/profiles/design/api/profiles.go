@@ -31,19 +31,18 @@ var _ = Service("profiles", func() {
 
 		Payload(func() {
 			Field(1, "session_token", String, "Authentication session token")
-			Field(2, "user_id", Int64, "User ID from auth service")
-			Field(3, "first_name", String, "First name")
-			Field(4, "last_name", String, "Last name")
-			Field(5, "email", String, "Email address", func() {
+			Field(2, "first_name", String, "First name")
+			Field(3, "last_name", String, "Last name")
+			Field(4, "email", String, "Email address", func() {
 				Format(FormatEmail)
 			})
-			Field(6, "phone", String, "Phone number")
-			Field(7, "avatar_url", String, "Profile picture URL")
-			Field(8, "bio", String, "Biography/description")
-			Field(9, "grade_level", String, "Grade level (1-12, undergraduate, graduate)")
-			Field(10, "major", String, "Major/field of study")
+			Field(5, "phone", String, "Phone number")
+			Field(6, "avatar_url", String, "Profile picture URL")
+			Field(7, "bio", String, "Biography/description")
+			Field(8, "grade_level", String, "Grade level (1-12, undergraduate, graduate)")
+			Field(9, "major", String, "Major/field of study")
 
-			Required("session_token", "user_id", "first_name", "last_name", "email", "grade_level")
+			Required("session_token", "first_name", "last_name", "email", "grade_level")
 		})
 
 		Result(StudentProfileResponse)
@@ -65,18 +64,17 @@ var _ = Service("profiles", func() {
 
 		Payload(func() {
 			Field(1, "session_token", String, "Authentication session token")
-			Field(2, "user_id", Int64, "User ID from auth service")
-			Field(3, "first_name", String, "First name")
-			Field(4, "last_name", String, "Last name")
-			Field(5, "email", String, "Email address", func() {
+			Field(1, "first_name", String, "First name")
+			Field(3, "last_name", String, "Last name")
+			Field(4, "email", String, "Email address", func() {
 				Format(FormatEmail)
 			})
-			Field(6, "phone", String, "Phone number")
-			Field(7, "avatar_url", String, "Profile picture URL")
-			Field(8, "bio", String, "Biography/description")
-			Field(9, "position", String, "Position/title")
+			Field(5, "phone", String, "Phone number")
+			Field(6, "avatar_url", String, "Profile picture URL")
+			Field(7, "bio", String, "Biography/description")
+			Field(8, "position", String, "Position/title")
 
-			Required("session_token", "user_id", "first_name", "last_name", "email", "position")
+			Required("session_token", "first_name", "last_name", "email", "position")
 		})
 
 		Result(TeacherProfileResponse)
