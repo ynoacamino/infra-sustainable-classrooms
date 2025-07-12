@@ -57,7 +57,7 @@ services:
         condition: service_healthy
     networks:
       - infrastructure-network
-  
+
   profiles-service:
     build:
       context: .
@@ -72,9 +72,10 @@ services:
       postgres:
         condition: service_healthy
       auth-service:
+        condition: service_started
     networks:
       - infrastructure-network
-  
+
   text-service:
     build:
       context: .
@@ -89,6 +90,7 @@ services:
       postgres:
         condition: service_healthy
       profiles-service:
+        condition: service_started
     networks:
       - infrastructure-network
 
