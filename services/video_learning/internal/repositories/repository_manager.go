@@ -6,6 +6,7 @@ import (
 	"github.com/minio/minio-go/v7"
 	"github.com/redis/go-redis/v9"
 	"github.com/ynoacamino/infra-sustainable-classrooms/services/video_learning/internal/ports"
+	"google.golang.org/grpc"
 )
 
 // RepositoryManager coordina todos los repositorios del dominio video_learning
@@ -15,6 +16,7 @@ type RepositoryManager struct {
 	VideoCommentRepo     ports.VideoCommentRepository
 	VideoTagRepo         ports.VideoTagRepository
 	UserCategoryLikeRepo ports.UserCategoryLikeRepository
+	ProfilesServiceRepo  ports.ProfilesServiceRepository
 	CacheRepo            ports.CacheRepository
 	StorageRepo          ports.StorageRepository
 	TxManager            TransactionManager
@@ -22,13 +24,14 @@ type RepositoryManager struct {
 }
 
 // NewRepositoryManager crea una nueva instancia del manejador de repositorios
-func NewRepositoryManager(pool *pgxpool.Pool, redisClient *redis.Client, minioClient *minio.Client) *RepositoryManager {
+func NewRepositoryManager(pool *pgxpool.Pool, profilesGrpcConn *grpc.ClientConn, redisClient *redis.Client, minioClient *minio.Client) *RepositoryManager {
 	return &RepositoryManager{
 		VideoRepo:            NewVideoRepository(pool),
 		VideoCategoryRepo:    NewVideoCategoryRepository(pool),
 		VideoCommentRepo:     NewVideoCommentRepository(pool),
 		VideoTagRepo:         NewVideoTagRepository(pool),
 		UserCategoryLikeRepo: NewUserCategoryLikeRepository(pool),
+		ProfilesServiceRepo:  NewProfilesServiceRepository(profilesGrpcConn),
 		CacheRepo:            NewCacheRepository(redisClient),
 		StorageRepo:          NewStorageRepository(minioClient),
 		TxManager:            NewTransactionManager(pool),
