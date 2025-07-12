@@ -31,7 +31,7 @@ var VideoDetails = Type("VideoDetails", func() {
 	Field(7, "video_url", String, "Minio presigned URL for video")
 	Field(8, "thumbnail_url", String, "Minio presigned URL for thumbnail")
 	Field(9, "upload_date", Int64, "Upload timestamp in milliseconds")
-	Field(10, "category_id", Int64, "Video category ID")
+	Field(10, "category", String, "Video category")
 	Field(11, "tags", ArrayOf(String), "Video tags")
 	Field(12, "similar_videos", ArrayOf(Video), "List of similar videos")
 

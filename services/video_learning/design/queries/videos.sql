@@ -70,18 +70,6 @@ LIMIT $2
 OFFSET
     $3;
 
--- name: UpdateVideo :one
-UPDATE video
-SET
-    title = COALESCE($2, title),
-    description = COALESCE($3, description),
-    category_id = COALESCE($4, category_id),
-    thumb_obj_name = COALESCE($5, thumb_obj_name)
-WHERE
-    id = $1
-RETURNING
-    *;
-
 -- name: IncrementVideoViews :exec
 UPDATE video SET views = views + $2 WHERE id = $1;
 

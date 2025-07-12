@@ -54,16 +54,6 @@ CREATE TABLE IF NOT EXISTS video_comments (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
 );
 
--- Tabla de respuestas a comentarios
-CREATE TABLE IF NOT EXISTS video_comment_replies (
-    id BIGSERIAL PRIMARY KEY,
-    comment_id BIGINT NOT NULL REFERENCES video_comments (id) ON DELETE CASCADE,
-    user_id BIGINT NOT NULL,
-    content TEXT NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
-);
-
 -- Tabla de asociación entre usuarios y categorias preferidas
 CREATE TABLE IF NOT EXISTS user_category_likes (
     user_id BIGINT NOT NULL,
