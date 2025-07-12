@@ -1,4 +1,4 @@
-import { AuthInterceptor } from '@/services/auth/interceptor';
+import { SessionInterceptor } from '@/services/auth/interceptor';
 import type { SimpleResponse } from '@/services/shared/response';
 import { Service } from '@/services/shared/service';
 import type { TOTPSecret, User } from '@/types/auth/models';
@@ -77,6 +77,6 @@ class AuthService extends Service {
 // Factory function to create an instance of AuthService with the interceptor
 export const authService = async (cookies: Promise<ReadonlyRequestCookies>) => {
   const service = new AuthService();
-  service.addInterceptor(new AuthInterceptor(await cookies));
+  service.addInterceptor(new SessionInterceptor(await cookies));
   return service;
 };

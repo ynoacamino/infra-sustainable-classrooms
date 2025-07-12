@@ -186,7 +186,7 @@ export abstract class Service {
     });
   }
 
-  protected async put<T, B extends ZodSchema>({
+  protected async put<T, B extends ZodSchema = ZodSchema>({
     endpoint,
     payload,
     options,

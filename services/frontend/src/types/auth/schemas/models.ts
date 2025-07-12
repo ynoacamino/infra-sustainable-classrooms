@@ -4,6 +4,7 @@ import z from 'zod';
  * Schema for validating user identifiers (username or email).
  *
  * This schema enforces:
+ * - Valid email format using Zod's built-in email validation
  * - Minimum length of 3 characters to prevent too short identifiers
  * - Maximum length of 100 characters to prevent database overflow
  * - String type validation
@@ -20,9 +21,9 @@ import z from 'zod';
  */
 export const UserIdentifier = z
   .string()
+  .email('Identifier must be a valid email address')
   .min(3, 'Identifier must be at least 3 characters long')
-  .max(100, 'Identifier must be at most 100 characters long')
-  .describe('User identifier (username/email)');
+  .max(100, 'Identifier must not exceed 100 characters');
 
 /**
  * Schema for TOTP (Time-based One-Time Password) secret configuration.

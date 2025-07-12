@@ -8,9 +8,9 @@ export const authFormSchema = GenerateSecretPayloadSchema;
 export const authFormFields: Field<keyof z.infer<typeof authFormSchema>>[] = [
   {
     name: 'identifier',
-    label: 'Email or Username',
-    type: SupportedFields.TEXT,
+    label: 'Email',
+    type: SupportedFields.EMAIL,
     placeholder: 'e.g. example@example.com',
-    description: 'Enter your email address or username to register.',
+    description: 'Enter your email address',
   },
 ];
