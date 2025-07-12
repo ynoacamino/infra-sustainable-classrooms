@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/ynoacamino/infra-sustainable-classrooms/services/video-learning/config"
+	"github.com/ynoacamino/infra-sustainable-classrooms/services/video_learning/config"
 )
 
 type ConnectDBConfig interface {

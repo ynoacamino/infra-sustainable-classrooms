@@ -24,6 +24,8 @@ const (
 	MINIO_ENDPOINT   = "MINIO_ENDPOINT"
 	MINIO_ACCESS_KEY = "MINIO_ACCESS_KEY"
 	MINIO_SECRET_KEY = "MINIO_SECRET_KEY"
+
+	REDIS_ENDPOINT = "REDIS_ENDPOINT"
 )
 
 type DBConfig struct {
@@ -42,6 +44,11 @@ type MinioConfig struct {
 	Endpoint  string
 	AccessKey string
 	SecretKey string
+}
+
+type RedisConfig struct {
+	Ctx      context.Context
+	Endpoint string
 }
 
 type Config struct {
@@ -63,6 +70,9 @@ type Config struct {
 	MinioEndpoint  string
 	MinioAccessKey string
 	MinioSecretKey string
+
+	// Redis configuration
+	RedisEndpoint string
 }
 
 func NewConfig() (*Config, error) {
@@ -113,6 +123,12 @@ func NewConfig() (*Config, error) {
 		return nil, fmt.Errorf("MinIO configuration is incomplete")
 	}
 
+	// Redis configuration
+	redisEndpoint := getEnvOrDefault(REDIS_ENDPOINT, "redis:6379")
+	if redisEndpoint == "" {
+		return nil, fmt.Errorf("redis configuration is incomplete")
+	}
+
 	// Log important configuration
 	goaLog.Print(ctx, goaLog.KV{K: "http-port", V: httpPort})
 	goaLog.Print(ctx, goaLog.KV{K: "grpc-port", V: grpcPort})
@@ -131,6 +147,7 @@ func NewConfig() (*Config, error) {
 		MinioEndpoint:   minioEndpoint,
 		MinioAccessKey:  minioAccessKey,
 		MinioSecretKey:  minioSecretKey,
+		RedisEndpoint:   redisEndpoint,
 	}, nil
 }
 
@@ -153,5 +170,12 @@ func (c *Config) GetMinioConfig() *MinioConfig {
 		Endpoint:  c.MinioEndpoint,
 		AccessKey: c.MinioAccessKey,
 		SecretKey: c.MinioSecretKey,
+	}
+}
+
+func (c *Config) GetRedisConfig() *RedisConfig {
+	return &RedisConfig{
+		Ctx:      c.Ctx,
+		Endpoint: c.RedisEndpoint,
 	}
 }

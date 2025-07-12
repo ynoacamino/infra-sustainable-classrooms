@@ -1,8 +1,8 @@
 BUCKETS=(
-    "video-learning-videos-confirmed"
-    "video-learning-videos-staging"
-    "video-learning-thumbnails-confirmed"
-    "video-learning-thumbnails-staging"
+    "video_learning_videos_confirmed"
+    "video_learning_videos_staging"
+    "video_learning_thumbnails_confirmed"
+    "video_learning_thumbnails_staging"
 )
 
 MINIO_ROOT_USER=minioadmin

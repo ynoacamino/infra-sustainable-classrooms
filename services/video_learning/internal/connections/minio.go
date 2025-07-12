@@ -5,7 +5,7 @@ import (
 
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
-	"github.com/ynoacamino/infra-sustainable-classrooms/services/video-learning/config"
+	"github.com/ynoacamino/infra-sustainable-classrooms/services/video_learning/config"
 )
 
 type ConnectMinioConfig interface {

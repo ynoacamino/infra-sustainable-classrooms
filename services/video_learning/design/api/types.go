@@ -61,9 +61,8 @@ var Comment = Type("Comment", func() {
 	Field(3, "date", Int64, "Comment publish date in milliseconds")
 	Field(4, "title", String, "Comment title")
 	Field(5, "body", String, "Comment content")
-	Field(6, "responses", ArrayOf(CommentReply), "Comment replies")
 
-	Required("id", "author", "date", "title", "body", "responses")
+	Required("id", "author", "date", "title", "body")
 })
 
 // CommentReply type for comment replies
@@ -146,10 +145,8 @@ var VideoList = Type("VideoList", func() {
 
 	Field(1, "videos", ArrayOf(Video), "List of videos")
 	Field(2, "total", Int, "Total number of videos")
-	Field(3, "page", Int, "Current page number")
-	Field(4, "page_size", Int, "Number of videos per page")
 
-	Required("videos", "total", "page", "page_size")
+	Required("videos", "total")
 })
 
 // CommentList type for paginated comment lists
@@ -158,10 +155,8 @@ var CommentList = Type("CommentList", func() {
 
 	Field(1, "comments", ArrayOf(Comment), "List of comments")
 	Field(2, "total", Int, "Total number of comments")
-	Field(3, "page", Int, "Current page number")
-	Field(4, "page_size", Int, "Number of comments per page")
 
-	Required("comments", "total", "page", "page_size")
+	Required("comments", "total")
 })
 
 // UserSession type for user session information (from profiles microservice)

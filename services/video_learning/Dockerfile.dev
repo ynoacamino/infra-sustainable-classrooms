@@ -15,4 +15,4 @@ COPY go.mod go.sum ./
 
 RUN go mod download
 
-CMD ["wgo", "run", "./services/video-learning/cmd/"]
+CMD ["wgo", "run", "./services/video_learning/cmd/"]

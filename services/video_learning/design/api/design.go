@@ -5,7 +5,7 @@ import (
 )
 
 // API defines the global properties of the Video Learning API
-var _ = API("video-learning", func() {
+var _ = API("video_learning", func() {
 	Title("Video Learning Microservice")
 
 	Description("Microservice for video learning platform with HTTP and gRPC support")
@@ -18,11 +18,11 @@ var _ = API("video-learning", func() {
 	})
 
 	// Server configuration
-	Server("video-learning", func() {
+	Server("video_learning", func() {
 		Description("Video Learning service server")
 
 		// HTTP server
-		Services("video-learning")
+		Services("video_learning")
 		Host("localhost", func() {
 			Description("Development server")
 
@@ -34,7 +34,7 @@ var _ = API("video-learning", func() {
 	Server("grpc", func() {
 		Description("Video Learning service gRPC server")
 
-		Services("video-learning")
+		Services("video_learning")
 
 		Host("localhost", func() {
 			Description("gRPC server for inter-service communication")

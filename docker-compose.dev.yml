@@ -107,16 +107,16 @@ services:
     networks:
       - infrastructure-network
 
-  # video-learning-service:
+  # video_learning-service:
   #   build:
   #     context: .
-  #     dockerfile: services/video-learning/Dockerfile.dev
-  #   container_name: video-learning-service
+  #     dockerfile: services/video_learning/Dockerfile.dev
+  #   container_name: video_learning-service
   #   restart: unless-stopped
   #   ports:
   #     - "8080:8080"
   #   env_file:
-  #     - ./services/video-learning/.env.dev
+  #     - ./services/video_learning/.env.dev
   #   volumes:
   #     - ./services:/app/services
   #   depends_on:
