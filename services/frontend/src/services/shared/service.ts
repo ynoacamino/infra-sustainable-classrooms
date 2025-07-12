@@ -25,7 +25,7 @@ export abstract class Service {
     this.endpointPrefix = this.normalizeEndpoint(endpointPrefix) || '';
   }
 
-  protected addInterceptor(interceptor: Interceptor): void {
+  public addInterceptor(interceptor: Interceptor): void {
     this.interceptors.push(interceptor);
   }
 
@@ -90,7 +90,7 @@ export abstract class Service {
           'Content-Type': 'application/json',
           ...(options?.headers || {}),
         },
-        body: payload ? JSON.stringify(payload) : undefined,
+        body: payload ? JSON.stringify(payload.data) : undefined,
       };
       const finalReqInit = await this.applyRequestInterceptors(url, reqInit);
       const response = await fetch(url, finalReqInit);
@@ -140,7 +140,7 @@ export abstract class Service {
   }
 
   protected error(error: ServiceError): Result<never> {
-    return { success: false, error };
+    return { success: false, error: error.toJSON() };
   }
 
   private normalizeEndpoint(
