@@ -6,5 +6,8 @@ goa gen github.com/ynoacamino/infra-sustainable-classrooms/services/auth/design/
 echo "Generating code for profiles service..."
 goa gen github.com/ynoacamino/infra-sustainable-classrooms/services/profiles/design/api -o ./services/profiles/
 
+echo "Generating code for text service..."
+goa gen github.com/ynoacamino/infra-sustainable-classrooms/services/text/design/api -o ./services/text/
+
 echo "Generating SQL code..."
 sqlc generate
