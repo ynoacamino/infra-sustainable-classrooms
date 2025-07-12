@@ -1,7 +1,6 @@
 import Header from '@/layout/shared/header';
 import { profilesService } from '@/services/profiles/service';
 import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
 
 export default async function LayoutStudent({
   children,
@@ -10,8 +9,9 @@ export default async function LayoutStudent({
 }) {
   const profiles = await profilesService(cookies());
   const res = await profiles.getCompleteProfile();
+  console.log(res);
   if (!res.success) {
-    redirect('/auth/verify');
+    return <h1>Create profile here</h1>;
   }
   return (
     <>
