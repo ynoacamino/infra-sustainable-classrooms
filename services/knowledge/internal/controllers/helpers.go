@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/jackc/pgx/v5/pgtype"
@@ -60,7 +61,14 @@ func (s *knowledgesvrc) PgBoolToBool(b pgtype.Bool) bool {
 // Helper to convert float64 to pgtype.Numeric
 func (s *knowledgesvrc) Float64ToPgNumeric(f float64) pgtype.Numeric {
 	var num pgtype.Numeric
-	_ = num.Scan(f)
+	err := num.Scan(f)
+	if err != nil {
+		// If direct scan fails, try string conversion
+		err = num.Scan(fmt.Sprintf("%f", f))
+		if err != nil {
+			return pgtype.Numeric{Valid: false}
+		}
+	}
 	return num
 }
 
@@ -69,6 +77,9 @@ func (s *knowledgesvrc) PgNumericToFloat64(num pgtype.Numeric) float64 {
 	if !num.Valid {
 		return 0.0
 	}
-	f, _ := num.Float64Value()
+	f, err := num.Float64Value()
+	if err != nil {
+		return 0.0
+	}
 	return f.Float64
 }
