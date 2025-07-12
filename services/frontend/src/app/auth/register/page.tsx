@@ -1,25 +1,16 @@
-'use client';
-
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import LayoutLogin from '@/layout/shared/layout-login';
-import { authService } from '@/services/auth/auth';
 import { RegisterForm } from '@/components/auth/forms/register-form';
+import { authService } from '@/services/auth/service';
+import { cookies } from 'next/headers';
 
-export default function RegisterPage() {
-  const router = useRouter();
-
-  useEffect(() => {
-    // Check if user is already logged in
-    const checkAuth = async () => {
-      const user = await authService.getUser();
-      if (user) {
-        router.replace('/dashboard');
-      }
-    };
-    checkAuth();
-  }, [router]);
+export default async function RegisterPage() {
+  const auth = await authService(cookies());
+  const res = await auth.getUserProfile();
+  if (res.success) {
+    redirect('/dashboard');
+  }
 
   return (
     <LayoutLogin>
@@ -28,7 +19,7 @@ export default function RegisterPage() {
         <RegisterForm />
         <p className="mt-4 text-sm text-gray-600">
           Already have an account?{' '}
-          <Link href="/auth/login" className="text-blue-500 hover:underline">
+          <Link href="/auth/verify" className="text-blue-500 hover:underline">
             Sign in
           </Link>
         </p>
