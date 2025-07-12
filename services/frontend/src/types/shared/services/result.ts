@@ -1,13 +1,15 @@
-import type { ErrorResult } from '@/services/shared/errors';
+import type { ErrorResult } from '@/services/shared/errors/base';
 
-export type SuccessResultType<T> = {
+export type SuccessResult<T> = {
   success: true;
   data: T;
 };
 
-export type NotSuccessResultType = {
+export type NotSuccessResult = {
   success: false;
   error: ErrorResult;
 };
 
-export type ResultType<T> = SuccessResultType<T> | NotSuccessResultType;
+export type Result<T> = SuccessResult<T> | NotSuccessResult;
+
+export type AsyncResult<T> = Promise<Result<T>>;

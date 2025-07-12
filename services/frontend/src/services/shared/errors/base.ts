@@ -23,12 +23,17 @@ export class ErrorResult<
   get message(): string {
     return this._message;
   }
+
   get status(): number {
     return this._status;
   }
 
   get reason(): string {
     return this._reason;
+  }
+
+  get extend(): T {
+    return this._extend;
   }
 
   toJSON(): ErrorResultType<T> {
@@ -38,5 +43,14 @@ export class ErrorResult<
       status: this._status,
       extend: this._extend,
     };
+  }
+}
+
+export abstract class ServiceError<
+  T extends Record<string, unknown> = Record<string, unknown>,
+> extends ErrorResult<T> {
+  constructor(params: ErrorResultType<T>) {
+    super(params);
+    Object.setPrototypeOf(this, new.target.prototype); // fix instanceof
   }
 }

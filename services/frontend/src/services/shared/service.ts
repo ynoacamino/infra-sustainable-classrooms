@@ -1,21 +1,28 @@
 import { API_BASE_URL } from '@/config/shared/env';
-import { Result } from '@/services/shared/result';
+import type { ServiceError } from '@/services/shared/errors/base';
 import {
   InvalidEndpointError,
-  NetworkError,
-  RemoteServiceError,
-  type ServiceError,
-} from '@/services/shared/service-errors';
+  ValidationError,
+} from '@/services/shared/errors/client';
+import {
+  createHttpError,
+  createNetworkError,
+} from '@/services/shared/errors/utils';
 import type { Interceptor } from '@/types/shared/services/interceptors';
+import type { ServiceRequest } from '@/types/shared/services/request';
+import type { AsyncResult, Result } from '@/types/shared/services/result';
+import type { ZodSchema } from 'zod';
 
 export abstract class Service {
   private apiBaseUrl: string;
   private interceptors: Interceptor[];
+  private endpointPrefix: string;
 
   // The services can have a custom API URL, but if not provided, it will use the default API base URL.
-  protected constructor(apiUrl?: string) {
+  protected constructor(endpointPrefix: string, apiUrl?: string) {
     this.apiBaseUrl = apiUrl ?? API_BASE_URL;
     this.interceptors = [];
+    this.endpointPrefix = this.normalizeEndpoint(endpointPrefix) || '';
   }
 
   protected addInterceptor(interceptor: Interceptor): void {
@@ -52,23 +59,38 @@ export abstract class Service {
     return res;
   }
 
-  private async request<T>(
-    endpoint: string | string[],
-    options?: RequestInit,
-  ): Promise<Result<T>> {
+  private async request<T, B extends ZodSchema = ZodSchema>({
+    endpoint,
+    payload,
+    options,
+  }: ServiceRequest<B>): AsyncResult<T> {
     // Validate the endpoint type
     const safeEndpoint = this.normalizeEndpoint(endpoint);
 
     if (!safeEndpoint) return this.error(new InvalidEndpointError());
+    const safeEndpointPrefix = this.endpointPrefix
+      ? `${this.endpointPrefix}/`
+      : '';
+    // Payload validation
+    if (payload) {
+      const parsed = payload.schema.safeParse(payload.data);
+      if (!parsed.success) {
+        return this.error(
+          ValidationError.fromFieldErrors(parsed.error.flatten().fieldErrors),
+        );
+      }
+    }
     // Make the request
     try {
-      const url = `${this.apiBaseUrl}/${safeEndpoint}`;
+      const url = `${this.apiBaseUrl}/${safeEndpointPrefix}${safeEndpoint}`;
+
       const reqInit: RequestInit = {
         ...options,
         headers: {
           'Content-Type': 'application/json',
           ...(options?.headers || {}),
         },
+        body: payload ? JSON.stringify(payload) : undefined,
       };
       const finalReqInit = await this.applyRequestInterceptors(url, reqInit);
       const response = await fetch(url, finalReqInit);
@@ -88,44 +110,45 @@ export abstract class Service {
         : await finalResponse.text();
 
       if (!finalResponse.ok) {
-        const error = new RemoteServiceError({
-          message:
-            typeof body === 'object' && 'message' in body
-              ? body.message
-              : typeof body === 'string'
-                ? body
-                : 'Unknown error from remote service',
-          status: finalResponse.status,
-          reason:
-            typeof body === 'object' && 'reason' in body
-              ? body.reason
-              : finalResponse.statusText || 'RemoteServiceError',
-          extend: typeof body === 'object' ? body : { raw: String(body) },
-        });
-
+        const errorMessage =
+          typeof body === 'object' && 'message' in body
+            ? body.message
+            : typeof body === 'string'
+              ? body
+              : 'Unknown error from remote service';
+        const extendedError =
+          typeof body === 'object' ? body : { raw: String(body) };
+        const error = createHttpError(
+          finalResponse.status,
+          errorMessage,
+          extendedError,
+        );
         return this.error(error);
       }
 
       return this.result<T>(body);
     } catch (err) {
       if (err instanceof Error) {
-        return this.error(new NetworkError(err.message));
+        return this.error(createNetworkError(err));
       }
-      return this.error(new NetworkError('Unexpected error'));
+      return this.error(createNetworkError(new Error('Unexpected error')));
     }
   }
 
-  private result<T>(data: T): Result<T> {
-    return Result.ok(data);
+  protected result<T>(data: T): Result<T> {
+    return { success: true, data };
   }
 
-  private error(error: ServiceError): Result<never> {
-    return Result.fail(error);
+  protected error(error: ServiceError): Result<never> {
+    return { success: false, error };
   }
 
-  private normalizeEndpoint(endpoint: string | string[]): string | undefined {
+  private normalizeEndpoint(
+    endpoint: (string | number) | (string | number)[],
+  ): string | undefined {
     const raw = Array.isArray(endpoint) ? endpoint.join('/') : endpoint;
     const cleaned = raw
+      .toString()
       .trim()
       .replace(/\/+/g, '/')
       .replace(/^\/|\/$/g, '');
@@ -137,41 +160,55 @@ export abstract class Service {
     return cleaned;
   }
 
-  protected async get<T>(
-    endpoint: string | string[],
-    options?: RequestInit,
-  ): Promise<Result<T>> {
-    return this.request<T>(endpoint, { ...options, method: 'GET' });
-  }
-
-  protected async post<T>(
-    endpoint: string | string[],
-    body?: Record<string, unknown>,
-    options?: RequestInit,
-  ): Promise<Result<T>> {
-    return this.request<T>(endpoint, {
-      ...options,
-      method: 'POST',
-      body: body ? JSON.stringify(body) : undefined,
+  // TODO: make payload validation for get requests
+  protected async get<T>({
+    endpoint,
+    options,
+  }: ServiceRequest): AsyncResult<T> {
+    return this.request<T>({
+      endpoint,
+      options: { ...options, method: 'GET' },
     });
   }
 
-  protected async put<T>(
-    endpoint: string | string[],
-    body?: Record<string, unknown>,
-    options?: RequestInit,
-  ): Promise<Result<T>> {
-    return this.request<T>(endpoint, {
-      ...options,
-      method: 'PUT',
-      body: body ? JSON.stringify(body) : undefined,
+  protected async post<T, B extends ZodSchema = ZodSchema>({
+    endpoint,
+    payload,
+    options,
+  }: ServiceRequest<B>): AsyncResult<T> {
+    return this.request<T>({
+      endpoint,
+      payload,
+      options: {
+        ...options,
+        method: 'POST',
+      },
     });
   }
 
+  protected async put<T, B extends ZodSchema>({
+    endpoint,
+    payload,
+    options,
+  }: ServiceRequest<B>): AsyncResult<T> {
+    return this.request<T>({
+      endpoint,
+      payload,
+      options: {
+        ...options,
+        method: 'PUT',
+      },
+    });
+  }
+
+  // TODO: make payload validation for delete requests
   protected async delete<T>(
     endpoint: string | string[],
     options?: RequestInit,
-  ): Promise<Result<T>> {
-    return this.request<T>(endpoint, { ...options, method: 'DELETE' });
+  ): AsyncResult<T> {
+    return this.request<T>({
+      endpoint,
+      options: { ...options, method: 'DELETE' },
+    });
   }
 }
