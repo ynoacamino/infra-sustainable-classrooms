@@ -111,9 +111,8 @@ var VideoList = Type("VideoList", func() {
 	Description("Paginated list of videos")
 
 	Field(1, "videos", ArrayOf(Video), "List of videos")
-	Field(2, "total", Int, "Total number of videos")
 
-	Required("videos", "total")
+	Required("videos")
 })
 
 // CommentList type for paginated comment lists
@@ -121,9 +120,8 @@ var CommentList = Type("CommentList", func() {
 	Description("Paginated list of comments")
 
 	Field(1, "comments", ArrayOf(Comment), "List of comments")
-	Field(2, "total", Int, "Total number of comments")
 
-	Required("comments", "total")
+	Required("comments")
 })
 
 // === INTER-SERVICE COMMUNICATION TYPES ===

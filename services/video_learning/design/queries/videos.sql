@@ -62,7 +62,7 @@ WHERE (
         OR vt.name ILIKE '%' || $1 || '%'
     )
     AND (
-        $2::bigint IS NULL
+        $2::bigint = 0
         OR v.category_id = $2
     )
 ORDER BY (v.likes + v.views) DESC
