@@ -29,7 +29,6 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
       - ./db/init:/docker-entrypoint-initdb.d
     networks:
       - infrastructure-network
@@ -53,8 +52,6 @@ services:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
     command: server /data --console-address ":9001"
-    volumes:
-      - ./minio/data:/data
     networks:
       - infrastructure-network
     healthcheck:
@@ -105,27 +102,27 @@ services:
     networks:
       - infrastructure-network
 
-  # video_learning-service:
-  #   build:
-  #     context: .
-  #     dockerfile: services/video_learning/Dockerfile.dev
-  #   container_name: video_learning-service
-  #   restart: unless-stopped
-  #   ports:
-  #     - "8080:8080"
-  #   env_file:
-  #     - ./services/video_learning/.env.dev
-  #   volumes:
-  #     - ./services:/app/services
-  #   depends_on:
-  #     postgres:
-  #       condition: service_healthy
-  #     minio:
-  #       condition: service_healthy
-  #     redis:
-  #       condition: service_healthy
-  #   networks:
-  #     - infrastructure-network
+  video_learning-service:
+    build:
+      context: .
+      dockerfile: services/video_learning/Dockerfile.dev
+    container_name: video_learning-service
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    env_file:
+      - ./services/video_learning/.env.dev
+    volumes:
+      - ./services:/app/services
+    depends_on:
+      postgres:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - infrastructure-network
   
   profiles-service:
     build:
@@ -162,10 +159,6 @@ services:
         condition: service_started
     networks:
       - infrastructure-network
-
-volumes:
-  postgres_data:
-  frontend_node_modules:
 
 networks:
   infrastructure-network:
