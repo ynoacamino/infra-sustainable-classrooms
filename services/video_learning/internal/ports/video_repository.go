@@ -11,7 +11,6 @@ type VideoRepository interface {
 	// Video CRUD operations
 	CreateVideo(ctx context.Context, params videolearningdb.CreateVideoParams) (videolearningdb.Video, error)
 	GetVideoByID(ctx context.Context, id int64) (videolearningdb.GetVideoByIDRow, error)
-	UpdateVideo(ctx context.Context, params videolearningdb.UpdateVideoParams) (videolearningdb.Video, error)
 	DeleteVideo(ctx context.Context, id int64) error
 
 	// Video search and filtering

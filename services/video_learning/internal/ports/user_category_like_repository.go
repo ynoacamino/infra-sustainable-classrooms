@@ -9,8 +9,6 @@ import (
 // UserCategoryLikeRepository define las operaciones de persistencia para los likes de usuarios en categorías
 type UserCategoryLikeRepository interface {
 	// User category like operations
-	GetUserCategoryLike(ctx context.Context, params videolearningdb.GetUserCategoryLikeParams) (videolearningdb.UserCategoryLike, error)
-	GetUserCategoryLikes(ctx context.Context, userID int64) ([]videolearningdb.UserCategoryLike, error)
 	IncrementUserCategoryLike(ctx context.Context, params videolearningdb.IncrementUserCategoryLikeParams) error
 	DeleteAllUserCategoryLikes(ctx context.Context, userID int64) error
 }

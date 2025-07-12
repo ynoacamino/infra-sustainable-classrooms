@@ -35,7 +35,7 @@ var VideoDetails = Type("VideoDetails", func() {
 	Field(11, "tags", ArrayOf(String), "Video tags")
 	Field(12, "similar_videos", ArrayOf(Video), "List of similar videos")
 
-	Required("id", "title", "description", "author", "views", "likes", "video_url", "thumbnail_url", "upload_date", "category_id", "tags", "similar_videos")
+	Required("id", "title", "description", "author", "views", "likes", "video_url", "thumbnail_url", "upload_date", "category", "tags", "similar_videos")
 })
 
 // OwnVideo type for user's own videos

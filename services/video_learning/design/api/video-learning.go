@@ -520,7 +520,7 @@ var _ = Service("video_learning", func() {
 	})
 
 	// Create category
-	Method("CreateOrGetCategory", func() {
+	Method("GetOrCreateCategory", func() {
 		Description("Create a new video category or get existing one")
 
 		Payload(func() {
@@ -548,7 +548,7 @@ var _ = Service("video_learning", func() {
 	// === TAG MANAGEMENT ===
 
 	// Create or get tag
-	Method("CreateOrGetTag", func() {
+	Method("GetOrCreateTag", func() {
 		Description("Create a new tag or get existing one")
 
 		Payload(func() {
