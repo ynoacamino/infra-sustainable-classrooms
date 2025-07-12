@@ -102,10 +102,7 @@ func NewConfig() (*Config, error) {
 	debug := parseBoolOrDefault(DBG, false)
 
 	// Setup logging context
-	format := goaLog.FormatJSON
-	if goaLog.IsTerminal() {
-		format = goaLog.FormatTerminal
-	}
+	format := goaLog.FormatTerminal
 
 	ctx := goaLog.Context(context.Background(), goaLog.WithFormat(format))
 
