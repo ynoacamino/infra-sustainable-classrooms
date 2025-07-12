@@ -10,7 +10,7 @@ type RepositoryManager struct {
 	TestRepo            ports.TestRepository
 	QuestionRepo        ports.QuestionRepository
 	SubmissionRepo      ports.SubmissionRepository
-	TestCategoryRepo    ports.TestCategoryRepository
+	AnswerRepo          ports.AnswerRepository
 	AuthServiceRepo     ports.AuthServiceRepository
 	ProfilesServiceRepo ports.ProfilesServiceRepository
 	pool                *pgxpool.Pool
@@ -21,7 +21,7 @@ func NewRepositoryManager(pool *pgxpool.Pool, authGrpcConn *grpc.ClientConn, pro
 		TestRepo:            NewTestRepository(pool),
 		QuestionRepo:        NewQuestionRepository(pool),
 		SubmissionRepo:      NewSubmissionRepository(pool),
-		TestCategoryRepo:    NewTestCategoryRepository(pool),
+		AnswerRepo:          NewAnswerRepository(pool),
 		AuthServiceRepo:     NewAuthServiceRepository(authGrpcConn),
 		ProfilesServiceRepo: NewProfilesServiceRepository(profilesGrpcConn),
 		pool:                pool,
