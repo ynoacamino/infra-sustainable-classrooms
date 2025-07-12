@@ -1,5 +1,5 @@
 import Header from '@/layout/shared/header';
-import { authService } from '@/services/auth/service';
+import { profilesService } from '@/services/profiles/service';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
@@ -8,14 +8,14 @@ export default async function LayoutStudent({
 }: {
   children: React.ReactNode;
 }) {
-  const auth = await authService(cookies());
-  const res = await auth.getUserProfile();
+  const profiles = await profilesService(cookies());
+  const res = await profiles.getCompleteProfile();
   if (!res.success) {
     redirect('/auth/verify');
   }
   return (
     <>
-      <Header user={res.data} />
+      <Header profile={res.data} />
       <main className="flex flex-col pb-20 items-center">{children}</main>
     </>
   );

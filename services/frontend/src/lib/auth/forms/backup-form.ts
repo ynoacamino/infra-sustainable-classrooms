@@ -9,11 +9,10 @@ export const backupFormFields: Field<keyof z.infer<typeof backupFormSchema>>[] =
   [
     {
       name: 'identifier',
-      label: 'Email or Username',
-      type: SupportedFields.TEXT,
+      label: 'Email',
+      type: SupportedFields.EMAIL,
       placeholder: 'e.g. example@example.com',
-      description:
-        'Enter your email address or username to verify your account.',
+      description: 'Enter the email address associated with your account.',
     },
     {
       name: 'backup_code',

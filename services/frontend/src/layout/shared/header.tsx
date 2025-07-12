@@ -3,13 +3,13 @@ import { routesConfig } from '@/config/shared/routes';
 import { HeaderAuth } from '@/layout/auth/header-auth';
 import { Link } from '@/ui/link';
 import { Button } from '@/ui/button';
-import type { User } from '@/types/auth/models';
+import type { Profile } from '@/types/profiles/models';
 
 interface HeaderProps {
-  user: User;
+  profile: Profile;
 }
 
-export default function Header({ user }: HeaderProps) {
+export default function Header({ profile }: HeaderProps) {
   return (
     <header className="flex justify-between sticky top-0 z-50 bg-background py-2 md:py-4 px-4 sm:px-6 md:px-8">
       <Link href="/" className="gap-2 font-bold text-lg flex">
@@ -31,7 +31,7 @@ export default function Header({ user }: HeaderProps) {
           <IconBell size={18} stroke={2} />
         </Button>
         <div className="min-w-30">
-          <HeaderAuth user={user} />
+          <HeaderAuth profile={profile} />
         </div>
       </nav>
     </header>
