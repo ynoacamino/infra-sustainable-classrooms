@@ -12,4 +12,5 @@ type UserCategoryLikeRepository interface {
 	IncrementUserCategoryLike(ctx context.Context, params videolearningdb.IncrementUserCategoryLikeParams) error
 	DeleteAllUserCategoryLikes(ctx context.Context, userID int64) error
 	GetUserCategoryLikes(ctx context.Context, userID int64) ([]videolearningdb.GetUserCategoryLikesRow, error)
+	GetUserVideoLike(ctx context.Context, params videolearningdb.GetUserVideoLikeParams) (videolearningdb.UserVideoLike, error)
 }

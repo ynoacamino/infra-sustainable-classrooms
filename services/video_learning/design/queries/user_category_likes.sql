@@ -17,3 +17,10 @@ FROM
     LEFT JOIN user_category_likes ucl ON vc.id = ucl.category_id
 WHERE
     ucl.user_id = $1;
+
+-- name: GetUserVideoLike :one
+SELECT *
+FROM user_video_likes
+WHERE
+    user_id = $1
+    AND video_id = $2;

@@ -263,7 +263,7 @@ var _ = Service("video_learning", func() {
 			Field(6, "thumbnail_object_name", String, "Thumbnail object name in Minio")
 			Field(7, "video_object_name", String, "Video object name in Minio")
 
-			Required("session_token", "title", "category_id", "video_object_name")
+			Required("session_token", "title", "category_id", "video_object_name", "thumbnail_object_name")
 		})
 
 		Result(SimpleResponse)
@@ -397,26 +397,6 @@ var _ = Service("video_learning", func() {
 			Response("invalid_session", StatusUnauthorized)
 			Response("video_not_found", StatusNotFound)
 			Response("invalid_input", StatusBadRequest)
-		})
-	})
-
-	// gRPC method for validating user sessions (inter-service communication)
-	Method("ValidateUserRole", func() {
-		Description("Validate user role for inter-service communication")
-
-		Payload(func() {
-			Field(1, "user_id", Int64, "User ID to validate")
-
-			Required("user_id")
-		})
-
-		Result(RoleValidationResponse)
-
-		// This method is only for gRPC inter-service communication
-		GRPC(func() {
-			Response(CodeOK)
-			Response("profile_not_found", CodeNotFound)
-			Response("permission_denied", CodePermissionDenied)
 		})
 	})
 

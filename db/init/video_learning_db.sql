@@ -64,3 +64,13 @@ CREATE TABLE IF NOT EXISTS user_category_likes (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
     PRIMARY KEY (user_id, category_id)
 );
+
+-- Tabla de asociación entre usuarios y videos que les gustan
+CREATE TABLE IF NOT EXISTS user_video_likes (
+    user_id BIGINT NOT NULL,
+    video_id BIGINT NOT NULL REFERENCES video (id) ON DELETE CASCADE,
+    liked BOOLEAN DEFAULT FALSE NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    PRIMARY KEY (user_id, video_id)
+);

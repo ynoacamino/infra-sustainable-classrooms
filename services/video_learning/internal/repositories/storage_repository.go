@@ -51,3 +51,17 @@ func (s *storageRepository) DownloadFile(ctx context.Context, bucket string, obj
 	}
 	return object, nil
 }
+
+func (s *storageRepository) CopyFile(ctx context.Context, srcBucket string, srcObject string, destBucket string, destObject string) error {
+	_, err := s.client.CopyObject(ctx, minio.CopyDestOptions{
+		Bucket: destBucket,
+		Object: destObject,
+	}, minio.CopySrcOptions{
+		Bucket: srcBucket,
+		Object: srcObject,
+	})
+	if err != nil {
+		return err
+	}
+	return nil
+}

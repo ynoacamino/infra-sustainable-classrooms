@@ -3,7 +3,10 @@ package controllers
 import (
 	"bytes"
 	"context"
+	"database/sql"
+	"errors"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/jackc/pgx/v5/pgtype"
@@ -530,42 +533,16 @@ func (s *videolearningsrvc) CompleteUpload(ctx context.Context, p *videolearning
 		return nil, videolearning.PermissionDenied("only teachers can upload videos")
 	}
 
-	// Move video from staging to confirmed bucket
-	// First download from staging
-	videoReader, err := s.storageRepo.DownloadFile(ctx, "video-learning-videos-staging", p.VideoObjectName)
-	if err != nil {
-		return nil, videolearning.ServiceUnavailable("video not found in staging")
-	}
-	defer videoReader.Close()
-
-	// Read all data
-	videoData := make([]byte, 100*1024*1024) // 100MB max
-	n, _ := videoReader.Read(videoData)
-	videoData = videoData[:n]
-
-	// Upload to confirmed bucket
-	reader := bytes.NewReader(videoData)
-	err = s.storageRepo.UploadFile(ctx, "video-learning-videos-confirmed", p.VideoObjectName, reader, int64(len(videoData)), "video/mp4")
+	// Move video
+	err = s.storageRepo.CopyFile(ctx, "video-learning-videos-staging", p.VideoObjectName, "video-learning-videos-confirmed", p.VideoObjectName)
 	if err != nil {
 		return nil, videolearning.UploadFailed("failed to move video to confirmed bucket")
 	}
 
-	// Move thumbnail if provided
-	var thumbObjName pgtype.Text
-	if p.ThumbnailObjectName != nil {
-		thumbReader, err := s.storageRepo.DownloadFile(ctx, "video-learning-thumbnails-staging", *p.ThumbnailObjectName)
-		if err == nil {
-			defer thumbReader.Close()
-			thumbData := make([]byte, 10*1024*1024) // 10MB max
-			n, _ := thumbReader.Read(thumbData)
-			thumbData = thumbData[:n]
-
-			thumbReaderConfirmed := bytes.NewReader(thumbData)
-			err = s.storageRepo.UploadFile(ctx, "video-learning-thumbnails-confirmed", *p.ThumbnailObjectName, thumbReaderConfirmed, int64(len(thumbData)), "image/jpeg")
-			if err == nil {
-				thumbObjName = pgtype.Text{String: *p.ThumbnailObjectName, Valid: true}
-			}
-		}
+	// Move thumbnail
+	err = s.storageRepo.CopyFile(ctx, "video-learning-thumbnails-staging", p.ThumbnailObjectName, "video-learning-thumbnails-confirmed", p.ThumbnailObjectName)
+	if err != nil {
+		return nil, videolearning.UploadFailed("failed to move thumbnail to confirmed bucket")
 	}
 
 	// Create video record in database
@@ -581,7 +558,7 @@ func (s *videolearningsrvc) CompleteUpload(ctx context.Context, p *videolearning
 		Views:        0,
 		Likes:        0,
 		VideoObjName: pgtype.Text{String: p.VideoObjectName, Valid: true},
-		ThumbObjName: thumbObjName,
+		ThumbObjName: pgtype.Text{String: p.ThumbnailObjectName, Valid: true},
 		CategoryID:   p.CategoryID,
 	})
 	if err != nil {
@@ -603,10 +580,16 @@ func (s *videolearningsrvc) CompleteUpload(ctx context.Context, p *videolearning
 		})
 	}
 
-	// Clean up staging files
-	s.storageRepo.DeleteFile(ctx, "video-learning-videos-staging", p.VideoObjectName)
-	if p.ThumbnailObjectName != nil {
-		s.storageRepo.DeleteFile(ctx, "video-learning-thumbnails-staging", *p.ThumbnailObjectName)
+	// Delete staging video
+	err = s.storageRepo.DeleteFile(ctx, "video-learning-videos-staging", p.VideoObjectName)
+	if err != nil {
+		log.Print("failed to delete staging video file: ", err)
+	}
+
+	// Delete staging thumbnail
+	err = s.storageRepo.DeleteFile(ctx, "video-learning-thumbnails-staging", p.ThumbnailObjectName)
+	if err != nil {
+		log.Print("failed to delete staging thumbnail file: ", err)
 	}
 
 	return &videolearning.SimpleResponse{
@@ -634,8 +617,15 @@ func (s *videolearningsrvc) UploadThumbnail(ctx context.Context, p *videolearnin
 		return nil, videolearning.UploadFailed("failed to upload thumbnail")
 	}
 
+	// Generate presigned URL for thumbnail
+	presignedURL, err := s.getOrGeneratePresignedURL(ctx, "video-learning-thumbnails-staging", objectName, 4*time.Hour)
+	if err != nil {
+		return nil, videolearning.UploadFailed("failed to generate presigned URL for thumbnail")
+	}
+
 	return &videolearning.UploadResponse{
-		ObjectName: objectName,
+		ObjectName:   objectName,
+		PresignedURL: &presignedURL,
 	}, nil
 }
 
@@ -745,31 +735,68 @@ func (s *videolearningsrvc) ToggleVideoLike(ctx context.Context, p *videolearnin
 		return nil, videolearning.VideoNotFound("video not found")
 	}
 
-	// Check if user has already liked this video (mock implementation)
-	// In production, you'd have a user_video_likes table
 	cacheKey := fmt.Sprintf("user:like:%d:%d", userID, p.VideoID)
-	hasLiked, _ := s.cacheRepo.Exists(ctx, cacheKey)
 
 	var increment int
 	var message string
 
-	if hasLiked {
-		// Unlike
-		increment = -1
-		message = "Video unliked"
-		s.cacheRepo.Delete(ctx, cacheKey)
+	cached, err := s.cacheRepo.Exists(ctx, cacheKey)
+
+	if err != nil {
+		return nil, videolearning.ServiceUnavailable("failed to check like status")
+	}
+
+	if cached {
+		value, err := s.cacheRepo.Get(ctx, cacheKey)
+		if err != nil {
+			return nil, videolearning.ServiceUnavailable("failed to get like status")
+		}
+
+		hasLiked := value == "1"
+
+		if hasLiked {
+			increment = -1
+			message = "Video unliked"
+			s.cacheRepo.Set(ctx, cacheKey, "0", 2*time.Hour)
+		} else {
+			increment = 1
+			message = "Video liked"
+			s.cacheRepo.Set(ctx, cacheKey, "1", 2*time.Hour)
+		}
 	} else {
-		// Like
-		increment = 1
-		message = "Video liked"
-		s.cacheRepo.Set(ctx, cacheKey, "1", 24*time.Hour*365) // 1 year expiry
+		// check db
+		userLike, err := s.userCategoryLikeRepo.GetUserVideoLike(ctx, videolearningdb.GetUserVideoLikeParams{
+			UserID:  userID,
+			VideoID: p.VideoID,
+		})
+
+		if err != nil {
+			if errors.Is(err, sql.ErrNoRows) {
+				// No like record, create new like
+				increment = 1
+				message = "Video liked"
+				s.cacheRepo.Set(ctx, cacheKey, "1", 2*time.Hour)
+			} else {
+				return nil, videolearning.ServiceUnavailable("failed to get like status")
+			}
+		} else {
+			if userLike.Liked {
+				increment = 1
+				message = "Video liked"
+				s.cacheRepo.Set(ctx, cacheKey, "1", 2*time.Hour)
+			} else {
+				increment = -1
+				message = "Video unliked"
+				s.cacheRepo.Set(ctx, cacheKey, "0", 2*time.Hour)
+			}
+		}
 	}
 
 	// Update cached like count
 	s.incrementCachedVideoLikes(ctx, p.VideoID, increment)
 
 	// Update user category preferences
-	s.incrementCachedUserCategoryLike(ctx, userID, video.CategoryID, int(increment))
+	s.incrementCachedUserCategoryLike(ctx, userID, video.CategoryID, increment)
 
 	return &videolearning.SimpleResponse{
 		Success: true,
@@ -816,10 +843,4 @@ func (s *videolearningsrvc) DeleteVideo(ctx context.Context, p *videolearning.De
 		Success: true,
 		Message: "Video deleted successfully",
 	}, nil
-}
-
-// ValidateUserRole validates if the user has the required role for an operation
-func (s *videolearningsrvc) ValidateUserRole(ctx context.Context, p *videolearning.ValidateUserRolePayload) (res *videolearning.RoleValidationResponse, err error) {
-	// Not implementing as per instructions
-	return nil, videolearning.ServiceUnavailable("ValidateUserRole not implemented")
 }
