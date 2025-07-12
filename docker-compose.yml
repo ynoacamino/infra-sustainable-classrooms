@@ -67,6 +67,22 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      auth-service:
+    networks:
+      - infrastructure-network
+  
+  text-service:
+    build:
+      context: .
+      dockerfile: services/text/Dockerfile
+    container_name: text-service
+    restart: unless-stopped
+    env_file:
+      - ./services/text/.env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      profiles-service:
     networks:
       - infrastructure-network
 
