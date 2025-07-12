@@ -1,6 +1,7 @@
 import { Roles } from '@/lib/auth/enums/roles';
-import type { Role } from '@/types/auth/role';
 import { Button } from '@/ui/button';
+
+type Role = (typeof Roles)[keyof typeof Roles];
 
 interface RoleSelectorProps {
   value: Role;

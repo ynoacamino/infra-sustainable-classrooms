@@ -2,30 +2,93 @@ import { cn } from '@/lib/shared/utils';
 import * as SelectPrimitive from '@radix-ui/react-select';
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
 
+/**
+ * Select component
+ *
+ * Root component for select dropdowns. Provides context for all select components.
+ * Built on top of Radix UI Select primitive.
+ *
+ * @param props - Root select props
+ * @returns The select root component
+ *
+ * @example
+ * ```tsx
+ * <Select>
+ *   <SelectTrigger>
+ *     <SelectValue placeholder="Select an option" />
+ *   </SelectTrigger>
+ *   <SelectContent>
+ *     <SelectItem value="option1">Option 1</SelectItem>
+ *     <SelectItem value="option2">Option 2</SelectItem>
+ *   </SelectContent>
+ * </Select>
+ * ```
+ */
 function Select({
   ...props
 }: React.ComponentProps<typeof SelectPrimitive.Root>) {
   return <SelectPrimitive.Root data-slot="select" {...props} />;
 }
 
+/**
+ * SelectGroup component
+ *
+ * Groups related select items together.
+ *
+ * @param props - Group props
+ * @returns The select group component
+ */
 function SelectGroup({
   ...props
 }: React.ComponentProps<typeof SelectPrimitive.Group>) {
   return <SelectPrimitive.Group data-slot="select-group" {...props} />;
 }
 
+/**
+ * SelectValue component
+ *
+ * Displays the selected value or placeholder text in the select trigger.
+ *
+ * @param props - Value props
+ * @returns The select value component
+ *
+ * @example
+ * ```tsx
+ * <SelectValue placeholder="Choose an option" />
+ * ```
+ */
 function SelectValue({
   ...props
 }: React.ComponentProps<typeof SelectPrimitive.Value>) {
   return <SelectPrimitive.Value data-slot="select-value" {...props} />;
 }
 
+/**
+ * SelectTrigger component
+ *
+ * Trigger button that opens the select dropdown when clicked.
+ * Includes chevron icon and size variants.
+ *
+ * @param props - Trigger props
+ * @param props.className - Additional CSS classes
+ * @param props.size - Size variant of the trigger
+ * @param props.children - Trigger content (usually SelectValue)
+ * @returns The select trigger component
+ *
+ * @example
+ * ```tsx
+ * <SelectTrigger size="sm">
+ *   <SelectValue placeholder="Select..." />
+ * </SelectTrigger>
+ * ```
+ */
 function SelectTrigger({
   className,
   size = 'default',
   children,
   ...props
 }: React.ComponentProps<typeof SelectPrimitive.Trigger> & {
+  /** Size variant of the trigger */
   size?: 'sm' | 'default';
 }) {
   return (
@@ -46,6 +109,26 @@ function SelectTrigger({
   );
 }
 
+/**
+ * SelectContent component
+ *
+ * Container for select dropdown items. Appears when the trigger is activated.
+ * Includes animations, scrolling, and positioning options.
+ *
+ * @param props - Content props
+ * @param props.className - Additional CSS classes
+ * @param props.children - Select items and other content
+ * @param props.position - Positioning strategy for the dropdown
+ * @returns The select content component
+ *
+ * @example
+ * ```tsx
+ * <SelectContent position="popper">
+ *   <SelectItem value="item1">Item 1</SelectItem>
+ *   <SelectItem value="item2">Item 2</SelectItem>
+ * </SelectContent>
+ * ```
+ */
 function SelectContent({
   className,
   children,
@@ -81,6 +164,22 @@ function SelectContent({
   );
 }
 
+/**
+ * SelectLabel component
+ *
+ * Label text for grouping select items.
+ *
+ * @param props - Label props
+ * @param props.className - Additional CSS classes
+ * @returns The select label component
+ *
+ * @example
+ * ```tsx
+ * <SelectLabel>Fruits</SelectLabel>
+ * <SelectItem value="apple">Apple</SelectItem>
+ * <SelectItem value="banana">Banana</SelectItem>
+ * ```
+ */
 function SelectLabel({
   className,
   ...props
@@ -94,6 +193,23 @@ function SelectLabel({
   );
 }
 
+/**
+ * SelectItem component
+ *
+ * Individual selectable item within the select dropdown.
+ * Shows a check icon when selected.
+ *
+ * @param props - Item props
+ * @param props.className - Additional CSS classes
+ * @param props.children - Item content/text
+ * @returns The select item component
+ *
+ * @example
+ * ```tsx
+ * <SelectItem value="option1">Option 1</SelectItem>
+ * <SelectItem value="option2" disabled>Option 2 (disabled)</SelectItem>
+ * ```
+ */
 function SelectItem({
   className,
   children,
@@ -118,6 +234,22 @@ function SelectItem({
   );
 }
 
+/**
+ * SelectSeparator component
+ *
+ * Visual separator between select items or groups.
+ *
+ * @param props - Separator props
+ * @param props.className - Additional CSS classes
+ * @returns The select separator component
+ *
+ * @example
+ * ```tsx
+ * <SelectItem value="item1">Item 1</SelectItem>
+ * <SelectSeparator />
+ * <SelectItem value="item2">Item 2</SelectItem>
+ * ```
+ */
 function SelectSeparator({
   className,
   ...props
@@ -131,6 +263,16 @@ function SelectSeparator({
   );
 }
 
+/**
+ * SelectScrollUpButton component
+ *
+ * Button for scrolling up in a scrollable select content area.
+ * Automatically appears when content overflows.
+ *
+ * @param props - Scroll button props
+ * @param props.className - Additional CSS classes
+ * @returns The select scroll up button component
+ */
 function SelectScrollUpButton({
   className,
   ...props
@@ -149,6 +291,16 @@ function SelectScrollUpButton({
   );
 }
 
+/**
+ * SelectScrollDownButton component
+ *
+ * Button for scrolling down in a scrollable select content area.
+ * Automatically appears when content overflows.
+ *
+ * @param props - Scroll button props
+ * @param props.className - Additional CSS classes
+ * @returns The select scroll down button component
+ */
 function SelectScrollDownButton({
   className,
   ...props

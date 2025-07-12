@@ -36,6 +36,18 @@
           "sql_package": "pgx/v5"
         }
       }
+    },
+    {
+      "engine": "postgresql",
+      "queries": "services/text/design/queries",
+      "schema": "db/init/text_db.sql",
+      "gen": {
+        "go": {
+          "package": "textdb",
+          "out": "services/text/gen/database",
+          "sql_package": "pgx/v5"
+        }
+      }
     }
   ]
 }

@@ -111,7 +111,7 @@ export function TotpSetupComponent({
         <div className="space-y-3">
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Setup Key (if you can&apost scan the QR code)
+              Setup Key (if you can&apos;t scan the QR code)
             </label>
             <div className="mt-1 flex">
               <input
@@ -205,7 +205,7 @@ export function TotpSetupComponent({
       {/* Instructions */}
       <div className="bg-gray-50 rounded-lg p-6">
         <h4 className="text-md font-medium text-gray-900 mb-4">
-          What&aposs Next?
+          What&apos;s Next?
         </h4>
 
         <ol className="list-decimal list-inside space-y-2 text-sm text-gray-700">
