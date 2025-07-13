@@ -136,10 +136,7 @@ func (as *AggregationService) aggregateVideoViews() error {
 	// Process in batches for better performance
 	totalProcessed := 0
 	for i := 0; i < len(keys); i += as.batchSize {
-		end := i + as.batchSize
-		if end > len(keys) {
-			end = len(keys)
-		}
+		end := min(i+as.batchSize, len(keys))
 
 		batchKeys := keys[i:end]
 		batchValues := values[i:end]
