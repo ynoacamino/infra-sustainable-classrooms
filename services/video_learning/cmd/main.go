@@ -40,7 +40,7 @@ func main() {
 	log.Printf(ctx, "database connection established")
 
 	grpccoon, err := connections.ConnectGRPC(config.ConnectGRPCConfig{
-		GrpcAddress: cfg.AuthGRPCAddress,
+		GrpcAddress: cfg.ProfilesGRPCAddress,
 	})
 	if err != nil {
 		log.Fatal(ctx, fmt.Errorf("failed to connect to gRPC server: %w", err))
