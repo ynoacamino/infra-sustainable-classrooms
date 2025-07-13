@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import { updateCourseFormFields, updateCourseFormSchema } from '@/lib/text/forms/update-course-form';
 import { updateCourseAction } from '@/actions/text/actions';
 import type { Course } from '@/types/text/models';
+import { redirect } from 'next/navigation';
 
 function UpdateCourseForm({ course }: { course: Course }) {
   const form = useForm<z.infer<typeof updateCourseFormSchema>>({
@@ -31,6 +32,7 @@ function UpdateCourseForm({ course }: { course: Course }) {
       return;
     }
     toast.success('Course updated successfully');
+    redirect(`/teacher/courses`);
   };
 
   return (

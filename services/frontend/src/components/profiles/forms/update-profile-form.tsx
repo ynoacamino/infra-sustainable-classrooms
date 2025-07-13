@@ -11,6 +11,7 @@ import { toast } from 'sonner';
 import { updateProfileFormFields, updateProfilePayloadSchema } from '@/lib/profiles/forms/update-profile-form';
 import { createTeacherProfileAction, updateProfileAction } from '@/actions/profiles/actions';
 import type { CompleteProfile } from '@/types/profiles/models';
+import { redirect } from 'next/navigation';
 
 function UpdateProfileForm({profile}: {profile: CompleteProfile}) {
   const form = useForm<z.infer<typeof updateProfilePayloadSchema>>({
@@ -27,6 +28,7 @@ function UpdateProfileForm({profile}: {profile: CompleteProfile}) {
     }
     form.reset();
     toast.success('Teacher profile created successfully');
+    redirect('/dashboard');
   };
   return (
     <Form {...form}>

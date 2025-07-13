@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import { updateSectionFormFields, updateSectionFormSchema } from '@/lib/text/forms/update-section-form';
 import { updateSectionAction } from '@/actions/text/actions';
 import type { Section } from '@/types/text/models';
+import { redirect } from 'next/navigation';
 
 interface UpdateSectionFormProps {
   section: Section;
@@ -35,6 +36,7 @@ function UpdateSectionForm({ section }: UpdateSectionFormProps) {
       return;
     }
     toast.success('Section updated successfully');
+    redirect(`/teacher/courses/${section.course_id}`);
   };
 
   return (

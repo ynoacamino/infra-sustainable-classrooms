@@ -39,9 +39,9 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="flex items-center gap-4 mb-8">
+      <div className="flex flex-col items-start justify-center gap-4 mb-8">
         <Button variant="outline" size="sm" asChild>
-          <Link href={`/teacher/courses/${courseId}/sections/${sectionId}/articles`}>
+          <Link href={`/teacher/courses/${courseId}/sections/${sectionId}`}>
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Articles
           </Link>

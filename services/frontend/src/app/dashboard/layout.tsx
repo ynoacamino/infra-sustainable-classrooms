@@ -24,7 +24,11 @@ export default async function LayoutStudent({
   return (
     <>
       <Header profile={res.data} />
-      <main className="flex flex-col pb-20 items-center">{children}</main>
+      <main className="flex flex-col pb-20 items-center w-full">
+        <div className='w-full max-w-6xl px-4 sm:px-6 lg:px-8'>
+          {children}
+        </div>
+      </main>
     </>
   );
 }

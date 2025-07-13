@@ -9,6 +9,7 @@ import { Button } from '@/ui/button';
 import { toast } from 'sonner';
 import { createCourseFormFields, createCourseFormSchema } from '@/lib/text/forms/create-course-form';
 import { createCourseAction } from '@/actions/text/actions';
+import { redirect } from 'next/navigation';
 
 function CreateCourseForm() {
   const form = useForm<z.infer<typeof createCourseFormSchema>>({
@@ -30,6 +31,7 @@ function CreateCourseForm() {
     }
     form.reset();
     toast.success('Course created successfully');
+    redirect(`/teacher/courses`);
   };
 
   return (

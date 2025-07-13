@@ -10,6 +10,7 @@ import { verifyTotpAction } from '@/actions/auth/actions';
 import { toast } from 'sonner';
 import { registerTeacherFormFields, registerTeacherFormSchema } from '@/lib/profiles/forms/register-teacher-form';
 import { createTeacherProfileAction } from '@/actions/profiles/actions';
+import { redirect } from 'next/navigation';
 
 function RegisterTeacherForm() {
   const form = useForm<z.infer<typeof registerTeacherFormSchema>>({
@@ -34,6 +35,7 @@ function RegisterTeacherForm() {
     }
     form.reset();
     toast.success('Teacher profile created successfully');
+    redirect('/dashboard');
   };
   return (
     <Form {...form}>

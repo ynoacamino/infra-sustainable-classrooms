@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import { updateArticleFormFields, updateArticleFormSchema } from '@/lib/text/forms/update-article-form';
 import { updateArticleAction } from '@/actions/text/actions';
 import type { Article } from '@/types/text/models';
+import { redirect } from 'next/navigation';
 
 interface UpdateArticleFormProps {
   article: Article;
@@ -34,6 +35,7 @@ function UpdateArticleForm({ article }: UpdateArticleFormProps) {
       return;
     }
     toast.success('Article updated successfully');
+    redirect(`/teacher/courses/`)
   };
 
   return (

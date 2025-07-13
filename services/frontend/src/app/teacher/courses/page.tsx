@@ -57,9 +57,6 @@ export default async function CoursesPage() {
                 <Button asChild variant="outline" size="sm">
                   <Link href={`/teacher/courses/${course.id}/edit`}>Edit</Link>
                 </Button>
-                <Button asChild size="sm">
-                  <Link href={`/teacher/courses/${course.id}/sections`}>Sections</Link>
-                </Button>
               </div>
             </div>
           ))}

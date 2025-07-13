@@ -9,6 +9,7 @@ import { Button } from '@/ui/button';
 import { toast } from 'sonner';
 import { createSectionFormFields, createSectionFormSchema } from '@/lib/text/forms/create-section-form';
 import { createSectionAction } from '@/actions/text/actions';
+import { redirect } from 'next/navigation';
 
 interface CreateSectionFormProps {
   courseId: number;
@@ -35,6 +36,7 @@ function CreateSectionForm({ courseId }: CreateSectionFormProps) {
     }
     form.reset();
     toast.success('Section created successfully');
+    redirect(`/teacher/courses/${courseId}`);
   };
 
   return (
