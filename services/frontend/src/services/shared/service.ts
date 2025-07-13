@@ -201,6 +201,21 @@ export abstract class Service {
     });
   }
 
+  protected async patch<T, B extends ZodSchema = ZodSchema>({
+    endpoint,
+    payload,
+    options,
+  }: ServiceRequest<B>): AsyncResult<T> {
+    return this.request<T>({
+      endpoint,
+      payload,
+      options: {
+        ...options,
+        method: 'PATCH',
+      },
+    });
+  }
+
   // TODO: make payload validation for delete requests
   protected async delete<T>(
     endpoint: string | string[],

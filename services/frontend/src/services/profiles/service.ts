@@ -15,6 +15,7 @@ import type {
 } from '@/types/profiles/payload';
 import {
   CreateStudentProfilePayloadSchema,
+  CreateTeacherProfilePayloadSchema,
   GetPublicProfileByIdPayloadSchema,
   UpdateProfilePayloadSchema,
 } from '@/types/profiles/schemas/payload';
@@ -44,7 +45,7 @@ class ProfilesService extends Service {
     return this.post<TeacherProfile>({
       endpoint: 'teacher',
       payload: {
-        schema: CreateStudentProfilePayloadSchema,
+        schema: CreateTeacherProfilePayloadSchema,
         data: payload,
       },
     });

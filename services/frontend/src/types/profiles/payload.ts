@@ -2,7 +2,7 @@ import type {
   CreateStudentProfilePayloadSchema,
   CreateTeacherProfilePayloadSchema,
   GetPublicProfileByIdPayloadSchema,
-  UpdateProfileSchema,
+  UpdateProfilePayloadSchema,
 } from '@/types/profiles/schemas/payload';
 import type z from 'zod';
 
@@ -18,4 +18,4 @@ export type GetPublicProfileByIdPayload = z.infer<
   typeof GetPublicProfileByIdPayloadSchema
 >;
 
-export type UpdateProfilePayload = z.infer<typeof UpdateProfileSchema>;
+export type UpdateProfilePayload = z.infer<typeof UpdateProfilePayloadSchema>;

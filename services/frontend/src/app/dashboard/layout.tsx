@@ -1,6 +1,8 @@
 import Header from '@/layout/shared/header';
+import { authService } from '@/services/auth/service';
 import { profilesService } from '@/services/profiles/service';
 import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 
 export default async function LayoutStudent({
   children,
@@ -8,15 +10,25 @@ export default async function LayoutStudent({
   children: React.ReactNode;
 }) {
   const profiles = await profilesService(cookies());
+  const auth = await authService(cookies());
   const res = await profiles.getCompleteProfile();
-  console.log(res);
+
   if (!res.success) {
-    return <h1>Create profile here</h1>;
+    const res = await auth.getUserProfile();
+    if (!res.success) {
+      redirect('/auth/verify');
+    } else {
+      redirect('/auth/register/profile');
+    }
   }
   return (
     <>
       <Header profile={res.data} />
-      <main className="flex flex-col pb-20 items-center">{children}</main>
+      <main className="flex flex-col pb-20 items-center w-full">
+        <div className='w-full max-w-6xl px-4 sm:px-6 lg:px-8'>
+          {children}
+        </div>
+      </main>
     </>
   );
 }
