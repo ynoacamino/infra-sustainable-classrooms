@@ -1,9 +1,9 @@
-import { textService } from "@/services/text/service";
-import { cookies } from "next/headers";
-import Link from "next/link";
-import { Button } from "@/ui/button";
-import { ArrowLeft, Edit, FileText, Plus } from "lucide-react";
-import { notFound } from "next/navigation";
+import { textService } from '@/services/text/service';
+import { cookies } from 'next/headers';
+import Link from 'next/link';
+import { Button } from '@/ui/button';
+import { ArrowLeft, Edit, FileText, Plus } from 'lucide-react';
+import { notFound } from 'next/navigation';
 
 interface CoursePageProps {
   params: { courseId: string };
@@ -11,7 +11,7 @@ interface CoursePageProps {
 
 export default async function CoursePage({ params }: CoursePageProps) {
   const courseId = parseInt(params.courseId);
-  
+
   if (isNaN(courseId)) {
     notFound();
   }
@@ -19,7 +19,7 @@ export default async function CoursePage({ params }: CoursePageProps) {
   const text = await textService(cookies());
   const [courseResult, sectionsResult] = await Promise.all([
     text.getCourse({ course_id: courseId }),
-    text.listSections({ course_id: courseId })
+    text.listSections({ course_id: courseId }),
   ]);
 
   if (!courseResult.success) {
@@ -78,8 +78,8 @@ export default async function CoursePage({ params }: CoursePageProps) {
               </Button>
             </div>
             {course.imageUrl && (
-              <img 
-                src={course.imageUrl} 
+              <img
+                src={course.imageUrl}
                 alt={course.title}
                 className="w-full h-64 object-cover rounded-md mt-4"
               />
@@ -89,52 +89,71 @@ export default async function CoursePage({ params }: CoursePageProps) {
             <span className="text-2xl font-semibold block">Sections</span>
             <div>
               {sections.length === 0 ? (
-              <div className="text-center py-12">
-                <h3 className="text-lg font-semibold mb-4">No sections yet</h3>
-                <p className="text-gray-600 mb-6">Add your first section to organize course content</p>
-                <Button asChild>
-                  <Link href={`/teacher/courses/${courseId}/sections/new`}>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Section
-                  </Link>
-                </Button>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {sections
-                  .sort((a, b) => a.order - b.order)
-                  .map(section => (
-                  <div key={section.id} className="bg-white rounded-lg border shadow-sm p-6">
-                    <div className="flex justify-between items-start">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <span className="bg-blue-100 text-blue-800 text-sm font-medium px-2.5 py-0.5 rounded">
-                            Section {section.order}
-                          </span>
-                          <h3 className="text-xl font-semibold">{section.title}</h3>
-                        </div>
-                        <p className="text-gray-600 mb-4">{section.description}</p>
-                        <div className="text-sm text-gray-500">
-                          Created: {new Date(section.created_at).toLocaleDateString()}
+                <div className="text-center py-12">
+                  <h3 className="text-lg font-semibold mb-4">
+                    No sections yet
+                  </h3>
+                  <p className="text-gray-600 mb-6">
+                    Add your first section to organize course content
+                  </p>
+                  <Button asChild>
+                    <Link href={`/teacher/courses/${courseId}/sections/new`}>
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add Section
+                    </Link>
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {sections
+                    .sort((a, b) => a.order - b.order)
+                    .map((section) => (
+                      <div
+                        key={section.id}
+                        className="bg-white rounded-lg border shadow-sm p-6"
+                      >
+                        <div className="flex justify-between items-start">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-3 mb-2">
+                              <span className="bg-blue-100 text-blue-800 text-sm font-medium px-2.5 py-0.5 rounded">
+                                Section {section.order}
+                              </span>
+                              <h3 className="text-xl font-semibold">
+                                {section.title}
+                              </h3>
+                            </div>
+                            <p className="text-gray-600 mb-4">
+                              {section.description}
+                            </p>
+                            <div className="text-sm text-gray-500">
+                              Created:{' '}
+                              {new Date(
+                                section.created_at,
+                              ).toLocaleDateString()}
+                            </div>
+                          </div>
+                          <div className="flex gap-2 ml-4">
+                            <Button asChild variant="outline" size="sm">
+                              <Link
+                                href={`/teacher/courses/${courseId}/sections/${section.id}`}
+                              >
+                                View
+                              </Link>
+                            </Button>
+                            <Button asChild variant="outline" size="sm">
+                              <Link
+                                href={`/teacher/courses/${courseId}/sections/${section.id}/edit`}
+                              >
+                                <Edit className="h-4 w-4 mr-2" />
+                                Edit
+                              </Link>
+                            </Button>
+                          </div>
                         </div>
                       </div>
-                      <div className="flex gap-2 ml-4">
-                        <Button asChild variant="outline" size="sm">
-                          <Link href={`/teacher/courses/${courseId}/sections/${section.id}`}>
-                            View
-                          </Link>
-                        </Button>
-                        <Button asChild variant="outline" size="sm">
-                          <Link href={`/teacher/courses/${courseId}/sections/${section.id}/edit`}>
-                            <Edit className="h-4 w-4 mr-2" />
-                            Edit
-                          </Link>
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>)}
+                    ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -169,11 +188,11 @@ export default async function CoursePage({ params }: CoursePageProps) {
             <h3 className="text-lg font-semibold mb-4">Course Information</h3>
             <div className="space-y-2 text-sm">
               <div>
-                <strong>Created:</strong>{" "}
+                <strong>Created:</strong>{' '}
                 {new Date(course.created_at).toLocaleDateString()}
               </div>
               <div>
-                <strong>Last Updated:</strong>{" "}
+                <strong>Last Updated:</strong>{' '}
                 {new Date(course.updated_at).toLocaleDateString()}
               </div>
               <div>

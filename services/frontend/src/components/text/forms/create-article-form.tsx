@@ -7,7 +7,10 @@ import { z } from 'zod';
 import { InferItem } from '@/ui/infer-field';
 import { Button } from '@/ui/button';
 import { toast } from 'sonner';
-import { createArticleFormFields, createArticleFormSchema } from '@/lib/text/forms/create-article-form';
+import {
+  createArticleFormFields,
+  createArticleFormSchema,
+} from '@/lib/text/forms/create-article-form';
 import { createArticleAction } from '@/actions/text/actions';
 import { redirect } from 'next/navigation';
 

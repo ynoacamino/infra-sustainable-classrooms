@@ -8,17 +8,25 @@ import { InferItem } from '@/ui/infer-field';
 import { Button } from '@/ui/button';
 import { verifyTotpAction } from '@/actions/auth/actions';
 import { toast } from 'sonner';
-import { updateProfileFormFields, updateProfilePayloadSchema } from '@/lib/profiles/forms/update-profile-form';
-import { createTeacherProfileAction, updateProfileAction } from '@/actions/profiles/actions';
+import {
+  updateProfileFormFields,
+  updateProfilePayloadSchema,
+} from '@/lib/profiles/forms/update-profile-form';
+import {
+  createTeacherProfileAction,
+  updateProfileAction,
+} from '@/actions/profiles/actions';
 import type { CompleteProfile } from '@/types/profiles/models';
 import { redirect } from 'next/navigation';
 
-function UpdateProfileForm({profile}: {profile: CompleteProfile}) {
+function UpdateProfileForm({ profile }: { profile: CompleteProfile }) {
   const form = useForm<z.infer<typeof updateProfilePayloadSchema>>({
     resolver: zodResolver(updateProfilePayloadSchema),
     defaultValues: profile,
   });
-  const onSubmit = async (values: z.infer<typeof updateProfilePayloadSchema>) => {
+  const onSubmit = async (
+    values: z.infer<typeof updateProfilePayloadSchema>,
+  ) => {
     const res = await updateProfileAction(values);
     if (!res.success) {
       form.setError('root', { message: res.error.message });

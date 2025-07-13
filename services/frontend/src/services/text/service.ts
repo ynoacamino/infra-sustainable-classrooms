@@ -44,18 +44,15 @@ import {
   CreateCoursePayloadSchema,
   GetCoursePayloadSchema,
   UpdateCoursePayloadSchema,
-  DeleteCoursePayloadSchema,
   ListCoursesPayloadSchema,
   CreateSectionPayloadSchema,
   GetSectionPayloadSchema,
   ListSectionsPayloadSchema,
   UpdateSectionPayloadSchema,
-  DeleteSectionPayloadSchema,
   CreateArticlePayloadSchema,
   GetArticlePayloadSchema,
   ListArticlesPayloadSchema,
   UpdateArticlePayloadSchema,
-  DeleteArticlePayloadSchema,
 } from '@/types/text/schemas/payload';
 import type { AsyncResult } from '@/types/shared/services/result';
 import type { ReadonlyRequestCookies } from 'next/dist/server/web/spec-extension/adapters/request-cookies';
@@ -66,7 +63,9 @@ class TextService extends Service {
   }
 
   // === COURSE METHODS ===
-  async createCourse(payload: CreateCoursePayload): AsyncResult<CreateCourseResponse> {
+  async createCourse(
+    payload: CreateCoursePayload,
+  ): AsyncResult<CreateCourseResponse> {
     return this.post<CreateCourseResponse>({
       endpoint: 'courses',
       payload: {
@@ -86,7 +85,9 @@ class TextService extends Service {
     });
   }
 
-  async listCourses(payload: ListCoursesPayload): AsyncResult<ListCoursesResponse> {
+  async listCourses(
+    payload: ListCoursesPayload,
+  ): AsyncResult<ListCoursesResponse> {
     return this.get<ListCoursesResponse>({
       endpoint: 'courses',
       payload: {
@@ -96,7 +97,9 @@ class TextService extends Service {
     });
   }
 
-  async updateCourse(payload: UpdateCoursePayload): AsyncResult<UpdateCourseResponse> {
+  async updateCourse(
+    payload: UpdateCoursePayload,
+  ): AsyncResult<UpdateCourseResponse> {
     return this.patch<UpdateCourseResponse>({
       endpoint: ['courses', payload.course_id],
       payload: {
@@ -106,12 +109,19 @@ class TextService extends Service {
     });
   }
 
-  async deleteCourse(payload: DeleteCoursePayload): AsyncResult<DeleteCourseResponse> {
-    return this.delete<DeleteCourseResponse>(['courses', payload.course_id.toString()]);
+  async deleteCourse(
+    payload: DeleteCoursePayload,
+  ): AsyncResult<DeleteCourseResponse> {
+    return this.delete<DeleteCourseResponse>([
+      'courses',
+      payload.course_id.toString(),
+    ]);
   }
 
   // === SECTION METHODS ===
-  async createSection(payload: CreateSectionPayload): AsyncResult<CreateSectionResponse> {
+  async createSection(
+    payload: CreateSectionPayload,
+  ): AsyncResult<CreateSectionResponse> {
     return this.post<CreateSectionResponse>({
       endpoint: ['courses', payload.course_id, 'sections'],
       payload: {
@@ -121,7 +131,9 @@ class TextService extends Service {
     });
   }
 
-  async getSection(payload: GetSectionPayload): AsyncResult<GetSectionResponse> {
+  async getSection(
+    payload: GetSectionPayload,
+  ): AsyncResult<GetSectionResponse> {
     return this.get<GetSectionResponse>({
       endpoint: ['sections', payload.section_id],
       payload: {
@@ -131,7 +143,9 @@ class TextService extends Service {
     });
   }
 
-  async listSections(payload: ListSectionsPayload): AsyncResult<ListSectionsResponse> {
+  async listSections(
+    payload: ListSectionsPayload,
+  ): AsyncResult<ListSectionsResponse> {
     return this.get<ListSectionsResponse>({
       endpoint: ['courses', payload.course_id, 'sections'],
       payload: {
@@ -141,7 +155,9 @@ class TextService extends Service {
     });
   }
 
-  async updateSection(payload: UpdateSectionPayload): AsyncResult<UpdateSectionResponse> {
+  async updateSection(
+    payload: UpdateSectionPayload,
+  ): AsyncResult<UpdateSectionResponse> {
     return this.patch<UpdateSectionResponse>({
       endpoint: ['sections', payload.section_id],
       payload: {
@@ -151,12 +167,19 @@ class TextService extends Service {
     });
   }
 
-  async deleteSection(payload: DeleteSectionPayload): AsyncResult<DeleteSectionResponse> {
-    return this.delete<DeleteSectionResponse>(['sections', payload.section_id.toString()]);
+  async deleteSection(
+    payload: DeleteSectionPayload,
+  ): AsyncResult<DeleteSectionResponse> {
+    return this.delete<DeleteSectionResponse>([
+      'sections',
+      payload.section_id.toString(),
+    ]);
   }
 
   // === ARTICLE METHODS ===
-  async createArticle(payload: CreateArticlePayload): AsyncResult<CreateArticleResponse> {
+  async createArticle(
+    payload: CreateArticlePayload,
+  ): AsyncResult<CreateArticleResponse> {
     return this.post<CreateArticleResponse>({
       endpoint: ['sections', payload.section_id, 'articles'],
       payload: {
@@ -166,7 +189,9 @@ class TextService extends Service {
     });
   }
 
-  async getArticle(payload: GetArticlePayload): AsyncResult<GetArticleResponse> {
+  async getArticle(
+    payload: GetArticlePayload,
+  ): AsyncResult<GetArticleResponse> {
     return this.get<GetArticleResponse>({
       endpoint: ['articles', payload.article_id],
       payload: {
@@ -176,7 +201,9 @@ class TextService extends Service {
     });
   }
 
-  async listArticles(payload: ListArticlesPayload): AsyncResult<ListArticlesResponse> {
+  async listArticles(
+    payload: ListArticlesPayload,
+  ): AsyncResult<ListArticlesResponse> {
     return this.get<ListArticlesResponse>({
       endpoint: ['sections', payload.section_id, 'articles'],
       payload: {
@@ -186,7 +213,9 @@ class TextService extends Service {
     });
   }
 
-  async updateArticle(payload: UpdateArticlePayload): AsyncResult<UpdateArticleResponse> {
+  async updateArticle(
+    payload: UpdateArticlePayload,
+  ): AsyncResult<UpdateArticleResponse> {
     return this.patch<UpdateArticleResponse>({
       endpoint: ['articles', payload.article_id],
       payload: {
@@ -196,8 +225,13 @@ class TextService extends Service {
     });
   }
 
-  async deleteArticle(payload: DeleteArticlePayload): AsyncResult<DeleteArticleResponse> {
-    return this.delete<DeleteArticleResponse>(['articles', payload.article_id.toString()]);
+  async deleteArticle(
+    payload: DeleteArticlePayload,
+  ): AsyncResult<DeleteArticleResponse> {
+    return this.delete<DeleteArticleResponse>([
+      'articles',
+      payload.article_id.toString(),
+    ]);
   }
 
   // === UTILITY METHODS ===
@@ -205,28 +239,44 @@ class TextService extends Service {
    * Helper method to check if a response is a SimpleResponse
    */
   isSimpleResponse(response: any): response is SimpleResponse {
-    return response && typeof response.success === 'boolean' && typeof response.message === 'string';
+    return (
+      response &&
+      typeof response.success === 'boolean' &&
+      typeof response.message === 'string'
+    );
   }
 
   /**
    * Helper method to check if a response is a Course
    */
   isCourse(response: any): response is Course {
-    return response && typeof response.id === 'number' && typeof response.title === 'string';
+    return (
+      response &&
+      typeof response.id === 'number' &&
+      typeof response.title === 'string'
+    );
   }
 
   /**
    * Helper method to check if a response is a Section
    */
   isSection(response: any): response is Section {
-    return response && typeof response.id === 'number' && typeof response.course_id === 'number';
+    return (
+      response &&
+      typeof response.id === 'number' &&
+      typeof response.course_id === 'number'
+    );
   }
 
   /**
    * Helper method to check if a response is an Article
    */
   isArticle(response: any): response is Article {
-    return response && typeof response.id === 'number' && typeof response.section_id === 'number';
+    return (
+      response &&
+      typeof response.id === 'number' &&
+      typeof response.section_id === 'number'
+    );
   }
 }
 

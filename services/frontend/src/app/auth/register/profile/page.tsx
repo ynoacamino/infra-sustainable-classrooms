@@ -24,11 +24,9 @@ export default async function RegisterProfilePage() {
   return (
     <LayoutLogin>
       <h1 className="font-bold text-3xl">Create your profile</h1>
-      <p>
-        Select teacher or student to create your profile
-      </p>
+      <p>Select teacher or student to create your profile</p>
       <div className="flex flex-col gap-y-2 items-center w-full">
-        <div className='flex items-center justify-between w-full'>
+        <div className="flex items-center justify-between w-full">
           <Link
             href="/auth/register/profile/teacher"
             className="flex flex-col gap-2 items-center mt-2"

@@ -152,6 +152,24 @@ services:
     networks:
       - infrastructure-network
 
+  knowledge-service:
+    build:
+      context: .
+      dockerfile: services/knowledge/Dockerfile.dev
+    container_name: knowledge-service
+    restart: unless-stopped
+    env_file:
+      - ./services/knowledge/.env.dev
+    volumes:
+      - ./services:/app/services
+    depends_on:
+      postgres:
+        condition: service_healthy
+      profiles-service:
+        condition: service_started
+    networks:
+      - infrastructure-network
+    
 volumes:
   postgres_data:
   minio_data:

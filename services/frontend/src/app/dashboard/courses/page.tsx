@@ -1,8 +1,8 @@
-import { textService } from "@/services/text/service";
-import { cookies } from "next/headers";
-import Link from "next/link";
-import { Button } from "@/ui/button";
-import { BookOpen, Clock, ChevronRight } from "lucide-react";
+import { textService } from '@/services/text/service';
+import { cookies } from 'next/headers';
+import Link from 'next/link';
+import { Button } from '@/ui/button';
+import { BookOpen, Clock, ChevronRight } from 'lucide-react';
 
 export default async function CoursesPage() {
   const text = await textService(cookies());
@@ -25,7 +25,9 @@ export default async function CoursesPage() {
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">Available Courses</h1>
-        <p className="text-gray-600">Explore and learn from our comprehensive course catalog</p>
+        <p className="text-gray-600">
+          Explore and learn from our comprehensive course catalog
+        </p>
       </div>
 
       {courses.length === 0 ? (
@@ -36,13 +38,16 @@ export default async function CoursesPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {courses.map(course => (
-            <div key={course.id} className="bg-white rounded-lg border shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+          {courses.map((course) => (
+            <div
+              key={course.id}
+              className="bg-white rounded-lg border shadow-sm hover:shadow-md transition-shadow overflow-hidden"
+            >
               {/* Course Image */}
               <div className="aspect-video bg-gradient-to-br from-blue-500 to-purple-600 relative">
                 {course.imageUrl ? (
-                  <img 
-                    src={course.imageUrl} 
+                  <img
+                    src={course.imageUrl}
                     alt={course.title}
                     className="w-full h-full object-cover"
                   />
@@ -55,13 +60,19 @@ export default async function CoursesPage() {
 
               {/* Course Content */}
               <div className="p-6">
-                <h3 className="text-xl font-semibold mb-2 line-clamp-2">{course.title}</h3>
-                <p className="text-gray-600 mb-4 line-clamp-3">{course.description}</p>
-                
+                <h3 className="text-xl font-semibold mb-2 line-clamp-2">
+                  {course.title}
+                </h3>
+                <p className="text-gray-600 mb-4 line-clamp-3">
+                  {course.description}
+                </p>
+
                 <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
                   <div className="flex items-center gap-1">
                     <Clock className="h-4 w-4" />
-                    <span>Updated {new Date(course.updated_at).toLocaleDateString()}</span>
+                    <span>
+                      Updated {new Date(course.updated_at).toLocaleDateString()}
+                    </span>
                   </div>
                 </div>
 

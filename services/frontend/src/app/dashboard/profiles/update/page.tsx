@@ -1,6 +1,6 @@
-import { UpdateProfileForm } from "@/components/profiles/forms/update-profile-form";
-import { profilesService } from "@/services/profiles/service";
-import { cookies } from "next/headers";
+import { UpdateProfileForm } from '@/components/profiles/forms/update-profile-form';
+import { profilesService } from '@/services/profiles/service';
+import { cookies } from 'next/headers';
 
 export default async function UpdateProfilePage() {
   const profiles = await profilesService(cookies());
@@ -14,5 +14,5 @@ export default async function UpdateProfilePage() {
       <h1 className="text-2xl font-bold mb-4">Update Profile</h1>
       <UpdateProfileForm profile={profile.data} />
     </div>
-  )
+  );
 }

@@ -12,7 +12,7 @@ interface HeaderProps {
 export default function HeaderTeacher({ profile }: HeaderProps) {
   return (
     <header className="flex flex-col h-screen justify-between sticky top-0 z-50 bg-background py-2 md:py-4 px-4 sm:px-6 w-full max-w-54">
-      <div className='flex flex-col items-center gap-2'>
+      <div className="flex flex-col items-center gap-2">
         <Link href="/" className="gap-2 font-bold text-lg flex w-full">
           <IconWifi size={24} />
           <span>StudyCentral</span>

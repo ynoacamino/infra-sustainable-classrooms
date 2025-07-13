@@ -141,6 +141,22 @@ services:
     networks:
       - infrastructure-network
 
+  knowledge-service:
+    build:
+      context: .
+      dockerfile: services/knowledge/Dockerfile
+    container_name: knowledge-service
+    restart: unless-stopped
+    env_file:
+      - ./services/knowledge/.env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      text-service:
+        condition: service_started
+    networks:
+      - infrastructure-network
+
   frontend-service:
     build:
       context: .

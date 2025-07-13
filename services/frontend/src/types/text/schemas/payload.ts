@@ -1,4 +1,8 @@
-import { CourseSchema, SectionSchema, ArticleSchema } from '@/types/text/schemas/models';
+import {
+  CourseSchema,
+  SectionSchema,
+  ArticleSchema,
+} from '@/types/text/schemas/models';
 import z from 'zod';
 
 // Course payload schemas
@@ -88,7 +92,9 @@ export const CreateSectionPayloadSchema = z.object({
     .int('Order must be an integer')
     .min(1, 'Order must be at least 1')
     .optional()
-    .describe('Order of the section in the course (optional, if not set it will be auto-numbered)'),
+    .describe(
+      'Order of the section in the course (optional, if not set it will be auto-numbered)',
+    ),
 });
 
 export const GetSectionPayloadSchema = z.object({
@@ -130,7 +136,9 @@ export const UpdateSectionPayloadSchema = z.object({
     .int('Order must be an integer')
     .min(1, 'Order must be at least 1')
     .optional()
-    .describe('Order of the section in the course (optional, if set will update the order)'),
+    .describe(
+      'Order of the section in the course (optional, if set will update the order)',
+    ),
 });
 
 export const DeleteSectionPayloadSchema = z.object({

@@ -1,10 +1,10 @@
-import { textService } from "@/services/text/service";
-import { cookies } from "next/headers";
-import Link from "next/link";
-import { Button } from "@/ui/button";
-import { CreateArticleForm } from "@/components/text/forms";
-import { ArrowLeft } from "lucide-react";
-import { notFound } from "next/navigation";
+import { textService } from '@/services/text/service';
+import { cookies } from 'next/headers';
+import Link from 'next/link';
+import { Button } from '@/ui/button';
+import { CreateArticleForm } from '@/components/text/forms';
+import { ArrowLeft } from 'lucide-react';
+import { notFound } from 'next/navigation';
 
 interface NewArticlePageProps {
   params: { courseId: string; sectionId: string };
@@ -13,7 +13,7 @@ interface NewArticlePageProps {
 export default async function NewArticlePage({ params }: NewArticlePageProps) {
   const courseId = parseInt(params.courseId);
   const sectionId = parseInt(params.sectionId);
-  
+
   if (isNaN(courseId) || isNaN(sectionId)) {
     notFound();
   }
@@ -41,7 +41,9 @@ export default async function NewArticlePage({ params }: NewArticlePageProps) {
     <div className="container mx-auto px-4 py-8">
       <div className="flex items-center gap-4 mb-8">
         <Button variant="outline" size="sm" asChild>
-          <Link href={`/teacher/courses/${courseId}/sections/${sectionId}/articles`}>
+          <Link
+            href={`/teacher/courses/${courseId}/sections/${sectionId}/articles`}
+          >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Articles
           </Link>
