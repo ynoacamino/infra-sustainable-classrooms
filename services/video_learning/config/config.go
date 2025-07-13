@@ -19,7 +19,7 @@ const (
 	DBG       = "DBG"
 	APP_ENV   = "APP_ENV"
 
-	AUTH_GRPC_ADDRESS = "AUTH_GRPC_ADDRESS"
+	PROFILES_GRPC_ADDRESS = "PROFILES_GRPC_ADDRESS"
 
 	MINIO_ENDPOINT   = "MINIO_ENDPOINT"
 	MINIO_ACCESS_KEY = "MINIO_ACCESS_KEY"
@@ -64,7 +64,7 @@ type Config struct {
 	Ctx         context.Context
 
 	// gRPC configuration
-	AuthGRPCAddress string
+	ProfilesGRPCAddress string
 
 	// MinIO configuration
 	MinioEndpoint  string
@@ -96,7 +96,7 @@ func NewConfig() (*Config, error) {
 	grpcPort := getEnvOrDefault(GRPC_PORT, "9090")
 
 	// gRPC configuration
-	authGRPCAddress := getEnvOrDefault(AUTH_GRPC_ADDRESS, fmt.Sprintf("auth-service:%s", grpcPort))
+	profilesGRPCAddress := getEnvOrDefault(PROFILES_GRPC_ADDRESS, fmt.Sprintf("auth-service:%s", grpcPort))
 
 	// Parse boolean and numeric values
 	debug := parseBoolOrDefault(DBG, false)
@@ -132,19 +132,19 @@ func NewConfig() (*Config, error) {
 	goaLog.Print(ctx, goaLog.KV{K: "environment", V: environment})
 
 	return &Config{
-		DatabaseURL:     databaseURL,
-		HTTPPort:        httpPort,
-		GRPCPort:        grpcPort,
-		Debug:           debug,
-		Environment:     environment,
-		Ctx:             ctx,
-		MaxConns:        max_conns,
-		MinConns:        min_conns,
-		AuthGRPCAddress: authGRPCAddress,
-		MinioEndpoint:   minioEndpoint,
-		MinioAccessKey:  minioAccessKey,
-		MinioSecretKey:  minioSecretKey,
-		RedisEndpoint:   redisEndpoint,
+		DatabaseURL:         databaseURL,
+		HTTPPort:            httpPort,
+		GRPCPort:            grpcPort,
+		Debug:               debug,
+		Environment:         environment,
+		Ctx:                 ctx,
+		MaxConns:            max_conns,
+		MinConns:            min_conns,
+		ProfilesGRPCAddress: profilesGRPCAddress,
+		MinioEndpoint:       minioEndpoint,
+		MinioAccessKey:      minioAccessKey,
+		MinioSecretKey:      minioSecretKey,
+		RedisEndpoint:       redisEndpoint,
 	}, nil
 }
 

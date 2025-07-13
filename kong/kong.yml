@@ -55,3 +55,14 @@ services:
           - POST
           - PUT
           - DELETE
+  - name: minio-service
+    host: minio
+    port: 9000
+    protocol: http
+    routes:
+      - name: minio-route
+        paths:
+          - /files
+        strip_path: true
+        methods:
+          - GET

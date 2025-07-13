@@ -26,8 +26,6 @@ services:
     restart: unless-stopped
     env_file:
       - ./db/.env.dev
-    ports:
-      - "5432:5432"
     volumes:
       - ./db/init:/docker-entrypoint-initdb.d
     networks:
@@ -43,15 +41,11 @@ services:
     image: minio/minio:latest
     container_name: minio
     restart: unless-stopped
-    ports:
-      - "9000:9000"
-      - "9001:9001"
     env_file:
       - ./minio/.env.dev
-    environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
     command: server /data --console-address ":9001"
+    volumes:
+      - minio_data:/data
     networks:
       - infrastructure-network
     healthcheck:
@@ -76,8 +70,6 @@ services:
     image: redis:alpine
     container_name: redis
     restart: unless-stopped
-    ports:
-      - "6379:6379"
     networks:
       - infrastructure-network
     healthcheck:
@@ -108,8 +100,6 @@ services:
       dockerfile: services/video_learning/Dockerfile.dev
     container_name: video_learning-service
     restart: unless-stopped
-    ports:
-      - "8080:8080"
     env_file:
       - ./services/video_learning/.env.dev
     volumes:
@@ -123,7 +113,7 @@ services:
         condition: service_healthy
     networks:
       - infrastructure-network
-  
+
   profiles-service:
     build:
       context: .
@@ -159,6 +149,10 @@ services:
         condition: service_started
     networks:
       - infrastructure-network
+
+volumes:
+  postgres_data:
+  minio_data:
 
 networks:
   infrastructure-network:
