@@ -163,10 +163,12 @@ export abstract class Service {
   // TODO: make payload validation for get requests
   protected async get<T>({
     endpoint,
+    payload,
     options,
   }: ServiceRequest): AsyncResult<T> {
     return this.request<T>({
       endpoint,
+      payload,
       options: { ...options, method: 'GET' },
     });
   }
@@ -201,13 +203,30 @@ export abstract class Service {
     });
   }
 
-  // TODO: make payload validation for delete requests
-  protected async delete<T>(
-    endpoint: string | string[],
-    options?: RequestInit,
-  ): AsyncResult<T> {
+  protected async patch<T, B extends ZodSchema = ZodSchema>({
+    endpoint,
+    payload,
+    options,
+  }: ServiceRequest<B>): AsyncResult<T> {
     return this.request<T>({
       endpoint,
+      payload,
+      options: {
+        ...options,
+        method: 'PATCH',
+      },
+    });
+  }
+
+  // TODO: make payload validation for delete requests
+  protected async delete<T, B extends ZodSchema = ZodSchema>({
+    endpoint,
+    payload,
+    options,
+  }: ServiceRequest<B>): AsyncResult<T> {
+    return this.request<T>({
+      endpoint,
+      payload,
       options: { ...options, method: 'DELETE' },
     });
   }

@@ -24,6 +24,8 @@ var _ = Service("text", func() {
 	Error("internal_error", String, "Internal server error")
 
 	// --- Courses ---
+	// DONE in frontend
+	// NOT TESTED
 	Method("CreateCourse", func() {
 		Description("Create a new text-based course (teachers only)")
 		Payload(func() {
@@ -59,6 +61,8 @@ var _ = Service("text", func() {
 		})
 	})
 
+	// DONE in frontend
+	// NOT TESTED
 	Method("GetCourse", func() {
 		Description("Retrieve course details by ID")
 		Payload(func() {
@@ -81,6 +85,8 @@ var _ = Service("text", func() {
 		})
 	})
 
+	// DONE in frontend
+	// NOT TESTED
 	Method("ListCourses", func() {
 		Description("List all available courses")
 		Payload(func() {
@@ -98,6 +104,8 @@ var _ = Service("text", func() {
 		})
 	})
 
+	// DONE in frontend
+	// NOT TESTED
 	Method("DeleteCourse", func() {
 		Description("Delete a course by ID (teachers only)")
 		Payload(func() {
@@ -121,6 +129,8 @@ var _ = Service("text", func() {
 		})
 	})
 
+	// DONE in frontend
+	// NOT TESTED
 	Method("UpdateCourse", func() {
 		Description("Update course details by ID (teachers only)")
 		Payload(func() {
@@ -161,6 +171,8 @@ var _ = Service("text", func() {
 	})
 
 	// --- Sections ---
+	// DONE in frontend
+	// NOT TESTED
 	Method("CreateSection", func() {
 		Description("Create a new section in a course (teachers only)")
 	   Payload(func() {
@@ -196,6 +208,8 @@ var _ = Service("text", func() {
 		})
 	})
 
+	// DONE in frontend
+	// NOT TESTED
 	Method("GetSection", func() {
 		Description("Get section details by ID")
 		Payload(func() {
@@ -216,6 +230,8 @@ var _ = Service("text", func() {
 		})
 	})
 
+	// DONE in frontend
+	// NOT TESTED
 	Method("ListSections", func() {
 		Description("List all sections for a course")
 		Payload(func() {
@@ -235,6 +251,8 @@ var _ = Service("text", func() {
 		})
 	})
 
+	// DONE in frontend
+	// NOT TESTED
 	Method("UpdateSection", func() {
 		Description("Update section details (teachers only)")
 	   Payload(func() {
@@ -270,6 +288,8 @@ var _ = Service("text", func() {
 		})
 	})
 
+	// DONE in frontend
+	// NOT TESTED
 	Method("DeleteSection", func() {
 		Description("Delete a section (teachers only)")
 		Payload(func() {
@@ -292,6 +312,8 @@ var _ = Service("text", func() {
 	})
 
 	// --- Articles ---
+	// DONE in frontend
+	// NOT TESTED
 	Method("CreateArticle", func() {
 		Description("Create a new article in a section (teachers only)")
 		Payload(func() {
@@ -322,6 +344,8 @@ var _ = Service("text", func() {
 		})
 	})
 
+	// DONE in frontend
+	// NOT TESTED
 	Method("GetArticle", func() {
 		Description("Get article details by ID")
 		Payload(func() {
@@ -342,6 +366,8 @@ var _ = Service("text", func() {
 		})
 	})
 
+	// DONE in frontend
+	// NOT TESTED
 	Method("ListArticles", func() {
 		Description("List all articles for a section")
 		Payload(func() {
@@ -361,6 +387,8 @@ var _ = Service("text", func() {
 		})
 	})
 
+	// DONE in frontend
+	// NOT TESTED
 	Method("UpdateArticle", func() {
 		Description("Update article details (teachers only)")
 		Payload(func() {

@@ -21,7 +21,6 @@ import z from 'zod';
  */
 export const UserIdentifier = z
   .string()
-  .email('Identifier must be a valid email address')
   .min(3, 'Identifier must be at least 3 characters long')
   .max(100, 'Identifier must not exceed 100 characters');
 

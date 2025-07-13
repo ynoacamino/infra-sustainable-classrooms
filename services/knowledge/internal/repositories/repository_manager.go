@@ -16,13 +16,12 @@ type RepositoryManager struct {
 	pool                *pgxpool.Pool
 }
 
-func NewRepositoryManager(pool *pgxpool.Pool, authGrpcConn *grpc.ClientConn, profilesGrpcConn *grpc.ClientConn) *RepositoryManager {
+func NewRepositoryManager(pool *pgxpool.Pool, profilesGrpcConn *grpc.ClientConn) *RepositoryManager {
 	return &RepositoryManager{
 		TestRepo:            NewTestRepository(pool),
 		QuestionRepo:        NewQuestionRepository(pool),
 		SubmissionRepo:      NewSubmissionRepository(pool),
 		AnswerRepo:          NewAnswerRepository(pool),
-		AuthServiceRepo:     NewAuthServiceRepository(authGrpcConn),
 		ProfilesServiceRepo: NewProfilesServiceRepository(profilesGrpcConn),
 		pool:                pool,
 	}

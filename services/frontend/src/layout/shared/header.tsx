@@ -16,12 +16,22 @@ export default function Header({ profile }: HeaderProps) {
         <IconWifi size={24} />
         <span>StudyCentral</span>
       </Link>
-      <nav className="text-sm flex gap-9 font-medium items-center">
+      <nav className="text-sm flex gap-5 font-medium items-center">
+        {profile.role === 'teacher' && (
+          <Link
+            href="/teacher"
+            className="transition-colors duration-75"
+            aria-label="Teacher Dashboard"
+            variant={'outline'}
+          >
+            Teacher Dashboard
+          </Link>
+        )}
         {routesConfig.studentRoutes.map((route) => (
           <Link
             key={route.path}
             href={route.path}
-            className="hover:text-primary transition-colors duration-75"
+            className="transition-colors duration-75"
             aria-label={route.name}
           >
             {route.name}

@@ -3,12 +3,12 @@ import {
   IconBook,
   IconHome,
   IconHomeFilled,
-  IconMessageReport,
   IconUser,
   IconUserFilled,
-  IconMessageReportFilled,
   IconMessage,
   IconMessageFilled,
+  IconVideo,
+  IconVideoFilled,
 } from '@tabler/icons-react';
 
 export const routesConfig = {
@@ -22,11 +22,21 @@ export const routesConfig = {
       name: 'Courses',
     },
     {
-      path: '/dashboard/post',
-      name: 'Posts',
+      path: '/dashboard/videos',
+      name: 'Videos',
+    },
+    {
+      path: '/dashboard/tests',
+      name: 'Tests',
     },
   ],
   teacherRoutes: [
+    {
+      path: '/dashboard',
+      name: 'Student View ',
+      icon: IconUser,
+      iconSelect: IconHomeFilled,
+    },
     {
       path: '/teacher',
       name: 'Dashboard',
@@ -40,22 +50,16 @@ export const routesConfig = {
       iconSelect: IconBookFilled,
     },
     {
-      name: 'Students',
-      path: '/teacher/students',
-      icon: IconUser,
-      iconSelect: IconUserFilled,
+      name: 'Videos',
+      path: '/teacher/videos',
+      icon: IconVideo,
+      iconSelect: IconVideoFilled,
     },
     {
-      path: '/teacher/post',
-      name: 'Posts',
+      path: '/teacher/tests',
+      name: 'Tests',
       icon: IconMessage,
       iconSelect: IconMessageFilled,
-    },
-    {
-      icon: IconMessageReport,
-      iconSelect: IconMessageReportFilled,
-      name: 'Reports',
-      path: '/teacher/reports',
     },
   ],
 };
