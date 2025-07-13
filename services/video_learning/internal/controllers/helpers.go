@@ -146,75 +146,69 @@ func (s *videolearningsrvc) convertVideoToAPIVideo(ctx context.Context, video in
 // getCachedVideoViews gets cached view count for a video
 func (s *videolearningsrvc) getCachedVideoViews(ctx context.Context, videoID int64) (int, error) {
 	key := fmt.Sprintf("video:views:%d", videoID)
-	result, err := s.cacheRepo.Get(ctx, key)
+
+	// Try to get as integer first
+	result, err := s.cacheRepo.GetInt(ctx, key)
 	if err != nil {
 		return 0, nil // Return 0 if not found or error
 	}
 
-	views, err := strconv.Atoi(result)
-	if err != nil {
-		return 0, nil
-	}
-
-	return views, nil
+	return int(result), nil
 }
 
 // getCachedVideoLikes gets cached like count for a video
 func (s *videolearningsrvc) getCachedVideoLikes(ctx context.Context, videoID int64) (int, error) {
 	key := fmt.Sprintf("video:likes:%d", videoID)
-	result, err := s.cacheRepo.Get(ctx, key)
+
+	// Try to get as integer first
+	result, err := s.cacheRepo.GetInt(ctx, key)
 	if err != nil {
 		return 0, nil // Return 0 if not found or error
 	}
 
-	likes, err := strconv.Atoi(result)
-	if err != nil {
-		return 0, nil
-	}
-
-	return likes, nil
+	return int(result), nil
 }
 
-// incrementCachedVideoViews increments cached view count
+// incrementCachedVideoViews increments cached view count atomically
 func (s *videolearningsrvc) incrementCachedVideoViews(ctx context.Context, videoID int64) error {
 	key := fmt.Sprintf("video:views:%d", videoID)
 
-	// Try to increment existing value
-	currentViews, err := s.getCachedVideoViews(ctx, videoID)
+	// Use atomic increment operation
+	_, err := s.cacheRepo.IncrBy(ctx, key, 1)
 	if err != nil {
-		currentViews = 0
+		// If increment fails (key doesn't exist), set it to 1
+		return s.cacheRepo.Set(ctx, key, "1", 24*time.Hour)
 	}
 
-	newViews := currentViews + 1
-	return s.cacheRepo.Set(ctx, key, strconv.Itoa(newViews), 24*time.Hour)
+	return nil
 }
 
-// incrementCachedVideoLikes increments cached like count
+// incrementCachedVideoLikes increments cached like count atomically
 func (s *videolearningsrvc) incrementCachedVideoLikes(ctx context.Context, videoID int64, increment int) error {
 	key := fmt.Sprintf("video:likes:%d", videoID)
 
-	currentLikes, err := s.getCachedVideoLikes(ctx, videoID)
+	// Use atomic increment operation
+	_, err := s.cacheRepo.IncrBy(ctx, key, int64(increment))
 	if err != nil {
-		currentLikes = 0
+		// If increment fails (key doesn't exist), set it to the increment value
+		return s.cacheRepo.Set(ctx, key, strconv.Itoa(increment), 24*time.Hour)
 	}
 
-	newLikes := currentLikes + increment
-	return s.cacheRepo.Set(ctx, key, strconv.Itoa(newLikes), 24*time.Hour)
+	return nil
 }
 
-// incrementCachedUserCategoryLike increments cached user category like count
+// incrementCachedUserCategoryLike increments cached user category like count atomically
 func (s *videolearningsrvc) incrementCachedUserCategoryLike(ctx context.Context, userID, categoryID int64, increment int) error {
 	key := fmt.Sprintf("user:category:likes:%d:%d", userID, categoryID)
 
-	// Get current value
-	result, err := s.cacheRepo.Get(ctx, key)
-	current := 0
-	if err == nil {
-		current, _ = strconv.Atoi(result)
+	// Use atomic increment operation
+	_, err := s.cacheRepo.IncrBy(ctx, key, int64(increment))
+	if err != nil {
+		// If increment fails (key doesn't exist), set it to the increment value
+		return s.cacheRepo.Set(ctx, key, strconv.Itoa(increment), 24*time.Hour)
 	}
 
-	newValue := current + increment
-	return s.cacheRepo.Set(ctx, key, strconv.Itoa(newValue), 24*time.Hour)
+	return nil
 }
 
 // randomSelectVideos randomly selects up to 'amount' videos from the slice

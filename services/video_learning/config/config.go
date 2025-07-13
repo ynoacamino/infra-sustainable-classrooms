@@ -26,6 +26,9 @@ const (
 	MINIO_SECRET_KEY = "MINIO_SECRET_KEY"
 
 	REDIS_ENDPOINT = "REDIS_ENDPOINT"
+
+	// Aggregation configuration
+	AGGREGATION_INTERVAL_SECONDS = "AGGREGATION_INTERVAL_SECONDS"
 )
 
 type DBConfig struct {
@@ -73,6 +76,9 @@ type Config struct {
 
 	// Redis configuration
 	RedisEndpoint string
+
+	// Aggregation configuration
+	AggregationIntervalSeconds int
 }
 
 func NewConfig() (*Config, error) {
@@ -126,25 +132,29 @@ func NewConfig() (*Config, error) {
 		return nil, fmt.Errorf("redis configuration is incomplete")
 	}
 
+	// Aggregation configuration
+	aggregationIntervalSeconds := parseIntOrDefault(AGGREGATION_INTERVAL_SECONDS, 300)
+
 	// Log important configuration
 	goaLog.Print(ctx, goaLog.KV{K: "http-port", V: httpPort})
 	goaLog.Print(ctx, goaLog.KV{K: "grpc-port", V: grpcPort})
 	goaLog.Print(ctx, goaLog.KV{K: "environment", V: environment})
 
 	return &Config{
-		DatabaseURL:     databaseURL,
-		HTTPPort:        httpPort,
-		GRPCPort:        grpcPort,
-		Debug:           debug,
-		Environment:     environment,
-		Ctx:             ctx,
-		MaxConns:        max_conns,
-		MinConns:        min_conns,
-		AuthGRPCAddress: authGRPCAddress,
-		MinioEndpoint:   minioEndpoint,
-		MinioAccessKey:  minioAccessKey,
-		MinioSecretKey:  minioSecretKey,
-		RedisEndpoint:   redisEndpoint,
+		DatabaseURL:                databaseURL,
+		HTTPPort:                   httpPort,
+		GRPCPort:                   grpcPort,
+		Debug:                      debug,
+		Environment:                environment,
+		Ctx:                        ctx,
+		MaxConns:                   max_conns,
+		MinConns:                   min_conns,
+		AuthGRPCAddress:            authGRPCAddress,
+		MinioEndpoint:              minioEndpoint,
+		MinioAccessKey:             minioAccessKey,
+		MinioSecretKey:             minioSecretKey,
+		RedisEndpoint:              redisEndpoint,
+		AggregationIntervalSeconds: aggregationIntervalSeconds,
 	}, nil
 }
 
