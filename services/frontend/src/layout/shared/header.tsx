@@ -17,18 +17,16 @@ export default function Header({ profile }: HeaderProps) {
         <span>StudyCentral</span>
       </Link>
       <nav className="text-sm flex gap-5 font-medium items-center">
-        {
-          profile.role === 'teacher' && (
-            <Link
-              href="/teacher"
-              className="transition-colors duration-75"
-              aria-label="Teacher Dashboard"
-              variant={"outline"}
-            >
-              Teacher Dashboard
-            </Link>
-          )
-        }
+        {profile.role === 'teacher' && (
+          <Link
+            href="/teacher"
+            className="transition-colors duration-75"
+            aria-label="Teacher Dashboard"
+            variant={'outline'}
+          >
+            Teacher Dashboard
+          </Link>
+        )}
         {routesConfig.studentRoutes.map((route) => (
           <Link
             key={route.path}

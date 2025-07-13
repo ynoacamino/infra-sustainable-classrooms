@@ -79,19 +79,19 @@ func createTestTest() knowledgedb.Test {
 }
 
 // createTestQuestion creates a test Question for use in tests
-func createTestQuestion() knowledgedb.Question {
-	return knowledgedb.Question{
-		ID:            1,
-		TestID:        1,
-		QuestionText:  "What is 2+2?",
-		OptionA:       "3",
-		OptionB:       "4",
-		OptionC:       "5",
-		OptionD:       "6",
-		CorrectAnswer: 1, // B
-		QuestionOrder: 1,
-	}
-}
+// func createTestQuestion() knowledgedb.Question {
+// 	return knowledgedb.Question{
+// 		ID:            1,
+// 		TestID:        1,
+// 		QuestionText:  "What is 2+2?",
+// 		OptionA:       "3",
+// 		OptionB:       "4",
+// 		OptionC:       "5",
+// 		OptionD:       "6",
+// 		CorrectAnswer: 1, // B
+// 		QuestionOrder: 1,
+// 	}
+// }
 
 // Helper functions for tests
 func stringPtr(s string) *string {

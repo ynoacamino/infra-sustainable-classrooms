@@ -7,7 +7,10 @@ import { z } from 'zod';
 import { InferItem } from '@/ui/infer-field';
 import { Button } from '@/ui/button';
 import { toast } from 'sonner';
-import { updateSectionFormFields, updateSectionFormSchema } from '@/lib/text/forms/update-section-form';
+import {
+  updateSectionFormFields,
+  updateSectionFormSchema,
+} from '@/lib/text/forms/update-section-form';
 import { updateSectionAction } from '@/actions/text/actions';
 import type { Section } from '@/types/text/models';
 import { redirect } from 'next/navigation';

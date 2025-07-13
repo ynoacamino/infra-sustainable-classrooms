@@ -28,9 +28,11 @@ export default async function LayoutTeacher({
   }
 
   return (
-    <div className='w-full flex justify-start'>
+    <div className="w-full flex justify-start">
       <HeaderTeacher profile={res.data} />
-      <main className="flex flex-1 flex-col pb-20 justify-start min-h-screen">{children}</main>
+      <main className="flex flex-1 flex-col pb-20 justify-start min-h-screen">
+        {children}
+      </main>
     </div>
   );
 }

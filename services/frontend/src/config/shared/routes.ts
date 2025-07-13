@@ -60,6 +60,6 @@ export const routesConfig = {
       name: 'Tests',
       icon: IconMessage,
       iconSelect: IconMessageFilled,
-    }
+    },
   ],
 };

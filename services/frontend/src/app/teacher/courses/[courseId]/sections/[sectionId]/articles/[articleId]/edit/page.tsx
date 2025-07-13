@@ -1,20 +1,22 @@
-import { textService } from "@/services/text/service";
-import { cookies } from "next/headers";
-import Link from "next/link";
-import { Button } from "@/ui/button";
-import { UpdateArticleForm } from "@/components/text/forms";
-import { ArrowLeft } from "lucide-react";
-import { notFound } from "next/navigation";
+import { textService } from '@/services/text/service';
+import { cookies } from 'next/headers';
+import Link from 'next/link';
+import { Button } from '@/ui/button';
+import { UpdateArticleForm } from '@/components/text/forms';
+import { ArrowLeft } from 'lucide-react';
+import { notFound } from 'next/navigation';
 
 interface EditArticlePageProps {
   params: { courseId: string; sectionId: string; articleId: string };
 }
 
-export default async function EditArticlePage({ params }: EditArticlePageProps) {
+export default async function EditArticlePage({
+  params,
+}: EditArticlePageProps) {
   const courseId = parseInt(params.courseId);
   const sectionId = parseInt(params.sectionId);
   const articleId = parseInt(params.articleId);
-  
+
   if (isNaN(courseId) || isNaN(sectionId) || isNaN(articleId)) {
     notFound();
   }
@@ -42,7 +44,9 @@ export default async function EditArticlePage({ params }: EditArticlePageProps) 
     <div className="container mx-auto px-4 py-8">
       <div className="flex items-center gap-4 mb-8">
         <Button variant="outline" size="sm" asChild>
-          <Link href={`/teacher/courses/${courseId}/sections/${sectionId}/articles/${articleId}`}>
+          <Link
+            href={`/teacher/courses/${courseId}/sections/${sectionId}/articles/${articleId}`}
+          >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Article
           </Link>

@@ -1,7 +1,7 @@
-import { textService } from "@/services/text/service";
-import { cookies } from "next/headers";
-import Link from "next/link";
-import { Button } from "@/ui/button";
+import { textService } from '@/services/text/service';
+import { cookies } from 'next/headers';
+import Link from 'next/link';
+import { Button } from '@/ui/button';
 
 export default async function CoursesPage() {
   const text = await textService(cookies());
@@ -28,23 +28,28 @@ export default async function CoursesPage() {
       {courses.data.length === 0 ? (
         <div className="text-center py-12">
           <h2 className="text-xl font-semibold mb-4">No courses yet</h2>
-          <p className="text-gray-600 mb-6">Create your first course to get started</p>
+          <p className="text-gray-600 mb-6">
+            Create your first course to get started
+          </p>
           <Button asChild>
             <Link href="/teacher/courses/new">Create Course</Link>
           </Button>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {courses.data.map(course => (
-            <div key={course.id} className="bg-white rounded-lg border shadow-sm hover:shadow-lg transition-shadow overflow-hidden">
+          {courses.data.map((course) => (
+            <div
+              key={course.id}
+              className="bg-white rounded-lg border shadow-sm hover:shadow-lg transition-shadow overflow-hidden"
+            >
               <div className="p-6">
                 <h3 className="text-xl font-semibold mb-2">{course.title}</h3>
                 <p className="text-gray-600 mb-4">{course.description}</p>
               </div>
               {course.imageUrl && (
                 <div className="px-6 pb-4">
-                  <img 
-                    src={course.imageUrl} 
+                  <img
+                    src={course.imageUrl}
                     alt={course.title}
                     className="w-full h-48 object-cover rounded-md"
                   />

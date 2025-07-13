@@ -40,15 +40,19 @@ export function HeaderAuth({ profile }: HeaderAuthProps) {
             className="w-24 h-24 rounded-full object-cover mb-2"
           />
           <span className="text-sm text-foreground/70">{profile.email}</span>
-          <span className="text-lg font-medium text-center">{profile.first_name}</span>
+          <span className="text-lg font-medium text-center">
+            {profile.first_name}
+          </span>
           <div className="flex flex-col items-center justify-start w-full gap-1 text-secondary">
-            <Button
-              variant="ghost"
-              asChild
-            >
-              <Link href="/dashboard/profiles/update" className="text-foreground w-full flex">
+            <Button variant="ghost" asChild>
+              <Link
+                href="/dashboard/profiles/update"
+                className="text-foreground w-full flex"
+              >
                 <UserPen />
-                <span className="flex-1 w-full text-center">Update profile</span>
+                <span className="flex-1 w-full text-center">
+                  Update profile
+                </span>
               </Link>
             </Button>
             <Button
