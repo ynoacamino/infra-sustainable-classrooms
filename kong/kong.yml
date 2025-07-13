@@ -76,6 +76,22 @@ services:
           - PUT
           - DELETE
           - PATCH
+  
+  - name: codelab-service
+    host: codelab-service
+    port: 8080
+    protocol: http
+    routes:
+      - name: codelab-route
+        paths:
+          - /codelab
+        strip_path: false
+        methods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+          - PATCH
 
   - name: minio-service
     host: minio

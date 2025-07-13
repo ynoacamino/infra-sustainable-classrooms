@@ -19,5 +19,8 @@ goa gen github.com/ynoacamino/infra-sustainable-classrooms/services/knowledge/de
 echo "Generating code for video_learning service..."
 goa gen github.com/ynoacamino/infra-sustainable-classrooms/services/video_learning/design/api -o ./services/video_learning/
 
+echo "Generating code for codelab service..."
+goa gen github.com/ynoacamino/infra-sustainable-classrooms/services/codelab/design/api -o ./services/codelab/
+
 echo "Generating SQL code..."
 sqlc generate
