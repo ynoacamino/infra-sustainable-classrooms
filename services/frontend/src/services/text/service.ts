@@ -44,18 +44,15 @@ import {
   CreateCoursePayloadSchema,
   GetCoursePayloadSchema,
   UpdateCoursePayloadSchema,
-  DeleteCoursePayloadSchema,
   ListCoursesPayloadSchema,
   CreateSectionPayloadSchema,
   GetSectionPayloadSchema,
   ListSectionsPayloadSchema,
   UpdateSectionPayloadSchema,
-  DeleteSectionPayloadSchema,
   CreateArticlePayloadSchema,
   GetArticlePayloadSchema,
   ListArticlesPayloadSchema,
   UpdateArticlePayloadSchema,
-  DeleteArticlePayloadSchema,
 } from '@/types/text/schemas/payload';
 import type { AsyncResult } from '@/types/shared/services/result';
 import type { ReadonlyRequestCookies } from 'next/dist/server/web/spec-extension/adapters/request-cookies';
