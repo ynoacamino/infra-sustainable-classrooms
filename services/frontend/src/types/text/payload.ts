@@ -3,7 +3,6 @@ import type {
   GetCoursePayloadSchema,
   UpdateCoursePayloadSchema,
   DeleteCoursePayloadSchema,
-  ListCoursesPayloadSchema,
   CreateSectionPayloadSchema,
   GetSectionPayloadSchema,
   ListSectionsPayloadSchema,
@@ -22,7 +21,6 @@ export type CreateCoursePayload = z.infer<typeof CreateCoursePayloadSchema>;
 export type GetCoursePayload = z.infer<typeof GetCoursePayloadSchema>;
 export type UpdateCoursePayload = z.infer<typeof UpdateCoursePayloadSchema>;
 export type DeleteCoursePayload = z.infer<typeof DeleteCoursePayloadSchema>;
-export type ListCoursesPayload = z.infer<typeof ListCoursesPayloadSchema>;
 
 // Section payload types
 export type CreateSectionPayload = z.infer<typeof CreateSectionPayloadSchema>;

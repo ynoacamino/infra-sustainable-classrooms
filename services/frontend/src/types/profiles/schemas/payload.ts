@@ -1,4 +1,5 @@
 import {
+  ProfileSchema,
   StudentProfileSchema,
   TeacherProfileSchema,
 } from '@/types/profiles/schemas/models';
@@ -24,13 +25,8 @@ export const CreateTeacherProfilePayloadSchema = TeacherProfileSchema.omit({
   is_active: true,
 });
 
-export const GetPublicProfileByIdPayloadSchema = z.object({
-  // This is a cookie
-  // session: z.string(),
-  user_id: z
-    .number()
-    .int('User ID must be an integer')
-    .describe('User identifier'),
+export const GetPublicProfileByIdPayloadSchema = ProfileSchema.pick({
+  user_id: true,
 });
 
 const UpdateStudentSchema = StudentProfileSchema.omit({

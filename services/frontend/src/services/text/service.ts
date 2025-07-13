@@ -1,17 +1,10 @@
 import { SessionInterceptor } from '@/services/auth/interceptor';
 import { Service } from '@/services/shared/service';
 import type {
-  Course,
-  Section,
-  Article,
-  SimpleResponse,
-} from '@/types/text/models';
-import type {
   CreateCoursePayload,
   GetCoursePayload,
   UpdateCoursePayload,
   DeleteCoursePayload,
-  ListCoursesPayload,
   CreateSectionPayload,
   GetSectionPayload,
   ListSectionsPayload,
@@ -23,51 +16,36 @@ import type {
   UpdateArticlePayload,
   DeleteArticlePayload,
 } from '@/types/text/payload';
-import type {
-  CreateCourseResponse,
-  GetCourseResponse,
-  ListCoursesResponse,
-  UpdateCourseResponse,
-  DeleteCourseResponse,
-  CreateSectionResponse,
-  GetSectionResponse,
-  ListSectionsResponse,
-  UpdateSectionResponse,
-  DeleteSectionResponse,
-  CreateArticleResponse,
-  GetArticleResponse,
-  ListArticlesResponse,
-  UpdateArticleResponse,
-  DeleteArticleResponse,
-} from '@/types/text/responses';
 import {
   CreateCoursePayloadSchema,
   GetCoursePayloadSchema,
   UpdateCoursePayloadSchema,
-  DeleteCoursePayloadSchema,
-  ListCoursesPayloadSchema,
   CreateSectionPayloadSchema,
   GetSectionPayloadSchema,
   ListSectionsPayloadSchema,
   UpdateSectionPayloadSchema,
-  DeleteSectionPayloadSchema,
   CreateArticlePayloadSchema,
   GetArticlePayloadSchema,
   ListArticlesPayloadSchema,
   UpdateArticlePayloadSchema,
+  DeleteCoursePayloadSchema,
+  DeleteSectionPayloadSchema,
   DeleteArticlePayloadSchema,
 } from '@/types/text/schemas/payload';
 import type { AsyncResult } from '@/types/shared/services/result';
 import type { ReadonlyRequestCookies } from 'next/dist/server/web/spec-extension/adapters/request-cookies';
+import type { SimpleResponse } from '@/services/shared/response';
+import type { Article, Course, Section } from '@/types/text/models';
 
 class TextService extends Service {
   constructor() {
     super('text');
   }
 
-  // === COURSE METHODS ===
-  async createCourse(payload: CreateCoursePayload): AsyncResult<CreateCourseResponse> {
-    return this.post<CreateCourseResponse>({
+  async createCourse(
+    payload: CreateCoursePayload,
+  ): AsyncResult<SimpleResponse> {
+    return this.post<SimpleResponse>({
       endpoint: 'courses',
       payload: {
         schema: CreateCoursePayloadSchema,
@@ -76,9 +54,9 @@ class TextService extends Service {
     });
   }
 
-  async getCourse(payload: GetCoursePayload): AsyncResult<GetCourseResponse> {
-    return this.get<GetCourseResponse>({
-      endpoint: ['courses', payload.course_id],
+  async getCourse(payload: GetCoursePayload): AsyncResult<Course> {
+    return this.get<Course>({
+      endpoint: ['courses', payload.id],
       payload: {
         schema: GetCoursePayloadSchema,
         data: payload,
@@ -86,19 +64,29 @@ class TextService extends Service {
     });
   }
 
-  async listCourses(payload: ListCoursesPayload): AsyncResult<ListCoursesResponse> {
-    return this.get<ListCoursesResponse>({
+  async listCourses(): AsyncResult<Course[]> {
+    return this.get<Course[]>({
       endpoint: 'courses',
+    });
+  }
+
+  async deleteCourse(
+    payload: DeleteCoursePayload,
+  ): AsyncResult<SimpleResponse> {
+    return this.delete<SimpleResponse>({
+      endpoint: ['courses', payload.id],
       payload: {
-        schema: ListCoursesPayloadSchema,
+        schema: DeleteCoursePayloadSchema,
         data: payload,
       },
     });
   }
 
-  async updateCourse(payload: UpdateCoursePayload): AsyncResult<UpdateCourseResponse> {
-    return this.patch<UpdateCourseResponse>({
-      endpoint: ['courses', payload.course_id],
+  async updateCourse(
+    payload: UpdateCoursePayload,
+  ): AsyncResult<SimpleResponse> {
+    return this.patch<SimpleResponse>({
+      endpoint: ['courses', payload.id],
       payload: {
         schema: UpdateCoursePayloadSchema,
         data: payload,
@@ -106,13 +94,11 @@ class TextService extends Service {
     });
   }
 
-  async deleteCourse(payload: DeleteCoursePayload): AsyncResult<DeleteCourseResponse> {
-    return this.delete<DeleteCourseResponse>(['courses', payload.course_id.toString()]);
-  }
-
   // === SECTION METHODS ===
-  async createSection(payload: CreateSectionPayload): AsyncResult<CreateSectionResponse> {
-    return this.post<CreateSectionResponse>({
+  async createSection(
+    payload: CreateSectionPayload,
+  ): AsyncResult<SimpleResponse> {
+    return this.post<SimpleResponse>({
       endpoint: ['courses', payload.course_id, 'sections'],
       payload: {
         schema: CreateSectionPayloadSchema,
@@ -121,9 +107,9 @@ class TextService extends Service {
     });
   }
 
-  async getSection(payload: GetSectionPayload): AsyncResult<GetSectionResponse> {
-    return this.get<GetSectionResponse>({
-      endpoint: ['sections', payload.section_id],
+  async getSection(payload: GetSectionPayload): AsyncResult<Section> {
+    return this.get<Section>({
+      endpoint: ['sections', payload.id],
       payload: {
         schema: GetSectionPayloadSchema,
         data: payload,
@@ -131,8 +117,8 @@ class TextService extends Service {
     });
   }
 
-  async listSections(payload: ListSectionsPayload): AsyncResult<ListSectionsResponse> {
-    return this.get<ListSectionsResponse>({
+  async listSections(payload: ListSectionsPayload): AsyncResult<Section[]> {
+    return this.get<Section[]>({
       endpoint: ['courses', payload.course_id, 'sections'],
       payload: {
         schema: ListSectionsPayloadSchema,
@@ -141,9 +127,11 @@ class TextService extends Service {
     });
   }
 
-  async updateSection(payload: UpdateSectionPayload): AsyncResult<UpdateSectionResponse> {
-    return this.patch<UpdateSectionResponse>({
-      endpoint: ['sections', payload.section_id],
+  async updateSection(
+    payload: UpdateSectionPayload,
+  ): AsyncResult<SimpleResponse> {
+    return this.patch<SimpleResponse>({
+      endpoint: ['sections', payload.id],
       payload: {
         schema: UpdateSectionPayloadSchema,
         data: payload,
@@ -151,13 +139,23 @@ class TextService extends Service {
     });
   }
 
-  async deleteSection(payload: DeleteSectionPayload): AsyncResult<DeleteSectionResponse> {
-    return this.delete<DeleteSectionResponse>(['sections', payload.section_id.toString()]);
+  async deleteSection(
+    payload: DeleteSectionPayload,
+  ): AsyncResult<SimpleResponse> {
+    return this.delete<SimpleResponse>({
+      endpoint: ['sections', payload.id],
+      payload: {
+        schema: DeleteSectionPayloadSchema,
+        data: payload,
+      },
+    });
   }
 
   // === ARTICLE METHODS ===
-  async createArticle(payload: CreateArticlePayload): AsyncResult<CreateArticleResponse> {
-    return this.post<CreateArticleResponse>({
+  async createArticle(
+    payload: CreateArticlePayload,
+  ): AsyncResult<SimpleResponse> {
+    return this.post<SimpleResponse>({
       endpoint: ['sections', payload.section_id, 'articles'],
       payload: {
         schema: CreateArticlePayloadSchema,
@@ -166,9 +164,9 @@ class TextService extends Service {
     });
   }
 
-  async getArticle(payload: GetArticlePayload): AsyncResult<GetArticleResponse> {
-    return this.get<GetArticleResponse>({
-      endpoint: ['articles', payload.article_id],
+  async getArticle(payload: GetArticlePayload): AsyncResult<Article> {
+    return this.get<Article>({
+      endpoint: ['articles', payload.id],
       payload: {
         schema: GetArticlePayloadSchema,
         data: payload,
@@ -176,8 +174,8 @@ class TextService extends Service {
     });
   }
 
-  async listArticles(payload: ListArticlesPayload): AsyncResult<ListArticlesResponse> {
-    return this.get<ListArticlesResponse>({
+  async listArticles(payload: ListArticlesPayload): AsyncResult<Article[]> {
+    return this.get<Article[]>({
       endpoint: ['sections', payload.section_id, 'articles'],
       payload: {
         schema: ListArticlesPayloadSchema,
@@ -186,9 +184,11 @@ class TextService extends Service {
     });
   }
 
-  async updateArticle(payload: UpdateArticlePayload): AsyncResult<UpdateArticleResponse> {
-    return this.patch<UpdateArticleResponse>({
-      endpoint: ['articles', payload.article_id],
+  async updateArticle(
+    payload: UpdateArticlePayload,
+  ): AsyncResult<SimpleResponse> {
+    return this.patch<SimpleResponse>({
+      endpoint: ['articles', payload.id],
       payload: {
         schema: UpdateArticlePayloadSchema,
         data: payload,
@@ -196,37 +196,16 @@ class TextService extends Service {
     });
   }
 
-  async deleteArticle(payload: DeleteArticlePayload): AsyncResult<DeleteArticleResponse> {
-    return this.delete<DeleteArticleResponse>(['articles', payload.article_id.toString()]);
-  }
-
-  // === UTILITY METHODS ===
-  /**
-   * Helper method to check if a response is a SimpleResponse
-   */
-  isSimpleResponse(response: any): response is SimpleResponse {
-    return response && typeof response.success === 'boolean' && typeof response.message === 'string';
-  }
-
-  /**
-   * Helper method to check if a response is a Course
-   */
-  isCourse(response: any): response is Course {
-    return response && typeof response.id === 'number' && typeof response.title === 'string';
-  }
-
-  /**
-   * Helper method to check if a response is a Section
-   */
-  isSection(response: any): response is Section {
-    return response && typeof response.id === 'number' && typeof response.course_id === 'number';
-  }
-
-  /**
-   * Helper method to check if a response is an Article
-   */
-  isArticle(response: any): response is Article {
-    return response && typeof response.id === 'number' && typeof response.section_id === 'number';
+  async deleteArticle(
+    payload: DeleteArticlePayload,
+  ): AsyncResult<SimpleResponse> {
+    return this.delete<SimpleResponse>({
+      endpoint: ['articles', payload.id],
+      payload: {
+        schema: DeleteArticlePayloadSchema,
+        data: payload,
+      },
+    });
   }
 }
 
