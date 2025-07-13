@@ -3,6 +3,7 @@ rm -rf ./sercices/profiles/gen
 rm -rf ./sercices/text/gen
 rm -rf ./sercices/knowledge/gen
 rm -rf ./sercices/video_learning/gen
+rm -rf ./sercices/mailing/gen
 
 echo "Generating code for auth service..."
 goa gen github.com/ynoacamino/infra-sustainable-classrooms/services/auth/design/api -o ./services/auth/
@@ -18,6 +19,9 @@ goa gen github.com/ynoacamino/infra-sustainable-classrooms/services/knowledge/de
 
 echo "Generating code for video_learning service..."
 goa gen github.com/ynoacamino/infra-sustainable-classrooms/services/video_learning/design/api -o ./services/video_learning/
+
+echo "Generating code for mailing service..."
+goa gen github.com/ynoacamino/infra-sustainable-classrooms/services/mailing/design/api -o ./services/mailing/
 
 echo "Generating SQL code..."
 sqlc generate
