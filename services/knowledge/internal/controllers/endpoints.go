@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/jackc/pgx/v5/pgtype"
 	knowledgedb "github.com/ynoacamino/infra-sustainable-classrooms/services/knowledge/gen/database"
 	"github.com/ynoacamino/infra-sustainable-classrooms/services/knowledge/gen/knowledge"
 	"github.com/ynoacamino/infra-sustainable-classrooms/services/profiles/gen/profiles"
@@ -480,20 +479,12 @@ func (s *knowledgesvrc) SubmitTest(ctx context.Context, payload *knowledge.Submi
 		}
 	}
 
-	// Calculate score percentage
 	score := float64(correctCount) / float64(totalQuestions) * 100
-
-	// Create submission with proper numeric conversion
-	scoreNumeric := pgtype.Numeric{}
-	err = scoreNumeric.Scan(score)
-	if err != nil {
-		return nil, knowledge.InvalidInput("Failed to convert score: " + err.Error())
-	}
 
 	submission, err := s.submissionRepo.CreateSubmission(ctx, knowledgedb.CreateSubmissionParams{
 		TestID: payload.TestID,
 		UserID: profile.UserID,
-		Score:  scoreNumeric,
+		Score:  s.Float64ToPgNumeric(score),
 	})
 	if err != nil {
 		return nil, knowledge.InvalidInput("Failed to create submission: " + err.Error())
