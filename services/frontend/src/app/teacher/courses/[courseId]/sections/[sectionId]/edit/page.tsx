@@ -1,19 +1,21 @@
-import { textService } from "@/services/text/service";
-import { cookies } from "next/headers";
-import Link from "next/link";
-import { Button } from "@/ui/button";
-import { UpdateSectionForm } from "@/components/text/forms";
-import { ArrowLeft } from "lucide-react";
-import { notFound } from "next/navigation";
+import { textService } from '@/services/text/service';
+import { cookies } from 'next/headers';
+import Link from 'next/link';
+import { Button } from '@/ui/button';
+import { UpdateSectionForm } from '@/components/text/forms';
+import { ArrowLeft } from 'lucide-react';
+import { notFound } from 'next/navigation';
 
 interface EditSectionPageProps {
   params: { courseId: string; sectionId: string };
 }
 
-export default async function EditSectionPage({ params }: EditSectionPageProps) {
+export default async function EditSectionPage({
+  params,
+}: EditSectionPageProps) {
   const courseId = parseInt(params.courseId);
   const sectionId = parseInt(params.sectionId);
-  
+
   if (isNaN(courseId) || isNaN(sectionId)) {
     notFound();
   }

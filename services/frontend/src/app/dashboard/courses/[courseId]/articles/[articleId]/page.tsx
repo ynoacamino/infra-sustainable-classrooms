@@ -1,18 +1,20 @@
-import { textService } from "@/services/text/service";
-import { cookies } from "next/headers";
-import Link from "next/link";
-import { Button } from "@/ui/button";
-import { ArrowLeft, BookOpen, Clock, User } from "lucide-react";
-import { notFound } from "next/navigation";
+import { textService } from '@/services/text/service';
+import { cookies } from 'next/headers';
+import Link from 'next/link';
+import { Button } from '@/ui/button';
+import { ArrowLeft, BookOpen, Clock, User } from 'lucide-react';
+import { notFound } from 'next/navigation';
 
 interface StudentArticlePageProps {
   params: { courseId: string; articleId: string };
 }
 
-export default async function StudentArticlePage({ params }: StudentArticlePageProps) {
+export default async function StudentArticlePage({
+  params,
+}: StudentArticlePageProps) {
   const courseId = parseInt(params.courseId);
   const articleId = parseInt(params.articleId);
-  
+
   if (isNaN(courseId) || isNaN(articleId)) {
     notFound();
   }
@@ -20,7 +22,7 @@ export default async function StudentArticlePage({ params }: StudentArticlePageP
   const text = await textService(cookies());
   const [courseResult, articleResult] = await Promise.all([
     text.getCourse({ course_id: courseId }),
-    text.getArticle({ article_id: articleId })
+    text.getArticle({ article_id: articleId }),
   ]);
 
   if (!courseResult.success) {
@@ -55,7 +57,9 @@ export default async function StudentArticlePage({ params }: StudentArticlePageP
   const article = articleResult.data;
 
   // Get section info
-  const sectionResult = await text.getSection({ section_id: article.section_id });
+  const sectionResult = await text.getSection({
+    section_id: article.section_id,
+  });
   const section = sectionResult.success ? sectionResult.data : null;
 
   return (
@@ -75,13 +79,18 @@ export default async function StudentArticlePage({ params }: StudentArticlePageP
         <div className="mb-6">
           {/* Breadcrumb */}
           <div className="flex items-center gap-2 text-sm text-gray-500 mb-4">
-            <Link href={`/dashboard/courses/${courseId}`} className="hover:text-blue-600">
+            <Link
+              href={`/dashboard/courses/${courseId}`}
+              className="hover:text-blue-600"
+            >
               {course.title}
             </Link>
             {section && (
               <>
                 <span>/</span>
-                <span>Section {section.order}: {section.title}</span>
+                <span>
+                  Section {section.order}: {section.title}
+                </span>
               </>
             )}
             <span>/</span>
@@ -89,7 +98,7 @@ export default async function StudentArticlePage({ params }: StudentArticlePageP
           </div>
 
           <h1 className="text-3xl font-bold mb-4">{article.title}</h1>
-          
+
           <div className="flex items-center gap-6 text-sm text-gray-500">
             <div className="flex items-center gap-2">
               <BookOpen className="h-4 w-4" />
@@ -105,7 +114,9 @@ export default async function StudentArticlePage({ params }: StudentArticlePageP
             )}
             <div className="flex items-center gap-2">
               <Clock className="h-4 w-4" />
-              <span>Updated {new Date(article.updated_at).toLocaleDateString()}</span>
+              <span>
+                Updated {new Date(article.updated_at).toLocaleDateString()}
+              </span>
             </div>
           </div>
         </div>
@@ -115,25 +126,30 @@ export default async function StudentArticlePage({ params }: StudentArticlePageP
       <div className="bg-white rounded-lg border shadow-sm p-8">
         <div className="prose prose-lg max-w-none">
           {/* Format article content with proper paragraph breaks */}
-          {article.content.split('\n').map((paragraph, index) => (
+          {article.content.split('\n').map((paragraph, index) =>
             paragraph.trim() ? (
               <p key={index} className="mb-4 text-gray-700 leading-relaxed">
                 {paragraph.trim()}
               </p>
             ) : (
               <div key={index} className="mb-4"></div>
-            )
-          ))}
+            ),
+          )}
         </div>
 
         {/* Article Footer */}
         <div className="mt-8 pt-6 border-t">
           <div className="flex items-center justify-between">
             <div className="text-sm text-gray-500">
-              <div>Created: {new Date(article.created_at).toLocaleDateString()}</div>
-              <div>Last updated: {new Date(article.updated_at).toLocaleDateString()}</div>
+              <div>
+                Created: {new Date(article.created_at).toLocaleDateString()}
+              </div>
+              <div>
+                Last updated:{' '}
+                {new Date(article.updated_at).toLocaleDateString()}
+              </div>
             </div>
-            
+
             <Button asChild>
               <Link href={`/dashboard/courses/${courseId}`}>
                 Continue Learning

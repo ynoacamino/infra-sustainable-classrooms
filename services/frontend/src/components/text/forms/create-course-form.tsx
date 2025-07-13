@@ -7,7 +7,10 @@ import { z } from 'zod';
 import { InferItem } from '@/ui/infer-field';
 import { Button } from '@/ui/button';
 import { toast } from 'sonner';
-import { createCourseFormFields, createCourseFormSchema } from '@/lib/text/forms/create-course-form';
+import {
+  createCourseFormFields,
+  createCourseFormSchema,
+} from '@/lib/text/forms/create-course-form';
 import { createCourseAction } from '@/actions/text/actions';
 import { redirect } from 'next/navigation';
 

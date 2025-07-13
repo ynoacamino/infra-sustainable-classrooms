@@ -8,7 +8,10 @@ import { InferItem } from '@/ui/infer-field';
 import { Button } from '@/ui/button';
 import { verifyTotpAction } from '@/actions/auth/actions';
 import { toast } from 'sonner';
-import { registerTeacherFormFields, registerTeacherFormSchema } from '@/lib/profiles/forms/register-teacher-form';
+import {
+  registerTeacherFormFields,
+  registerTeacherFormSchema,
+} from '@/lib/profiles/forms/register-teacher-form';
 import { createTeacherProfileAction } from '@/actions/profiles/actions';
 import { redirect } from 'next/navigation';
 
@@ -16,7 +19,8 @@ function RegisterTeacherForm() {
   const form = useForm<z.infer<typeof registerTeacherFormSchema>>({
     resolver: zodResolver(registerTeacherFormSchema),
     defaultValues: {
-      avatar_url: 'https://ynoa-uploader.ynoacamino.site/uploads/1752353997_profile.webp',
+      avatar_url:
+        'https://ynoa-uploader.ynoacamino.site/uploads/1752353997_profile.webp',
       bio: '',
       email: '',
       first_name: '',
@@ -25,7 +29,9 @@ function RegisterTeacherForm() {
       position: '',
     },
   });
-  const onSubmit = async (values: z.infer<typeof registerTeacherFormSchema>) => {
+  const onSubmit = async (
+    values: z.infer<typeof registerTeacherFormSchema>,
+  ) => {
     const res = await createTeacherProfileAction(values);
     if (!res.success) {
       form.setError('root', { message: res.error.message });

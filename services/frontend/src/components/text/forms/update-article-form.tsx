@@ -7,7 +7,10 @@ import { z } from 'zod';
 import { InferItem } from '@/ui/infer-field';
 import { Button } from '@/ui/button';
 import { toast } from 'sonner';
-import { updateArticleFormFields, updateArticleFormSchema } from '@/lib/text/forms/update-article-form';
+import {
+  updateArticleFormFields,
+  updateArticleFormSchema,
+} from '@/lib/text/forms/update-article-form';
 import { updateArticleAction } from '@/actions/text/actions';
 import type { Article } from '@/types/text/models';
 import { redirect } from 'next/navigation';
@@ -35,7 +38,7 @@ function UpdateArticleForm({ article }: UpdateArticleFormProps) {
       return;
     }
     toast.success('Article updated successfully');
-    redirect(`/teacher/courses/`)
+    redirect(`/teacher/courses/`);
   };
 
   return (

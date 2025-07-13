@@ -8,7 +8,10 @@ import { InferItem } from '@/ui/infer-field';
 import { Button } from '@/ui/button';
 import { verifyTotpAction } from '@/actions/auth/actions';
 import { toast } from 'sonner';
-import { registerStudentFormFields, registerStudentFormSchema } from '@/lib/profiles/forms/register-student-form';
+import {
+  registerStudentFormFields,
+  registerStudentFormSchema,
+} from '@/lib/profiles/forms/register-student-form';
 import { createStudentProfileAction } from '@/actions/profiles/actions';
 import { redirect, RedirectType } from 'next/navigation';
 
@@ -16,7 +19,8 @@ function RegisterStudentForm() {
   const form = useForm<z.infer<typeof registerStudentFormSchema>>({
     resolver: zodResolver(registerStudentFormSchema),
     defaultValues: {
-      avatar_url: 'https://ynoa-uploader.ynoacamino.site/uploads/1752353997_profile.webp',
+      avatar_url:
+        'https://ynoa-uploader.ynoacamino.site/uploads/1752353997_profile.webp',
       bio: '',
       email: '',
       first_name: '',
@@ -26,7 +30,9 @@ function RegisterStudentForm() {
       major: '',
     },
   });
-  const onSubmit = async (values: z.infer<typeof registerStudentFormSchema>) => {
+  const onSubmit = async (
+    values: z.infer<typeof registerStudentFormSchema>,
+  ) => {
     const res = await createStudentProfileAction(values);
     if (!res.success) {
       form.setError('root', { message: res.error.message });

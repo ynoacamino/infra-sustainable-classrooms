@@ -1,10 +1,10 @@
-import { textService } from "@/services/text/service";
-import { cookies } from "next/headers";
-import Link from "next/link";
-import { Button } from "@/ui/button";
-import { UpdateCourseForm } from "@/components/text/forms";
-import { ArrowLeft } from "lucide-react";
-import { notFound } from "next/navigation";
+import { textService } from '@/services/text/service';
+import { cookies } from 'next/headers';
+import Link from 'next/link';
+import { Button } from '@/ui/button';
+import { UpdateCourseForm } from '@/components/text/forms';
+import { ArrowLeft } from 'lucide-react';
+import { notFound } from 'next/navigation';
 
 interface EditCoursePageProps {
   params: { courseId: string };
@@ -12,7 +12,7 @@ interface EditCoursePageProps {
 
 export default async function EditCoursePage({ params }: EditCoursePageProps) {
   const courseId = parseInt(params.courseId);
-  
+
   if (isNaN(courseId)) {
     notFound();
   }
