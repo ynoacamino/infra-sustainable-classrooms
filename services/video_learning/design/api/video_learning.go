@@ -55,7 +55,7 @@ var _ = Service("video_learning", func() {
 		Result(VideoList)
 
 		HTTP(func() {
-			POST("/search")
+			GET("/search")
 			Cookie("session_token:session")
 			Response(StatusOK)
 			Response("unauthorized", StatusUnauthorized)
@@ -83,7 +83,7 @@ var _ = Service("video_learning", func() {
 		Result(VideoList)
 
 		HTTP(func() {
-			POST("/recommendations")
+			GET("/recommendations")
 			Cookie("session_token:session")
 			Response(StatusOK)
 			Response("unauthorized", StatusUnauthorized)
@@ -143,7 +143,7 @@ var _ = Service("video_learning", func() {
 		Result(CommentList)
 
 		HTTP(func() {
-			POST("/comments")
+			GET("/comments")
 			Cookie("session_token:session")
 			Response(StatusOK)
 			Response("unauthorized", StatusUnauthorized)
@@ -364,7 +364,7 @@ var _ = Service("video_learning", func() {
 		Result(SimpleResponse)
 
 		HTTP(func() {
-			POST("/video/{video_id}/like")
+			PUT("/video/{video_id}/like")
 			Cookie("session_token:session")
 			Response(StatusOK)
 			Response("unauthorized", StatusUnauthorized)
