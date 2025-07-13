@@ -97,8 +97,3 @@ export const ArticleSchema = z.object({
       'Timestamp when the article was last updated (milliseconds since epoch)',
     ),
 });
-
-export const SimpleResponseSchema = z.object({
-  success: z.boolean().describe('Operation success status'),
-  message: z.string().describe('Response message'),
-});

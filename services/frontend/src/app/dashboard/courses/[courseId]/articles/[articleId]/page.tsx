@@ -2,7 +2,7 @@ import { textService } from '@/services/text/service';
 import { cookies } from 'next/headers';
 import Link from 'next/link';
 import { Button } from '@/ui/button';
-import { ArrowLeft, BookOpen, Clock, User } from 'lucide-react';
+import { ArrowLeft, BookOpen, Clock } from 'lucide-react';
 import { notFound } from 'next/navigation';
 
 interface StudentArticlePageProps {
@@ -21,8 +21,8 @@ export default async function StudentArticlePage({
 
   const text = await textService(cookies());
   const [courseResult, articleResult] = await Promise.all([
-    text.getCourse({ course_id: courseId }),
-    text.getArticle({ article_id: articleId }),
+    text.getCourse({ id: courseId }),
+    text.getArticle({ id: articleId }),
   ]);
 
   if (!courseResult.success) {
@@ -58,7 +58,7 @@ export default async function StudentArticlePage({
 
   // Get section info
   const sectionResult = await text.getSection({
-    section_id: article.section_id,
+    id: article.section_id,
   });
   const section = sectionResult.success ? sectionResult.data : null;
 

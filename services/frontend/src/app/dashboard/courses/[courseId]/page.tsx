@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Button } from '@/ui/button';
 import { ArrowLeft, BookOpen, FileText, ChevronRight } from 'lucide-react';
 import { notFound } from 'next/navigation';
+import Image from 'next/image';
 
 interface StudentCoursePageProps {
   params: { courseId: string };
@@ -20,7 +21,7 @@ export default async function StudentCoursePage({
 
   const text = await textService(cookies());
   const [courseResult, sectionsResult] = await Promise.all([
-    text.getCourse({ course_id: courseId }),
+    text.getCourse({ id: courseId }),
     text.listSections({ course_id: courseId }),
   ]);
 
@@ -84,9 +85,10 @@ export default async function StudentCoursePage({
           <div className="lg:col-span-1">
             <div className="aspect-video bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg overflow-hidden">
               {course.imageUrl ? (
-                <img
+                <Image
                   src={course.imageUrl}
                   alt={course.title}
+                  fill
                   className="w-full h-full object-cover"
                 />
               ) : (
@@ -131,14 +133,14 @@ export default async function StudentCoursePage({
             <BookOpen className="mx-auto h-12 w-12 text-gray-400 mb-4" />
             <h3 className="text-lg font-semibold mb-2">No content available</h3>
             <p className="text-gray-600">
-              This course doesn't have any sections yet.
+              This course doesn&apos;t have any sections yet.
             </p>
           </div>
         ) : (
           <div className="space-y-6">
             {sectionsWithArticles
               .sort((a, b) => a.order - b.order)
-              .map((section, sectionIndex) => (
+              .map((section) => (
                 <div
                   key={section.id}
                   className="bg-white rounded-lg border shadow-sm overflow-hidden"

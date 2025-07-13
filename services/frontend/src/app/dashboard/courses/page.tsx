@@ -3,10 +3,11 @@ import { cookies } from 'next/headers';
 import Link from 'next/link';
 import { Button } from '@/ui/button';
 import { BookOpen, Clock, ChevronRight } from 'lucide-react';
+import Image from 'next/image';
 
 export default async function CoursesPage() {
   const text = await textService(cookies());
-  const coursesResult = await text.listCourses({});
+  const coursesResult = await text.listCourses();
 
   if (!coursesResult.success) {
     return (
@@ -46,9 +47,10 @@ export default async function CoursesPage() {
               {/* Course Image */}
               <div className="aspect-video bg-gradient-to-br from-blue-500 to-purple-600 relative">
                 {course.imageUrl ? (
-                  <img
+                  <Image
                     src={course.imageUrl}
                     alt={course.title}
+                    fill
                     className="w-full h-full object-cover"
                   />
                 ) : (
