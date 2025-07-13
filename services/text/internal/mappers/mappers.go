@@ -61,11 +61,12 @@ func ArticleDBToAPI(article *textdb.Article) *text.Article {
 	}
 
 	apiArticle := &text.Article{
-		ID:          article.ID,
-		Title:       article.Title,
-		Content:     article.Content,
-		CreatedAt:   timestampToMillis(article.CreatedAt),
-		UpdatedAt:   timestampToMillis(article.UpdatedAt),
+		ID:        article.ID,
+		SectionID: article.SectionID,
+		Title:     article.Title,
+		Content:   article.Content,
+		CreatedAt: timestampToMillis(article.CreatedAt),
+		UpdatedAt: timestampToMillis(article.UpdatedAt),
 	}
 
 	return apiArticle

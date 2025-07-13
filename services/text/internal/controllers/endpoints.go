@@ -112,15 +112,26 @@ func (s *textsrvc) UpdateCourse(ctx context.Context, payload *text.UpdateCourseP
 		return nil, text.PermissionDenied("Only teachers can create courses")
 	}
 
-	err = s.courseRepo.UpdateCourse(ctx, textdb.UpdateCourseParams{
-		ID:          payload.CourseID,
-		Title:       *payload.Title,
-		Description: *payload.Description,
-		ImageUrl: pgtype.Text{
+	updateParams := textdb.UpdateCourseParams{
+		ID: payload.CourseID,
+	}
+
+	if payload.Title != nil {
+		updateParams.Title = *payload.Title
+	}
+
+	if payload.Description != nil {
+		updateParams.Description = *payload.Description
+	}
+
+	if payload.ImageURL != nil {
+		updateParams.ImageUrl = pgtype.Text{
 			String: *payload.ImageURL,
-			Valid:  payload.ImageURL != nil,
-		},
-	})
+			Valid:  true,
+		}
+	}
+
+	err = s.courseRepo.UpdateCourse(ctx, updateParams)
 	if err != nil {
 		return nil, text.InvalidInput("Failed to update course: " + err.Error())
 	}
