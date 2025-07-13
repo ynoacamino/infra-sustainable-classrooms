@@ -10,7 +10,11 @@ import (
 type UserCategoryLikeRepository interface {
 	// User category like operations
 	IncrementUserCategoryLike(ctx context.Context, params videolearningdb.IncrementUserCategoryLikeParams) error
+	UpsertUserCategoryLike(ctx context.Context, params videolearningdb.UpsertUserCategoryLikeParams) error
 	DeleteAllUserCategoryLikes(ctx context.Context, userID int64) error
 	GetUserCategoryLikes(ctx context.Context, userID int64) ([]videolearningdb.GetUserCategoryLikesRow, error)
+
+	// User video like operations
 	GetUserVideoLike(ctx context.Context, params videolearningdb.GetUserVideoLikeParams) (videolearningdb.UserVideoLike, error)
+	UpsertUserVideoLike(ctx context.Context, params videolearningdb.UpsertUserVideoLikeParams) error
 }

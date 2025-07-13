@@ -8,12 +8,14 @@ import (
 	"os/signal"
 	"sync"
 	"syscall"
+	"time"
 
 	"github.com/ynoacamino/infra-sustainable-classrooms/services/video_learning/config"
 	videolearning "github.com/ynoacamino/infra-sustainable-classrooms/services/video_learning/gen/video_learning"
 	"github.com/ynoacamino/infra-sustainable-classrooms/services/video_learning/internal/connections"
 	videolearningapi "github.com/ynoacamino/infra-sustainable-classrooms/services/video_learning/internal/controllers"
 	"github.com/ynoacamino/infra-sustainable-classrooms/services/video_learning/internal/repositories"
+	"github.com/ynoacamino/infra-sustainable-classrooms/services/video_learning/internal/services"
 	"goa.design/clue/debug"
 	"goa.design/clue/log"
 )
@@ -61,6 +63,14 @@ func main() {
 	// Initialize repository manager
 	reposManager := repositories.NewRepositoryManager(pool, grpccoon, redisClient, minioClient)
 	defer reposManager.Close()
+	// Initialize aggregation service for periodic cache-to-database sync
+	aggregationService := services.NewAggregationService(cfg.Ctx, reposManager)
+
+	// Start aggregation service with configured interval
+	aggregationInterval := time.Duration(cfg.AggregationIntervalSeconds) * time.Second
+	log.Printf(ctx, "Starting aggregation service with interval: %v", aggregationInterval)
+	aggregationService.Start(aggregationInterval)
+	defer aggregationService.Stop()
 
 	// Initialize service with repository manager
 	var videoLearningSvc videolearning.Service = videolearningapi.NewVideoLearning(reposManager)
