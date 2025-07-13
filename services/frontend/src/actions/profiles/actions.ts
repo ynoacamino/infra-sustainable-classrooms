@@ -2,30 +2,27 @@
 
 import { profilesService } from '@/services/profiles/service';
 import type {
-  CreateStudentProfilePayloadSchema,
-  CreateTeacherProfilePayloadSchema,
-  UpdateProfilePayloadSchema,
-} from '@/types/profiles/schemas/payload';
+  CreateStudentProfilePayload,
+  CreateTeacherProfilePayload,
+  UpdateProfilePayload,
+} from '@/types/profiles/payload';
 import { cookies } from 'next/headers';
-import type z from 'zod';
 
 export async function createTeacherProfileAction(
-  payload: z.infer<typeof CreateTeacherProfilePayloadSchema>,
+  payload: CreateTeacherProfilePayload,
 ) {
   const profiles = await profilesService(cookies());
   return profiles.createTeacherProfile(payload);
 }
 
 export async function createStudentProfileAction(
-  payload: z.infer<typeof CreateStudentProfilePayloadSchema>,
+  payload: CreateStudentProfilePayload,
 ) {
   const profiles = await profilesService(cookies());
   return profiles.createStudentProfile(payload);
 }
 
-export async function updateProfileAction(
-  payload: z.infer<typeof UpdateProfilePayloadSchema>,
-) {
+export async function updateProfileAction(payload: UpdateProfilePayload) {
   const profiles = await profilesService(cookies());
   return profiles.updateProfile(payload);
 }
