@@ -82,10 +82,22 @@ var QuestionResult = Type("QuestionResult", func() {
 })
 
 // === RESPONSE TYPES ===
+var TestResponse = Type("TestResponse", func() {
+	Description("Single test response")
+	Field(1, "test", Test, "Test information")
+	Required("test")
+})
+
 var TestsResponse = Type("TestsResponse", func() {
 	Description("List of tests")
 	Field(1, "tests", ArrayOf(Test), "Tests")
 	Required("tests")
+})
+
+var QuestionResponse = Type("QuestionResponse", func() {
+	Description("Single question response")
+	Field(1, "question", Question, "Question information")
+	Required("question")
 })
 
 var QuestionsResponse = Type("QuestionsResponse", func() {
@@ -99,6 +111,12 @@ var FormResponse = Type("FormResponse", func() {
 	Field(1, "test", Test, "Test info")
 	Field(2, "questions", ArrayOf(QuestionForm), "Questions")
 	Required("test", "questions")
+})
+
+var SubmissionResponse = Type("SubmissionResponse", func() {
+	Description("Single submission response")
+	Field(1, "submission", Submission, "Submission information")
+	Required("submission")
 })
 
 var SubmissionsResponse = Type("SubmissionsResponse", func() {

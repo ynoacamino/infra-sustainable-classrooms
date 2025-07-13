@@ -2,35 +2,34 @@
 
 import { knowledgeService } from '@/services/knowledge/service';
 import type {
-  CreateTestPayloadSchema,
-  UpdateTestPayloadSchema,
-  DeleteTestPayloadSchema,
-  AddQuestionPayloadSchema,
-  UpdateQuestionPayloadSchema,
-  DeleteQuestionPayloadSchema,
-  SubmitTestPayloadSchema,
-} from '@/types/knowledge/schemas/payload';
+  AddQuestionPayload,
+  CreateTestPayload,
+  DeleteQuestionPayload,
+  DeleteTestPayload,
+  GetSubmissionResultPayload,
+  GetTestFormPayload,
+  GetTestPayload,
+  GetTestQuestionsPayload,
+  SubmitTestPayload,
+  UpdateQuestionPayload,
+  UpdateTestPayload,
+} from '@/types/knowledge/payload';
 import { cookies } from 'next/headers';
-import type z from 'zod';
 
 // === TEST ACTIONS (Teacher) ===
-export async function createTestAction(
-  payload: z.infer<typeof CreateTestPayloadSchema>,
-) {
+export async function createTestAction(payload: CreateTestPayload) {
   const knowledge = await knowledgeService(cookies());
   return knowledge.createTest(payload);
 }
 
-export async function updateTestAction(
-  payload: z.infer<typeof UpdateTestPayloadSchema>,
-) {
+export async function updateTestAction(payload: UpdateTestPayload) {
   const knowledge = await knowledgeService(cookies());
   return knowledge.updateTest(payload);
 }
 
-export async function deleteTestAction(testId: number) {
+export async function deleteTestAction(payload: DeleteTestPayload) {
   const knowledge = await knowledgeService(cookies());
-  return knowledge.deleteTest({ test_id: testId });
+  return knowledge.deleteTest(payload);
 }
 
 export async function getMyTestsAction() {
@@ -38,34 +37,30 @@ export async function getMyTestsAction() {
   return knowledge.getMyTests();
 }
 
-export async function getTestAction(testId: number) {
+export async function getTestAction(payload: GetTestPayload) {
   const knowledge = await knowledgeService(cookies());
-  return knowledge.getTest(testId);
+  return knowledge.getTest(payload);
 }
 
 // === QUESTION ACTIONS (Teacher) ===
-export async function addQuestionAction(
-  payload: z.infer<typeof AddQuestionPayloadSchema>,
-) {
+export async function addQuestionAction(payload: AddQuestionPayload) {
   const knowledge = await knowledgeService(cookies());
   return knowledge.addQuestion(payload);
 }
 
-export async function updateQuestionAction(
-  payload: z.infer<typeof UpdateQuestionPayloadSchema>,
-) {
+export async function updateQuestionAction(payload: UpdateQuestionPayload) {
   const knowledge = await knowledgeService(cookies());
   return knowledge.updateQuestion(payload);
 }
 
-export async function deleteQuestionAction(testId: number, questionId: number) {
+export async function deleteQuestionAction(payload: DeleteQuestionPayload) {
   const knowledge = await knowledgeService(cookies());
-  return knowledge.deleteQuestion({ test_id: testId, question_id: questionId });
+  return knowledge.deleteQuestion(payload);
 }
 
-export async function getTestQuestionsAction(testId: number) {
+export async function getTestQuestionsAction(payload: GetTestQuestionsPayload) {
   const knowledge = await knowledgeService(cookies());
-  return knowledge.getTestQuestions({ test_id: testId });
+  return knowledge.getTestQuestions(payload);
 }
 
 // === STUDENT ACTIONS ===
@@ -74,14 +69,12 @@ export async function getAvailableTestsAction() {
   return knowledge.getAvailableTests();
 }
 
-export async function getTestFormAction(testId: number) {
+export async function getTestFormAction(payload: GetTestFormPayload) {
   const knowledge = await knowledgeService(cookies());
-  return knowledge.getTestForm({ test_id: testId });
+  return knowledge.getTestForm(payload);
 }
 
-export async function submitTestAction(
-  payload: z.infer<typeof SubmitTestPayloadSchema>,
-) {
+export async function submitTestAction(payload: SubmitTestPayload) {
   const knowledge = await knowledgeService(cookies());
   return knowledge.submitTest(payload);
 }
@@ -91,7 +84,9 @@ export async function getMySubmissionsAction() {
   return knowledge.getMySubmissions();
 }
 
-export async function getSubmissionResultAction(submissionId: number) {
+export async function getSubmissionResultAction(
+  payload: GetSubmissionResultPayload,
+) {
   const knowledge = await knowledgeService(cookies());
-  return knowledge.getSubmissionResult({ submission_id: submissionId });
+  return knowledge.getSubmissionResult(payload);
 }

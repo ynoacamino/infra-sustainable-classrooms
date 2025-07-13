@@ -21,6 +21,8 @@ var _ = Service("knowledge", func() {
 	Error("invalid_input", String, "Invalid input")
 
 	// === TEACHER METHODS ===
+	// DONE in frontend
+	// NOT TESTED
 	Method("CreateTest", func() {
 		Description("Create a new test form")
 		Payload(func() {
@@ -38,6 +40,8 @@ var _ = Service("knowledge", func() {
 		})
 	})
 
+	// DONE in frontend
+	// NOT TESTED
 	Method("GetMyTests", func() {
 		Description("Get my created tests")
 		Payload(func() {
@@ -53,6 +57,27 @@ var _ = Service("knowledge", func() {
 		})
 	})
 
+	// DONE in frontend
+	// NOT TESTED
+	Method("GetTestById", func() {
+		Description("Get a test by ID")
+		Payload(func() {
+			Field(1, "session_token", String, "Session token")
+			Field(2, "test_id", Int64, "Test ID")
+			Required("session_token", "test_id")
+		})
+		Result(TestResponse)
+		HTTP(func() {
+			GET("/tests/{test_id}")
+			Cookie("session_token:session")
+			Response(StatusOK)
+			Response("unauthorized", StatusUnauthorized)
+			Response("test_not_found", StatusNotFound)
+		})
+	})
+
+	// DONE in frontend
+	// NOT TESTED
 	Method("UpdateTest", func() {
 		Description("Update test title")
 		Payload(func() {
@@ -71,6 +96,8 @@ var _ = Service("knowledge", func() {
 		})
 	})
 
+	// DONE in frontend
+	// NOT TESTED
 	Method("DeleteTest", func() {
 		Description("Delete a test")
 		Payload(func() {
@@ -88,6 +115,8 @@ var _ = Service("knowledge", func() {
 		})
 	})
 
+	// DONE in frontend
+	// NOT TESTED
 	Method("GetTestQuestions", func() {
 		Description("Get questions for a test")
 		Payload(func() {
@@ -105,6 +134,8 @@ var _ = Service("knowledge", func() {
 		})
 	})
 
+	// DONE in frontend
+	// NOT TESTED
 	Method("AddQuestion", func() {
 		Description("Add a question to a test")
 		Payload(func() {
@@ -129,6 +160,29 @@ var _ = Service("knowledge", func() {
 		})
 	})
 
+	// DONE in frontend
+	// NOT TESTED
+	Method("GetQuestionById", func() {
+		Description("Get a question by ID")
+		Payload(func() {
+			Field(1, "session_token", String, "Session token")
+			Field(2, "test_id", Int64, "Test ID")
+			Field(3, "question_id", Int64, "Question ID")
+			Required("session_token", "test_id", "question_id")
+		})
+		Result(QuestionResponse)
+		HTTP(func() {
+			GET("/tests/{test_id}/questions/{question_id}")
+			Cookie("session_token:session")
+			Response(StatusOK)
+			Response("unauthorized", StatusUnauthorized)
+			Response("test_not_found", StatusNotFound)
+			Response("question_not_found", StatusNotFound)
+		})
+	})
+
+	// DONE in frontend
+	// NOT TESTED
 	Method("UpdateQuestion", func() {
 		Description("Update a question")
 		Payload(func() {
@@ -154,6 +208,8 @@ var _ = Service("knowledge", func() {
 		})
 	})
 
+	// DONE in frontend
+	// NOT TESTED
 	Method("DeleteQuestion", func() {
 		Description("Delete a question")
 		Payload(func() {
@@ -174,6 +230,8 @@ var _ = Service("knowledge", func() {
 	})
 
 	// === STUDENT METHODS ===
+	// DONE in frontend
+	// NOT TESTED
 	Method("GetAvailableTests", func() {
 		Description("Get available tests for students")
 		Payload(func() {
@@ -189,6 +247,8 @@ var _ = Service("knowledge", func() {
 		})
 	})
 
+	// DONE in frontend
+	// NOT TESTED
 	Method("GetTestForm", func() {
 		Description("Get test form for taking")
 		Payload(func() {
@@ -207,6 +267,8 @@ var _ = Service("knowledge", func() {
 		})
 	})
 
+	// DONE in frontend
+	// NOT TESTED
 	Method("SubmitTest", func() {
 		Description("Submit test answers")
 		Payload(func() {
@@ -227,6 +289,8 @@ var _ = Service("knowledge", func() {
 		})
 	})
 
+	// DONE in frontend
+	// NOT TESTED
 	Method("GetMySubmissions", func() {
 		Description("Get my test submissions")
 		Payload(func() {
@@ -239,6 +303,25 @@ var _ = Service("knowledge", func() {
 			Cookie("session_token:session")
 			Response(StatusOK)
 			Response("unauthorized", StatusUnauthorized)
+		})
+	})
+
+	// DONE in frontend
+	// NOT TESTED
+	Method("GetSubmissionById", func() {
+		Description("Get a submission by ID")
+		Payload(func() {
+			Field(1, "session_token", String, "Session token")
+			Field(2, "submission_id", Int64, "Submission ID")
+			Required("session_token", "submission_id")
+		})
+		Result(SubmissionResponse)
+		HTTP(func() {
+			GET("/submissions/{submission_id}")
+			Cookie("session_token:session")
+			Response(StatusOK)
+			Response("unauthorized", StatusUnauthorized)
+			Response("submission_not_found", StatusNotFound)
 		})
 	})
 

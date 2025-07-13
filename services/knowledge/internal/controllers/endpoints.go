@@ -630,3 +630,152 @@ func (s *knowledgesvrc) GetSubmissionResult(ctx context.Context, payload *knowle
 		Questions: questionResults,
 	}, nil
 }
+
+// GetTestByID retrieves a test by its ID
+func (s *knowledgesvrc) GetTestByID(ctx context.Context, payload *knowledge.GetTestByIDPayload) (res *knowledge.TestResponse, err error) {
+	profile, err := s.profilesServiceRepo.GetCompleteProfile(ctx, &profiles.GetCompleteProfilePayload{
+		SessionToken: payload.SessionToken,
+	})
+	if err != nil {
+		return nil, knowledge.Unauthorized("Failed to retrieve user profile: " + err.Error())
+	}
+
+	test, err := s.testRepo.GetTestById(ctx, payload.TestID)
+	if err != nil {
+		return nil, knowledge.TestNotFound("Test not found")
+	}
+
+	// For students, they can only see tests they haven't submitted
+	if profile.Role == "student" {
+		hasSubmitted, err := s.submissionRepo.CheckUserCompletedTest(ctx, knowledgedb.CheckUserCompletedTestParams{
+			UserID: profile.UserID,
+			TestID: payload.TestID,
+		})
+		if err != nil {
+			return nil, knowledge.InvalidInput("Failed to check submission status: " + err.Error())
+		}
+		if hasSubmitted {
+			return nil, knowledge.TestAlreadySubmitted("Test already submitted")
+		}
+	}
+
+	// For teachers, they can only see their own tests
+	if profile.Role == "teacher" && test.CreatedBy != profile.UserID {
+		return nil, knowledge.Unauthorized("Access denied: You can only view your own tests")
+	}
+
+	return &knowledge.TestResponse{
+		Test: &knowledge.Test{
+			ID:        test.ID,
+			Title:     test.Title,
+			CreatedBy: test.CreatedBy,
+			CreatedAt: test.CreatedAt.Time.Unix(),
+		},
+	}, nil
+}
+
+// GetQuestionByID retrieves a question by its ID
+func (s *knowledgesvrc) GetQuestionByID(ctx context.Context, payload *knowledge.GetQuestionByIDPayload) (res *knowledge.QuestionResponse, err error) {
+	profile, err := s.profilesServiceRepo.GetCompleteProfile(ctx, &profiles.GetCompleteProfilePayload{
+		SessionToken: payload.SessionToken,
+	})
+	if err != nil {
+		return nil, knowledge.Unauthorized("Failed to retrieve user profile: " + err.Error())
+	}
+
+	// First verify the test exists and user has access
+	test, err := s.testRepo.GetTestById(ctx, payload.TestID)
+	if err != nil {
+		return nil, knowledge.TestNotFound("Test not found")
+	}
+
+	// For teachers, they can only see questions from their own tests
+	if profile.Role == "teacher" && test.CreatedBy != profile.UserID {
+		return nil, knowledge.Unauthorized("Access denied: You can only view questions from your own tests")
+	}
+
+	// For students, they can only see questions from tests they haven't submitted
+	if profile.Role == "student" {
+		hasSubmitted, err := s.submissionRepo.CheckUserCompletedTest(ctx, knowledgedb.CheckUserCompletedTestParams{
+			UserID: profile.UserID,
+			TestID: payload.TestID,
+		})
+		if err != nil {
+			return nil, knowledge.InvalidInput("Failed to check submission status: " + err.Error())
+		}
+		if hasSubmitted {
+			return nil, knowledge.TestAlreadySubmitted("Test already submitted")
+		}
+	}
+
+	question, err := s.questionRepo.GetQuestionById(ctx, payload.QuestionID)
+	if err != nil {
+		return nil, knowledge.QuestionNotFound("Question not found")
+	}
+
+	// Verify the question belongs to the specified test
+	if question.TestID != payload.TestID {
+		return nil, knowledge.QuestionNotFound("Question not found in the specified test")
+	}
+
+	return &knowledge.QuestionResponse{
+		Question: &knowledge.Question{
+			ID:            question.ID,
+			TestID:        question.TestID,
+			QuestionText:  question.QuestionText,
+			OptionA:       question.OptionA,
+			OptionB:       question.OptionB,
+			OptionC:       question.OptionC,
+			OptionD:       question.OptionD,
+			CorrectAnswer: int(question.CorrectAnswer),
+			QuestionOrder: int(question.QuestionOrder),
+		},
+	}, nil
+}
+
+// GetSubmissionByID retrieves a submission by its ID
+func (s *knowledgesvrc) GetSubmissionByID(ctx context.Context, payload *knowledge.GetSubmissionByIDPayload) (res *knowledge.SubmissionResponse, err error) {
+	profile, err := s.profilesServiceRepo.GetCompleteProfile(ctx, &profiles.GetCompleteProfilePayload{
+		SessionToken: payload.SessionToken,
+	})
+	if err != nil {
+		return nil, knowledge.Unauthorized("Failed to retrieve user profile: " + err.Error())
+	}
+
+	submission, err := s.submissionRepo.GetSubmissionById(ctx, payload.SubmissionID)
+	if err != nil {
+		return nil, knowledge.SubmissionNotFound("Submission not found")
+	}
+
+	// Get the test to check ownership permissions
+	test, err := s.testRepo.GetTestById(ctx, submission.TestID)
+	if err != nil {
+		return nil, knowledge.TestNotFound("Associated test not found")
+	}
+
+	// Check access permissions
+	if profile.Role == "student" {
+		// Students can only see their own submissions
+		if submission.UserID != profile.UserID {
+			return nil, knowledge.Unauthorized("Access denied: You can only view your own submissions")
+		}
+	} else if profile.Role == "teacher" {
+		// Teachers can see submissions for their own tests or their own submissions
+		if test.CreatedBy != profile.UserID && submission.UserID != profile.UserID {
+			return nil, knowledge.Unauthorized("Access denied: You can only view submissions for your own tests")
+		}
+	}
+
+	// Calculate score
+	score := s.PgNumericToFloat64(submission.Score)
+
+	return &knowledge.SubmissionResponse{
+		Submission: &knowledge.Submission{
+			ID:          submission.ID,
+			TestID:      submission.TestID,
+			TestTitle:   test.Title,
+			Score:       score,
+			SubmittedAt: submission.SubmittedAt.Time.Unix(),
+		},
+	}, nil
+}
