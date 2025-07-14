@@ -19,7 +19,6 @@ var Video = Type("Video", func() {
 })
 
 // VideoDetails type for complete video information
-// DOUBT: Should we set category as VideoCategory id and tags as VideoTag ids?
 var VideoDetails = Type("VideoDetails", func() {
 	Description("Complete video information")
 
@@ -32,10 +31,10 @@ var VideoDetails = Type("VideoDetails", func() {
 	Field(7, "video_url", String, "Minio presigned URL for video")
 	Field(8, "thumbnail_url", String, "Minio presigned URL for thumbnail")
 	Field(9, "upload_date", Int64, "Upload timestamp in milliseconds")
-	Field(10, "category", String, "Video category")
-	Field(11, "tags", ArrayOf(String), "Video tags")
+	Field(10, "category_id", Int64, "Video category")
+	Field(11, "tag_ids", ArrayOf(Int64), "Video tags")
 
-	Required("id", "title", "description", "author", "views", "likes", "video_url", "thumbnail_url", "upload_date", "category", "tags")
+	Required("id", "title", "description", "author", "views", "likes", "video_url", "thumbnail_url", "upload_date", "category_id", "tag_ids")
 })
 
 // OwnVideo type for user's own videos
@@ -53,7 +52,6 @@ var OwnVideo = Type("OwnVideo", func() {
 })
 
 // Comment type for video comments
-// DOUBT: May have video_id field to link comments to videos
 var Comment = Type("Comment", func() {
 	Description("Video comment information")
 
@@ -62,8 +60,9 @@ var Comment = Type("Comment", func() {
 	Field(3, "date", Int64, "Comment publish date in milliseconds")
 	Field(4, "title", String, "Comment title")
 	Field(5, "body", String, "Comment content")
+	Field(6, "video_id", Int64, "ID of the video this comment belongs to")
 
-	Required("id", "author", "date", "title", "body")
+	Required("id", "author", "date", "title", "body", "video_id")
 })
 
 // VideoCategory type for video categories
