@@ -1,8 +1,7 @@
 import { getMyTestsAction } from '@/actions/knowledge/actions';
 import Link from 'next/link';
 import { Button } from '@/ui/button';
-import { Plus, Edit, Trash2, Eye, FileText } from 'lucide-react';
-import { notFound } from 'next/navigation';
+import { Plus, Edit, Eye, FileText } from 'lucide-react';
 
 export default async function TestsPage() {
   const testsResult = await getMyTestsAction();
@@ -66,7 +65,10 @@ export default async function TestsPage() {
 
               <div className="space-y-2 text-sm text-gray-600 mb-4">
                 <p>Questions: {test.question_count || 0}</p>
-                <p>Created: {new Date(test.created_at * 1000).toLocaleDateString()}</p>
+                <p>
+                  Created:{' '}
+                  {new Date(test.created_at * 1000).toLocaleDateString()}
+                </p>
               </div>
 
               <div className="flex gap-2">

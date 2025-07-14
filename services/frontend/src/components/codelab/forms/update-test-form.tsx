@@ -30,7 +30,7 @@ function UpdateTestForm({ test, onSuccess }: UpdateTestFormProps) {
   });
 
   const onSubmit = async (values: z.infer<typeof updateTestFormSchema>) => {
-    const res = await updateTestAction(test.id, values);
+    const res = await updateTestAction({ id: test.id, test: values });
     if (!res.success) {
       form.setError('root', { message: res.error.message });
       console.error(res.error);

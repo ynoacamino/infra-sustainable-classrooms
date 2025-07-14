@@ -17,7 +17,7 @@ export default async function TakeTestPage({ params }: TakeTestPageProps) {
     notFound();
   }
 
-  const testFormResult = await getTestFormAction(testId);
+  const testFormResult = await getTestFormAction({ id: testId });
 
   if (!testFormResult.success) {
     if (testFormResult.error.status === 404) {
@@ -46,7 +46,9 @@ export default async function TakeTestPage({ params }: TakeTestPageProps) {
         </Button>
         <div>
           <h1 className="text-3xl font-bold">{test.title}</h1>
-          <p className="text-gray-600 mt-2">Take your time and answer all questions</p>
+          <p className="text-gray-600 mt-2">
+            Take your time and answer all questions
+          </p>
         </div>
       </div>
 
@@ -60,22 +62,30 @@ export default async function TakeTestPage({ params }: TakeTestPageProps) {
           </div>
           <div className="flex items-center">
             <Clock className="h-5 w-5 mr-2 text-blue-600" />
-            <span className="text-blue-800 font-medium">
-              No time limit
-            </span>
+            <span className="text-blue-800 font-medium">No time limit</span>
           </div>
         </div>
         <p className="text-blue-700 text-sm mb-2">
-          Read each question carefully and select the best answer. You can review and change your answers before submitting.
+          Read each question carefully and select the best answer. You can
+          review and change your answers before submitting.
         </p>
         <details className="text-blue-700 text-sm">
           <summary className="cursor-pointer hover:text-blue-800 font-medium">
             Keyboard shortcuts
           </summary>
           <div className="mt-2 space-y-1 text-xs bg-blue-100 p-2 rounded">
-            <div><kbd className="px-1 py-0.5 bg-white rounded border">←</kbd> Previous question</div>
-            <div><kbd className="px-1 py-0.5 bg-white rounded border">→</kbd> Next question</div>
-            <div><kbd className="px-1 py-0.5 bg-white rounded border">1-4</kbd> Select answer A-D</div>
+            <div>
+              <kbd className="px-1 py-0.5 bg-white rounded border">←</kbd>{' '}
+              Previous question
+            </div>
+            <div>
+              <kbd className="px-1 py-0.5 bg-white rounded border">→</kbd> Next
+              question
+            </div>
+            <div>
+              <kbd className="px-1 py-0.5 bg-white rounded border">1-4</kbd>{' '}
+              Select answer A-D
+            </div>
           </div>
         </details>
       </div>

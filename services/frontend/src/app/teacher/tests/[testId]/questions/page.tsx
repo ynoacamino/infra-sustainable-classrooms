@@ -4,7 +4,7 @@ import {
 } from '@/actions/knowledge/actions';
 import Link from 'next/link';
 import { Button } from '@/ui/button';
-import { ArrowLeft, Plus, Edit, Trash2, FileText } from 'lucide-react';
+import { ArrowLeft, Plus, Edit, FileText } from 'lucide-react';
 import { notFound } from 'next/navigation';
 import { DeleteQuestionButton } from '@/components/knowledge/delete-question-button';
 
@@ -22,8 +22,8 @@ export default async function QuestionsPage({ params }: QuestionsPageProps) {
 
   // Get test details and questions in parallel
   const [testResult, questionsResult] = await Promise.all([
-    getTestAction(testId),
-    getTestQuestionsAction(testId),
+    getTestAction({ id: testId }),
+    getTestQuestionsAction({ id: testId }),
   ]);
 
   if (!testResult.success) {
@@ -51,7 +51,7 @@ export default async function QuestionsPage({ params }: QuestionsPageProps) {
     );
   }
 
-  const test = testResult.data;
+  const test = testResult.data.test;
   const questions = questionsResult.data.questions;
 
   return (
@@ -65,7 +65,9 @@ export default async function QuestionsPage({ params }: QuestionsPageProps) {
             </Link>
           </Button>
           <div>
-            <h1 className="text-3xl font-bold">Questions for "{test.title}"</h1>
+            <h1 className="text-3xl font-bold">
+              Questions for &ldquo;{test.title}&rdquo;
+            </h1>
             <p className="text-gray-600 mt-2">Manage test questions</p>
           </div>
         </div>

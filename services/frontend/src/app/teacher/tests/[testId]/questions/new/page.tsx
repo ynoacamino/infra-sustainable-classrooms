@@ -19,7 +19,7 @@ export default async function NewQuestionPage({
     notFound();
   }
 
-  const testResult = await getTestAction(testId);
+  const testResult = await getTestAction({ id: testId });
 
   if (!testResult.success) {
     if (testResult.error.status === 404) {
@@ -49,7 +49,7 @@ export default async function NewQuestionPage({
         <div>
           <h1 className="text-3xl font-bold">Add Question</h1>
           <p className="text-gray-600 mt-2">
-            Add a new question to "{test.title}"
+            Add a new question to &ldquo;{test.test.title}&rdquo;
           </p>
         </div>
       </div>

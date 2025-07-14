@@ -1,27 +1,27 @@
-import { notFound } from 'next/navigation'
-import { getExercise } from '@/actions/codelab/actions'
-import { CreateTestForm } from '@/components/codelab/forms/create-test-form'
+import { notFound } from 'next/navigation';
+import { getExercise } from '@/actions/codelab/actions';
+import { CreateTestForm } from '@/components/codelab/forms/create-test-form';
 
 interface NewTestPageProps {
   params: Promise<{
-    exerciseId: string
-  }>
+    exerciseId: string;
+  }>;
 }
 
 export default async function NewTestPage({ params }: NewTestPageProps) {
-  const exerciseId = parseInt((await params).exerciseId)
-  
+  const exerciseId = parseInt((await params).exerciseId);
+
   if (isNaN(exerciseId)) {
-    notFound()
+    notFound();
   }
 
-  const exerciseResult = await getExercise(exerciseId)
-  
+  const exerciseResult = await getExercise({ id: exerciseId });
+
   if (!exerciseResult?.success) {
-    notFound()
+    notFound();
   }
 
-  const exercise = exerciseResult.data
+  const exercise = exerciseResult.data;
 
   return (
     <div className="container mx-auto py-8">
@@ -32,9 +32,9 @@ export default async function NewTestPage({ params }: NewTestPageProps) {
             Add a test case for: {exercise.title}
           </p>
         </div>
-        
+
         <CreateTestForm exerciseId={exerciseId} />
       </div>
     </div>
-  )
+  );
 }

@@ -9,22 +9,18 @@ import type { QuestionForm, Test } from '@/types/knowledge/models';
 import { submitTestAction } from '@/actions/knowledge/actions';
 import { redirect } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { z } from 'zod';
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogDescription, 
-  DialogFooter, 
-  DialogHeader, 
-  DialogTitle, 
-  DialogTrigger 
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
 } from '@/ui/dialog';
 import { AlertTriangle } from 'lucide-react';
-
-// Simple schema for the test form
-const submitTestFormSchema = z.object({
-  test_id: z.number(),
-}).passthrough(); // Allow additional fields for questions
+import { createSubmitTestFormSchema } from '@/lib/knowledge/forms/submit-test-form';
+import type z from 'zod';
 
 interface SubmitTestFormProps {
   test: Test;
@@ -35,29 +31,35 @@ function SubmitTestForm({ test, questions }: SubmitTestFormProps) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
+  const submitTestFormSchema = createSubmitTestFormSchema(questions);
+
   // Create dynamic default values
   const defaultValues = questions.reduce(
     (acc, question) => ({
       ...acc,
       [`question_${question.id}`]: '',
     }),
-    { test_id: test.id },
+    { id: test.id },
   );
 
-  const form = useForm<any>({
+  const form = useForm<z.infer<typeof submitTestFormSchema>>({
     resolver: zodResolver(submitTestFormSchema),
     defaultValues,
   });
 
-  const onSubmit = async (values: any) => {
+  const onSubmit = async (values: z.infer<typeof submitTestFormSchema>) => {
     // Validate that all questions are answered
     const unansweredQuestions = questions.filter(
-      (question) => !values[`question_${question.id}`] || values[`question_${question.id}`] === ''
+      (question) =>
+        !values.answers[`question_${question.id}`] ||
+        values.answers[`question_${question.id}`] === '',
     );
 
     if (unansweredQuestions.length > 0) {
-      toast.error(`Please answer all questions. ${unansweredQuestions.length} questions remaining.`);
+      toast.error(
+        `Please answer all questions. ${unansweredQuestions.length} questions remaining.`,
+      );
       return;
     }
 
@@ -71,15 +73,18 @@ function SubmitTestForm({ test, questions }: SubmitTestFormProps) {
 
     try {
       const values = form.getValues();
-      
+
       // Transform form values to the expected format
       const answers = questions.map((question) => ({
         question_id: question.id,
-        selected_answer: parseInt(values[`question_${question.id}`], 10),
+        selected_answer: parseInt(
+          values.answers[`question_${question.id}`],
+          10,
+        ),
       }));
 
       const payload = {
-        test_id: test.id,
+        id: test.id,
         answers,
       };
 
@@ -90,7 +95,7 @@ function SubmitTestForm({ test, questions }: SubmitTestFormProps) {
         toast.error(res.error.message);
         return;
       }
-      
+
       toast.success('Test submitted successfully!');
       clearProgress(); // Clear saved progress
       redirect('/dashboard/tests');
@@ -99,9 +104,7 @@ function SubmitTestForm({ test, questions }: SubmitTestFormProps) {
     }
   };
 
-  console.log({questions})
   const currentQuestion = questions[currentQuestionIndex];
-  console.log('Current Question:', currentQuestion);
   const totalQuestions = questions.length;
 
   const goToNextQuestion = () => {
@@ -121,46 +124,57 @@ function SubmitTestForm({ test, questions }: SubmitTestFormProps) {
   };
 
   // Calculate answered questions count
-  const answeredCount = questions.filter(q => form.watch(`question_${q.id}`) !== '').length;
+  const answeredCount = questions.filter(
+    (q) => form.watch(`answers.question_${q.id}`) !== '',
+  ).length;
 
   // Auto-save progress to localStorage (could be extended to backend)
   useEffect(() => {
     const values = form.getValues();
     const progressKey = `test_progress_${test.id}`;
-    
+
     // Save progress to localStorage
     try {
-      localStorage.setItem(progressKey, JSON.stringify({
-        values,
-        currentQuestionIndex,
-        timestamp: Date.now()
-      }));
+      localStorage.setItem(
+        progressKey,
+        JSON.stringify({
+          values,
+          currentQuestionIndex,
+          timestamp: Date.now(),
+        }),
+      );
     } catch (error) {
       console.warn('Failed to save progress to localStorage:', error);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.watch(), currentQuestionIndex, test.id]);
 
   // Load saved progress on mount
   useEffect(() => {
     const progressKey = `test_progress_${test.id}`;
-    
+
     try {
       const savedProgress = localStorage.getItem(progressKey);
       if (savedProgress) {
-        const { values, currentQuestionIndex: savedIndex, timestamp } = JSON.parse(savedProgress);
-        
+        const {
+          values,
+          currentQuestionIndex: savedIndex,
+          timestamp,
+        } = JSON.parse(savedProgress);
+
         // Only restore if saved within last 24 hours
         if (Date.now() - timestamp < 24 * 60 * 60 * 1000) {
           // Restore form values
+          form.setValue('id', values.id);
           Object.entries(values).forEach(([key, value]) => {
             if (key.startsWith('question_')) {
-              form.setValue(key, value as string);
+              form.setValue(`answers.${key}`, value as string);
             }
           });
-          
+
           // Restore current question index
           setCurrentQuestionIndex(savedIndex || 0);
-          
+
           toast.info('Restored your previous progress');
         } else {
           // Clear old progress
@@ -170,7 +184,7 @@ function SubmitTestForm({ test, questions }: SubmitTestFormProps) {
     } catch (error) {
       console.warn('Failed to load progress from localStorage:', error);
     }
-  }, []);
+  }, [form, test.id]);
 
   // Clear progress on successful submission
   const clearProgress = () => {
@@ -184,10 +198,7 @@ function SubmitTestForm({ test, questions }: SubmitTestFormProps) {
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-6"
-      >
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         {/* Progress indicator */}
         <div className="mb-6">
           <div className="flex justify-between items-center mb-2">
@@ -195,7 +206,8 @@ function SubmitTestForm({ test, questions }: SubmitTestFormProps) {
               Question {currentQuestionIndex + 1} of {totalQuestions}
             </span>
             <span className="text-sm text-gray-500">
-              {Math.round(((currentQuestionIndex + 1) / totalQuestions) * 100)}% Complete
+              {Math.round(((currentQuestionIndex + 1) / totalQuestions) * 100)}%
+              Complete
             </span>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2">
@@ -213,10 +225,10 @@ function SubmitTestForm({ test, questions }: SubmitTestFormProps) {
           <h3 className="text-lg font-semibold mb-4">
             {currentQuestion.question_text}
           </h3>
-          
+
           <FormField
             control={form.control}
-            name={`question_${currentQuestion.id}`}
+            name={`answers.question_${currentQuestion.id}`}
             render={({ field }) => (
               <div className="space-y-3">
                 {[
@@ -269,14 +281,14 @@ function SubmitTestForm({ test, questions }: SubmitTestFormProps) {
 
           <div className="flex gap-2">
             {currentQuestionIndex < totalQuestions - 1 ? (
-              <Button
-                type="button"
-                onClick={goToNextQuestion}
-              >
+              <Button type="button" onClick={goToNextQuestion}>
                 Next
               </Button>
             ) : (
-              <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
+              <Dialog
+                open={showConfirmDialog}
+                onOpenChange={setShowConfirmDialog}
+              >
                 <DialogTrigger asChild>
                   <Button
                     type="button"
@@ -293,10 +305,18 @@ function SubmitTestForm({ test, questions }: SubmitTestFormProps) {
                       Confirm Test Submission
                     </DialogTitle>
                     <DialogDescription>
-                      Are you sure you want to submit your test? Once submitted, you cannot change your answers.
+                      Are you sure you want to submit your test? Once submitted,
+                      you cannot change your answers.
                       <br />
                       <span className="font-medium mt-2 block">
-                        Questions answered: {questions.filter(q => form.watch(`question_${q.id}`) !== '').length} of {questions.length}
+                        Questions answered:{' '}
+                        {
+                          questions.filter(
+                            (q) =>
+                              form.watch(`answers.question_${q.id}`) !== '',
+                          ).length
+                        }{' '}
+                        of {questions.length}
                       </span>
                     </DialogDescription>
                   </DialogHeader>
@@ -332,10 +352,10 @@ function SubmitTestForm({ test, questions }: SubmitTestFormProps) {
           </div>
           <div className="grid grid-cols-5 sm:grid-cols-10 gap-2">
             {questions.map((question, index) => {
-              const fieldName = `question_${question.id}`;
-              const isAnswered = form.watch(fieldName) !== '';
+              const isAnswered =
+                form.watch(`answers.question_${question.id}`) !== '';
               const isCurrent = index === currentQuestionIndex;
-              
+
               return (
                 <button
                   key={question.id}
@@ -345,8 +365,8 @@ function SubmitTestForm({ test, questions }: SubmitTestFormProps) {
                     isCurrent
                       ? 'bg-blue-600 text-white'
                       : isAnswered
-                      ? 'bg-green-100 text-green-800 border border-green-300 hover:bg-green-200'
-                      : 'bg-gray-100 text-gray-600 border border-gray-300 hover:bg-gray-200'
+                        ? 'bg-green-100 text-green-800 border border-green-300 hover:bg-green-200'
+                        : 'bg-gray-100 text-gray-600 border border-gray-300 hover:bg-gray-200'
                   }`}
                   title={`Question ${index + 1}${isAnswered ? ' (answered)' : ' (not answered)'}`}
                 >

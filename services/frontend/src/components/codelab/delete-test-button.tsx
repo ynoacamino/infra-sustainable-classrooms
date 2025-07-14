@@ -9,24 +9,27 @@ import { deleteTestAction } from '@/actions/codelab/actions';
 
 interface DeleteTestButtonProps {
   testId: number;
-  exerciseId: number;
   index: number;
 }
 
-export function DeleteTestButton({ testId, exerciseId, index }: DeleteTestButtonProps) {
+export function DeleteTestButton({ testId, index }: DeleteTestButtonProps) {
   const [isDeleting, setIsDeleting] = useState(false);
   const router = useRouter();
 
   const handleDelete = async () => {
-    if (!confirm(`Are you sure you want to delete Test Case #${index + 1}? This action cannot be undone.`)) {
+    if (
+      !confirm(
+        `Are you sure you want to delete Test Case #${index + 1}? This action cannot be undone.`,
+      )
+    ) {
       return;
     }
 
     setIsDeleting(true);
-    
+
     try {
-      const result = await deleteTestAction(testId);
-      
+      const result = await deleteTestAction({ id: testId });
+
       if (result?.success) {
         toast.success('Test case deleted successfully');
         router.refresh();

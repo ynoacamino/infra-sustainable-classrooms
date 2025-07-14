@@ -1,12 +1,16 @@
-import { getAvailableTestsAction, getMySubmissionsAction } from '@/actions/knowledge/actions';
+import {
+  getAvailableTestsAction,
+  getMySubmissionsAction,
+} from '@/actions/knowledge/actions';
 import Link from 'next/link';
 import { Button } from '@/ui/button';
 import { FileText, Users, CheckCircle, Eye } from 'lucide-react';
+import type { Submission } from '@/types/knowledge/models';
 
 export default async function StudentsTestsPage() {
   const [testsResult, submissionsResult] = await Promise.all([
     getAvailableTestsAction(),
-    getMySubmissionsAction()
+    getMySubmissionsAction(),
   ]);
 
   if (!testsResult.success) {
@@ -19,15 +23,28 @@ export default async function StudentsTestsPage() {
       </div>
     );
   }
+  if (!submissionsResult.success) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-4 text-red-600">Error</h1>
+          <p>Error loading submissions: {submissionsResult.error.message}</p>
+        </div>
+      </div>
+    );
+  }
 
   const tests = testsResult.data.tests;
-  const submissions = submissionsResult.success ? submissionsResult.data.submissions : [];
-  
+  const submissions = submissionsResult.data.submissions;
+
   // Create a map of submissions by test_id for quick lookup
-  const submissionsByTestId = submissions.reduce((acc, submission) => {
-    acc[submission.test_id] = submission;
-    return acc;
-  }, {} as Record<number, any>);
+  const submissionsByTestId = submissions.reduce(
+    (acc, submission) => {
+      acc[submission.test_id] = submission;
+      return acc;
+    },
+    {} as Record<number, Submission>,
+  );
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -38,9 +55,7 @@ export default async function StudentsTestsPage() {
         </div>
         {submissions.length > 0 && (
           <Button variant="outline" asChild>
-            <Link href="/dashboard/tests/results">
-              View All Results
-            </Link>
+            <Link href="/dashboard/tests/results">View All Results</Link>
           </Button>
         )}
       </div>
@@ -60,7 +75,7 @@ export default async function StudentsTestsPage() {
           {tests.map((test) => {
             const submission = submissionsByTestId[test.id];
             const hasSubmission = !!submission;
-            
+
             return (
               <div
                 key={test.id}
@@ -84,19 +99,29 @@ export default async function StudentsTestsPage() {
                   </div>
                   <div className="flex items-center">
                     <Users className="h-4 w-4 mr-2" />
-                    <span>Created: {new Date(test.created_at * 1000).toLocaleDateString()}</span>
+                    <span>
+                      Created:{' '}
+                      {new Date(test.created_at * 1000).toLocaleDateString()}
+                    </span>
                   </div>
                   {hasSubmission && (
                     <div className="flex items-center">
                       <CheckCircle className="h-4 w-4 mr-2 text-green-500" />
-                      <span className="text-green-600 font-medium">Score: {submission.score}%</span>
+                      <span className="text-green-600 font-medium">
+                        Score: {submission.score}%
+                      </span>
                     </div>
                   )}
                 </div>
 
                 <div className="flex gap-2">
                   {hasSubmission ? (
-                    <Button variant="outline" size="sm" asChild className="flex-1">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      asChild
+                      className="flex-1"
+                    >
                       <Link href={`/dashboard/tests/results/${submission.id}`}>
                         <Eye className="h-4 w-4 mr-1" />
                         View Result
@@ -113,7 +138,10 @@ export default async function StudentsTestsPage() {
 
                 {hasSubmission && (
                   <div className="mt-3 text-xs text-gray-500">
-                    Completed on: {new Date(submission.submitted_at * 1000).toLocaleDateString()}
+                    Completed on:{' '}
+                    {new Date(
+                      submission.submitted_at * 1000,
+                    ).toLocaleDateString()}
                   </div>
                 )}
               </div>

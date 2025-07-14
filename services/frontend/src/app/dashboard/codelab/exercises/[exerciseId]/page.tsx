@@ -2,10 +2,23 @@ import { codelabService } from '@/services/codelab/service';
 import { cookies } from 'next/headers';
 import Link from 'next/link';
 import { Button } from '@/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/ui/card';
 import { Badge } from '@/ui/badge';
 import { Separator } from '@/ui/separator';
-import { ArrowLeft, Play, Code, CheckCircle, XCircle, Calendar } from 'lucide-react';
+import {
+  ArrowLeft,
+  Play,
+  Code,
+  CheckCircle,
+  XCircle,
+  Calendar,
+} from 'lucide-react';
 import { notFound } from 'next/navigation';
 import { CodeEditor } from '@/components/codelab/code-editor';
 
@@ -28,7 +41,6 @@ export default async function ExercisePage({ params }: ExercisePageProps) {
     id: exerciseId,
   });
 
-
   if (!exercise.success) {
     if (exercise.error.message.includes('not found')) {
       notFound();
@@ -40,7 +52,7 @@ export default async function ExercisePage({ params }: ExercisePageProps) {
       </div>
     );
   }
-  const tests = exercise.data.tests
+  const tests = exercise.data.tests;
   const attempts = exercise.data.attempts || [];
 
   console.log('Exercise Tests:', tests);
@@ -59,16 +71,17 @@ export default async function ExercisePage({ params }: ExercisePageProps) {
             <h1 className="text-3xl font-bold">{exercise.data.title}</h1>
             <Badge
               variant={
-                exercise.data.difficulty === 'easy' ? 'default' :
-                  exercise.data.difficulty === 'medium' ? 'secondary' : 'destructive'
+                exercise.data.difficulty === 'easy'
+                  ? 'default'
+                  : exercise.data.difficulty === 'medium'
+                    ? 'secondary'
+                    : 'destructive'
               }
             >
               {exercise.data.difficulty}
             </Badge>
           </div>
-          <p className="text-muted-foreground">
-            Solve this coding challenge
-          </p>
+          <p className="text-muted-foreground">Solve this coding challenge</p>
         </div>
       </div>
 
@@ -84,7 +97,9 @@ export default async function ExercisePage({ params }: ExercisePageProps) {
             </CardHeader>
             <CardContent>
               <div className="prose prose-sm max-w-none">
-                <p className="whitespace-pre-wrap">{exercise.data.description}</p>
+                <p className="whitespace-pre-wrap">
+                  {exercise.data.description}
+                </p>
               </div>
             </CardContent>
           </Card>
@@ -106,15 +121,25 @@ export default async function ExercisePage({ params }: ExercisePageProps) {
                   <div className="space-y-3">
                     {tests.map((test, index) => (
                       <div key={test.id} className="border rounded-lg p-3">
-                        <div className="text-sm font-medium mb-2">Example {index + 1}:</div>
+                        <div className="text-sm font-medium mb-2">
+                          Example {index + 1}:
+                        </div>
                         <div className="grid grid-cols-2 gap-3 text-sm">
                           <div>
-                            <div className="font-medium text-muted-foreground mb-1">Input:</div>
-                            <pre className="bg-muted p-2 rounded text-xs whitespace-pre-wrap">"{test.input}"</pre>
+                            <div className="font-medium text-muted-foreground mb-1">
+                              Input:
+                            </div>
+                            <pre className="bg-muted p-2 rounded text-xs whitespace-pre-wrap">
+                              &ldquo;{test.input}&rdquo;
+                            </pre>
                           </div>
                           <div>
-                            <div className="font-medium text-muted-foreground mb-1">Output:</div>
-                            <pre className="bg-muted p-2 rounded text-xs whitespace-pre-wrap">"{test.output}"</pre>
+                            <div className="font-medium text-muted-foreground mb-1">
+                              Output:
+                            </div>
+                            <pre className="bg-muted p-2 rounded text-xs whitespace-pre-wrap">
+                              &ldquo;{test.output}&rdquo;
+                            </pre>
                           </div>
                         </div>
                       </div>
@@ -123,14 +148,15 @@ export default async function ExercisePage({ params }: ExercisePageProps) {
                 ) : (
                   <div className="text-center py-4">
                     <div className="text-sm text-muted-foreground">
-                      No public test cases available.
-                      Your solution will be tested against hidden test cases.
+                      No public test cases available. Your solution will be
+                      tested against hidden test cases.
                     </div>
                   </div>
                 )}
 
                 <div className="text-sm text-muted-foreground border-t pt-3">
-                  Note: There may be additional hidden test cases that will be used to evaluate your solution.
+                  Note: There may be additional hidden test cases that will be
+                  used to evaluate your solution.
                 </div>
               </div>
             </CardContent>
@@ -144,7 +170,9 @@ export default async function ExercisePage({ params }: ExercisePageProps) {
                 <CardContent className="py-12">
                   <div className="text-center">
                     <Code className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                    <h3 className="text-lg font-medium mb-2">No attempts yet</h3>
+                    <h3 className="text-lg font-medium mb-2">
+                      No attempts yet
+                    </h3>
                     <p className="text-muted-foreground mb-4">
                       Start solving coding challenges to see your progress here
                     </p>
@@ -158,18 +186,25 @@ export default async function ExercisePage({ params }: ExercisePageProps) {
                     <CardHeader>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <CardTitle className="text-lg">{exercise.data.title}</CardTitle>
+                          <CardTitle className="text-lg">
+                            {exercise.data.title}
+                          </CardTitle>
                           <Badge
                             variant={
-                              exercise.data.difficulty === 'easy' ? 'default' :
-                                exercise.data.difficulty === 'medium' ? 'secondary' : 'destructive'
+                              exercise.data.difficulty === 'easy'
+                                ? 'default'
+                                : exercise.data.difficulty === 'medium'
+                                  ? 'secondary'
+                                  : 'destructive'
                             }
                           >
                             {exercise.data.difficulty}
                           </Badge>
                           <Badge
                             variant={attempt.success ? 'default' : 'secondary'}
-                            className={attempt.success ? 'bg-green-600' : 'bg-gray-500'}
+                            className={
+                              attempt.success ? 'bg-green-600' : 'bg-gray-500'
+                            }
                           >
                             {attempt.success ? (
                               <CheckCircle className="w-3 h-3 mr-1" />
@@ -198,7 +233,9 @@ export default async function ExercisePage({ params }: ExercisePageProps) {
                         <div className="flex gap-2">
                           {!attempt.success && (
                             <Button asChild size="sm">
-                              <Link href={`/dashboard/codelab/exercises/${exercise.data.id}`}>
+                              <Link
+                                href={`/dashboard/codelab/exercises/${exercise.data.id}`}
+                              >
                                 Continue Working
                               </Link>
                             </Button>
@@ -229,7 +266,6 @@ export default async function ExercisePage({ params }: ExercisePageProps) {
               <CodeEditor
                 exerciseId={exerciseId}
                 initialCode={exercise.data.initial_code}
-                testCases={tests}
               />
             </CardContent>
           </Card>
@@ -245,8 +281,11 @@ export default async function ExercisePage({ params }: ExercisePageProps) {
                   <span className="text-muted-foreground">Difficulty:</span>
                   <Badge
                     variant={
-                      exercise.data.difficulty === 'easy' ? 'default' :
-                        exercise.data.difficulty === 'medium' ? 'secondary' : 'destructive'
+                      exercise.data.difficulty === 'easy'
+                        ? 'default'
+                        : exercise.data.difficulty === 'medium'
+                          ? 'secondary'
+                          : 'destructive'
                     }
                   >
                     {exercise.data.difficulty}
@@ -255,11 +294,15 @@ export default async function ExercisePage({ params }: ExercisePageProps) {
                 <Separator />
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Created:</span>
-                  <span>{new Date(exercise.data.created_at).toLocaleDateString()}</span>
+                  <span>
+                    {new Date(exercise.data.created_at).toLocaleDateString()}
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Last Updated:</span>
-                  <span>{new Date(exercise.data.updated_at).toLocaleDateString()}</span>
+                  <span>
+                    {new Date(exercise.data.updated_at).toLocaleDateString()}
+                  </span>
                 </div>
               </div>
             </CardContent>

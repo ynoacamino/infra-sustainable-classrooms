@@ -49,7 +49,10 @@ export default function TakeTestLoading() {
 
         <div className="space-y-3">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="flex items-center p-3 border border-gray-200 rounded-lg">
+            <div
+              key={i}
+              className="flex items-center p-3 border border-gray-200 rounded-lg"
+            >
               <Skeleton className="h-4 w-4 mr-3 rounded-full" />
               <Skeleton className="h-4 w-48" />
             </div>

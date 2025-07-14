@@ -20,7 +20,7 @@ const template = `function solution(input) {
     // Your solution here
     // The input is a string, your output should be a string as well
 }
-`
+`;
 
 function CreateExerciseForm() {
   const form = useForm<z.infer<typeof createExerciseFormSchema>>({
@@ -66,7 +66,7 @@ function CreateExerciseForm() {
                       <div className="border rounded-md overflow-hidden">
                         <Editor
                           height="400px"
-                          language='javascript'
+                          language="javascript"
                           theme="vs-dark"
                           value={formField.value}
                           onChange={(value) => formField.onChange(value || '')}

@@ -42,10 +42,7 @@ export default function SubmissionResultLoading() {
         <Skeleton className="h-7 w-32 mb-6" />
         <div className="space-y-6">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div
-              key={i}
-              className="border border-gray-200 rounded-lg p-6"
-            >
+            <div key={i} className="border border-gray-200 rounded-lg p-6">
               <div className="flex items-start justify-between mb-4">
                 <Skeleton className="h-5 w-24" />
                 <Skeleton className="h-6 w-16 rounded-full" />

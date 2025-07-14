@@ -12,23 +12,27 @@ interface CompactDeleteExerciseButtonProps {
   exerciseTitle: string;
 }
 
-export function CompactDeleteExerciseButton({ 
-  exerciseId, 
-  exerciseTitle 
+export function CompactDeleteExerciseButton({
+  exerciseId,
+  exerciseTitle,
 }: CompactDeleteExerciseButtonProps) {
   const [isDeleting, setIsDeleting] = useState(false);
   const router = useRouter();
 
   const handleDelete = async () => {
-    if (!confirm(`Are you sure you want to delete "${exerciseTitle}"? This will also delete all associated test cases and student attempts. This action cannot be undone.`)) {
+    if (
+      !confirm(
+        `Are you sure you want to delete "${exerciseTitle}"? This will also delete all associated test cases and student attempts. This action cannot be undone.`,
+      )
+    ) {
       return;
     }
 
     setIsDeleting(true);
-    
+
     try {
-      const result = await deleteExerciseAction(exerciseId);
-      
+      const result = await deleteExerciseAction({ id: exerciseId });
+
       if (result?.success) {
         toast.success('Exercise deleted successfully');
         router.refresh();

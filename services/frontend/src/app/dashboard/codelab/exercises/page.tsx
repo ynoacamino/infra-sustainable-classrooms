@@ -2,18 +2,26 @@ import { codelabService } from '@/services/codelab/service';
 import { cookies } from 'next/headers';
 import Link from 'next/link';
 import { Button } from '@/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/ui/card';
 import { Badge } from '@/ui/badge';
-import { ArrowLeft, Code, Filter } from 'lucide-react';
+import { Code, Filter } from 'lucide-react';
 
 interface ExercisesPageProps {
   searchParams: Promise<{
-    difficulty?: string; 
+    difficulty?: string;
   }>;
 }
 
-export default async function ExercisesPage({ searchParams }: ExercisesPageProps) {
-  const {difficulty} = await searchParams;
+export default async function ExercisesPage({
+  searchParams,
+}: ExercisesPageProps) {
+  const { difficulty } = await searchParams;
   const codelab = await codelabService(cookies());
   const exercises = await codelab.listExercisesForStudents();
 
@@ -28,7 +36,7 @@ export default async function ExercisesPage({ searchParams }: ExercisesPageProps
 
   // Filter exercises by difficulty if specified
   const filteredExercises = difficulty
-    ? exercises.data.filter(ex => ex.difficulty === difficulty)
+    ? exercises.data.filter((ex) => ex.difficulty === difficulty)
     : exercises.data;
 
   const difficulties = ['easy', 'medium', 'hard'] as const;
@@ -50,26 +58,27 @@ export default async function ExercisesPage({ searchParams }: ExercisesPageProps
           <Filter className="h-4 w-4 text-muted-foreground" />
           <span className="text-sm font-medium">Filter by difficulty:</span>
         </div>
-        <Button
-          variant={!difficulty ? "default" : "outline"}
-          size="sm"
-          asChild
-        >
+        <Button variant={!difficulty ? 'default' : 'outline'} size="sm" asChild>
           <Link href="/dashboard/codelab/exercises">
             All ({exercises.data.length})
           </Link>
         </Button>
         {difficulties.map((difficulty) => {
-          const count = exercises.data.filter(ex => ex.difficulty === difficulty).length;
+          const count = exercises.data.filter(
+            (ex) => ex.difficulty === difficulty,
+          ).length;
           return (
             <Button
               key={difficulty}
-              variant={difficulty === difficulty ? "default" : "outline"}
+              variant={difficulty === difficulty ? 'default' : 'outline'}
               size="sm"
               asChild
             >
-              <Link href={`/dashboard/codelab/exercises?difficulty=${difficulty}`}>
-                {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)} ({count})
+              <Link
+                href={`/dashboard/codelab/exercises?difficulty=${difficulty}`}
+              >
+                {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)} (
+                {count})
               </Link>
             </Button>
           );
@@ -83,16 +92,14 @@ export default async function ExercisesPage({ searchParams }: ExercisesPageProps
             <div className="text-center">
               <Code className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-lg font-medium mb-2">
-                {difficulty 
+                {difficulty
                   ? `No ${difficulty} exercises found`
-                  : 'No exercises available'
-                }
+                  : 'No exercises available'}
               </h3>
               <p className="text-muted-foreground mb-4">
-                {difficulty 
+                {difficulty
                   ? 'Try selecting a different difficulty level'
-                  : 'Check back later for new coding challenges'
-                }
+                  : 'Check back later for new coding challenges'}
               </p>
               {difficulty && (
                 <Button asChild variant="outline">
@@ -107,14 +114,20 @@ export default async function ExercisesPage({ searchParams }: ExercisesPageProps
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredExercises.map((exercise) => (
-            <Card key={exercise.id} className="hover:shadow-md transition-shadow">
+            <Card
+              key={exercise.id}
+              className="hover:shadow-md transition-shadow"
+            >
               <CardHeader>
                 <div className="flex justify-between items-start mb-2">
                   <CardTitle className="text-lg">{exercise.title}</CardTitle>
                   <Badge
                     variant={
-                      exercise.difficulty === 'easy' ? 'default' :
-                      exercise.difficulty === 'medium' ? 'secondary' : 'destructive'
+                      exercise.difficulty === 'easy'
+                        ? 'default'
+                        : exercise.difficulty === 'medium'
+                          ? 'secondary'
+                          : 'destructive'
                     }
                   >
                     {exercise.difficulty}
@@ -144,10 +157,9 @@ export default async function ExercisesPage({ searchParams }: ExercisesPageProps
       {/* Results Summary */}
       {filteredExercises.length > 0 && (
         <div className="mt-8 text-center text-sm text-muted-foreground">
-          Showing {filteredExercises.length} of {exercises.data.length} exercises
-          {difficulty && (
-            <span> (filtered by {difficulty})</span>
-          )}
+          Showing {filteredExercises.length} of {exercises.data.length}{' '}
+          exercises
+          {difficulty && <span> (filtered by {difficulty})</span>}
         </div>
       )}
     </div>

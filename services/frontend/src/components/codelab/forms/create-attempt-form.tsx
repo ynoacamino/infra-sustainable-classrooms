@@ -91,9 +91,9 @@ function CreateAttemptForm({ exerciseId, onSuccess }: CreateAttemptFormProps) {
           <Button type="submit" className="flex-1">
             Submit Code
           </Button>
-          <Button 
-            type="button" 
-            variant="outline" 
+          <Button
+            type="button"
+            variant="outline"
             onClick={() => form.reset()}
             className="flex-1"
           >

@@ -10,7 +10,10 @@ interface ExerciseSearchProps {
   placeholder?: string;
 }
 
-export function ExerciseSearch({ onSearch, placeholder = "Search exercises..." }: ExerciseSearchProps) {
+export function ExerciseSearch({
+  onSearch,
+  placeholder = 'Search exercises...',
+}: ExerciseSearchProps) {
   const [query, setQuery] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {

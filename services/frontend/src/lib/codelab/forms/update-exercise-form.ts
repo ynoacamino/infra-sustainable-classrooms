@@ -3,7 +3,8 @@ import type { Field } from '@/types/shared/field';
 import type z from 'zod';
 
 // Extract just the exercise fields for the form
-export const updateExerciseFormSchema = UpdateExercisePayloadSchema.shape.exercise;
+export const updateExerciseFormSchema =
+  UpdateExercisePayloadSchema.shape.exercise;
 
 export const updateExerciseFormFields: Field<
   keyof z.infer<typeof updateExerciseFormSchema>
@@ -26,8 +27,10 @@ export const updateExerciseFormFields: Field<
     name: 'initial_code',
     label: 'Initial Code Template',
     type: 'textarea',
-    placeholder: 'def sum_two_numbers(a, b):\n    # Write your code here\n    pass',
-    description: 'Provide the initial code template that students will start with.',
+    placeholder:
+      'def sum_two_numbers(a, b):\n    # Write your code here\n    pass',
+    description:
+      'Provide the initial code template that students will start with.',
   },
   {
     name: 'solution',

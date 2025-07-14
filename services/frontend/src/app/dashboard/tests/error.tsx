@@ -19,7 +19,8 @@ export default function TestsError({ error, reset }: ErrorProps) {
             Something went wrong
           </h1>
           <p className="text-gray-600">
-            We encountered an error while loading the tests. This might be a temporary issue.
+            We encountered an error while loading the tests. This might be a
+            temporary issue.
           </p>
         </div>
 
@@ -28,11 +29,9 @@ export default function TestsError({ error, reset }: ErrorProps) {
             <RefreshCw className="h-4 w-4 mr-2" />
             Try Again
           </Button>
-          
+
           <Button variant="outline" asChild className="w-full">
-            <Link href="/dashboard">
-              Back to Dashboard
-            </Link>
+            <Link href="/dashboard">Back to Dashboard</Link>
           </Button>
         </div>
 
