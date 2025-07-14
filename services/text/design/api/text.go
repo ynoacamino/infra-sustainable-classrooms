@@ -8,7 +8,7 @@ var _ = Service("text", func() {
 	Description("Course management service for text-based learning, with sections and articles. Only teachers can create, update, or delete content. All endpoints require session_token via cookie.")
 
 	HTTP(func() {
-		Path("/text")
+		Path("/api/text")
 	})
 
 	GRPC(func() {
@@ -175,25 +175,25 @@ var _ = Service("text", func() {
 	// NOT TESTED
 	Method("CreateSection", func() {
 		Description("Create a new section in a course (teachers only)")
-	   Payload(func() {
-		   Field(1, "session_token", String, "Authentication session token")
-		   Field(2, "course_id", Int64, "Course unique identifier")
-		   Field(3, "title", String, "Section title", func() {
-			   Example("Getting Started")
-			   MinLength(3)
-			   MaxLength(100)
-		   })
-		   Field(4, "description", String, "Section description", func() {
-			   Example("Introduction to the course structure.")
-			   MinLength(5)
-			   MaxLength(200)
-		   })
-		   Field(5, "order", Int64, "Order of the section in the course (optional, if not set it will be auto-numbered)", func() {
-			   Example(1)
-			   Minimum(1)
-		   })
-		   Required("session_token", "description", "course_id", "title")
-	   })
+		Payload(func() {
+			Field(1, "session_token", String, "Authentication session token")
+			Field(2, "course_id", Int64, "Course unique identifier")
+			Field(3, "title", String, "Section title", func() {
+				Example("Getting Started")
+				MinLength(3)
+				MaxLength(100)
+			})
+			Field(4, "description", String, "Section description", func() {
+				Example("Introduction to the course structure.")
+				MinLength(5)
+				MaxLength(200)
+			})
+			Field(5, "order", Int64, "Order of the section in the course (optional, if not set it will be auto-numbered)", func() {
+				Example(1)
+				Minimum(1)
+			})
+			Required("session_token", "description", "course_id", "title")
+		})
 		Result(SimpleResponse)
 		HTTP(func() {
 			POST("/courses/{course_id}/sections")
@@ -255,25 +255,25 @@ var _ = Service("text", func() {
 	// NOT TESTED
 	Method("UpdateSection", func() {
 		Description("Update section details (teachers only)")
-	   Payload(func() {
-		   Field(1, "session_token", String, "Authentication session token")
-		   Field(2, "section_id", Int64, "Section unique identifier")
-		   Field(3, "title", String, "Section title", func() {
-			   Example("Updated Section Title.")
-			   MinLength(3)
-			   MaxLength(100)
-		   })
-		   Field(4, "description", String, "Section description", func() {
-			   Example("Updated section description.")
-			   MinLength(5)
-			   MaxLength(200)
-		   })
-		   Field(5, "order", Int64, "Order of the section in the course (optional, if set will update the order)", func() {
-			   Example(2)
-			   Minimum(1)
-		   })
-		   Required("session_token", "section_id")
-	   })
+		Payload(func() {
+			Field(1, "session_token", String, "Authentication session token")
+			Field(2, "section_id", Int64, "Section unique identifier")
+			Field(3, "title", String, "Section title", func() {
+				Example("Updated Section Title.")
+				MinLength(3)
+				MaxLength(100)
+			})
+			Field(4, "description", String, "Section description", func() {
+				Example("Updated section description.")
+				MinLength(5)
+				MaxLength(200)
+			})
+			Field(5, "order", Int64, "Order of the section in the course (optional, if set will update the order)", func() {
+				Example(2)
+				Minimum(1)
+			})
+			Required("session_token", "section_id")
+		})
 		Result(SimpleResponse)
 		HTTP(func() {
 			PATCH("/sections/{section_id}")

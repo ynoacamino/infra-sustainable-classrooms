@@ -9,7 +9,7 @@ var _ = Service("profiles", func() {
 
 	// HTTP transport for client communication
 	HTTP(func() {
-		Path("/profiles")
+		Path("/api/profiles")
 	})
 
 	// gRPC transport for inter-service communication

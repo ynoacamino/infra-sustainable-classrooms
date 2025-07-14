@@ -2,9 +2,9 @@
 FROM docker.io/library/golang:latest AS builder
 
 RUN apt-get update && apt-get install -y \
-    git \
-    ca-certificates \
-    tzdata 
+  git \
+  ca-certificates \
+  tzdata
 
 WORKDIR /app
 
@@ -15,10 +15,10 @@ RUN go mod download
 COPY services/codelab/ ./services/codelab/
 
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build \
-    -ldflags='-w -s -extldflags "-static"' \
-    -a -installsuffix cgo \
-    -o codelab-service \
-    ./services/codelab/cmd/
+  -ldflags='-w -s' \
+  -a -installsuffix cgo \
+  -o codelab-service \
+  ./services/codelab/cmd/
 
 # Production stage
 FROM scratch

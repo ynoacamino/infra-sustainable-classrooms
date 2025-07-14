@@ -8,7 +8,7 @@ var _ = Service("knowledge", func() {
 	Description("Knowledge microservice for simple test forms")
 
 	HTTP(func() {
-		Path("/knowledge")
+		Path("/api/knowledge")
 	})
 
 	GRPC(func() {})
