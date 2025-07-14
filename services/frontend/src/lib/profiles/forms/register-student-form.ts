@@ -55,4 +55,11 @@ export const registerStudentFormFields: Field<
     placeholder: 'e.g. 10th Grade',
     description: 'Enter your current grade level.',
   },
+  {
+    name: 'major',
+    label: 'Major',
+    type: 'text',
+    placeholder: 'e.g. Computer Science',
+    description: 'Enter your major or field of study (optional).',
+  },
 ];
