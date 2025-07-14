@@ -6,7 +6,6 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { InferItem } from '@/ui/infer-field';
 import { Button } from '@/ui/button';
-import { verifyTotpAction } from '@/actions/auth/actions';
 import { toast } from 'sonner';
 import {
   registerTeacherFormFields,

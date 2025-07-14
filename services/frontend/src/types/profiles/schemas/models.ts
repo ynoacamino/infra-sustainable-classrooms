@@ -56,7 +56,10 @@ export const StudentProfileSchema = ProfileSchema.extend({
 
 export const TeacherProfileSchema = ProfileSchema.extend({
   role: z.literal('teacher'),
-  position: z.string().describe('Teacher position or title'),
+  position: z
+    .string()
+    .min(1, 'Position is required')
+    .describe('Teacher position or title'),
 });
 
 export const CompleteProfileSchema = z.discriminatedUnion('role', [
