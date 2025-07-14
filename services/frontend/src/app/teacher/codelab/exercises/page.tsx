@@ -39,33 +39,35 @@ export default async function ExercisesPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {exercises.data.map((exercise) => (
-            <div 
-              key={exercise.id} 
+            <div
+              key={exercise.id}
               className="border rounded-lg p-6 hover:shadow-md transition-shadow bg-white"
             >
               <div className="flex justify-between items-start mb-4">
                 <h3 className="text-lg font-semibold">{exercise.title}</h3>
                 <div className="flex items-center gap-2">
-                  <span 
+                  <span
                     className={`px-2 py-1 rounded text-sm font-medium ${
-                      exercise.difficulty === 'easy' ? 'bg-green-100 text-green-800' :
-                      exercise.difficulty === 'medium' ? 'bg-yellow-100 text-yellow-800' : 
-                      'bg-red-100 text-red-800'
+                      exercise.difficulty === 'easy'
+                        ? 'bg-green-100 text-green-800'
+                        : exercise.difficulty === 'medium'
+                          ? 'bg-yellow-100 text-yellow-800'
+                          : 'bg-red-100 text-red-800'
                     }`}
                   >
                     {exercise.difficulty}
                   </span>
-                  <CompactDeleteExerciseButton 
-                    exerciseId={exercise.id} 
+                  <CompactDeleteExerciseButton
+                    exerciseId={exercise.id}
                     exerciseTitle={exercise.title}
                   />
                 </div>
               </div>
-              
+
               <p className="text-gray-600 mb-4 line-clamp-3">
                 {exercise.description}
               </p>
-              
+
               <div className="flex gap-2">
                 <Button asChild size="sm" className="flex-1">
                   <Link href={`/teacher/codelab/exercises/${exercise.id}`}>
@@ -78,7 +80,9 @@ export default async function ExercisesPage() {
                   </Link>
                 </Button>
                 <Button asChild variant="outline" size="sm" className="flex-1">
-                  <Link href={`/teacher/codelab/exercises/${exercise.id}/tests`}>
+                  <Link
+                    href={`/teacher/codelab/exercises/${exercise.id}/tests`}
+                  >
                     Tests
                   </Link>
                 </Button>

@@ -1,10 +1,5 @@
 import z from 'zod';
 
-export const SimpleResponseSchema = z.object({
-  success: z.boolean().describe('Operation success status'),
-  message: z.string().describe('Response message'),
-});
-
 export const ExerciseSchema = z.object({
   id: z
     .number()
@@ -119,27 +114,9 @@ export const AttemptSchema = z.object({
     ),
 });
 
-export const ExerciseForStudentsSchema = z.object({
-  id: z
-    .number()
-    .int('Exercise ID must be an integer')
-    .describe('Unique identifier for the exercise'),
-  title: z
-    .string()
-    .min(1, 'Title is required')
-    .max(200, 'Title must be at most 200 characters')
-    .describe('Exercise title'),
-  description: z
-    .string()
-    .min(1, 'Description is required')
-    .describe('Exercise description'),
-  initial_code: z
-    .string()
-    .min(1, 'Initial code is required')
-    .describe('Initial code template'),
-  difficulty: z
-    .enum(['easy', 'medium', 'hard'])
-    .describe('Exercise difficulty level'),
+export const ExerciseForStudentsSchema = ExerciseSchema.omit({
+  solution: true,
+}).extend({
   tests: z.array(TestSchema).describe('Associated tests for the exercise'),
   attempts: z
     .array(AttemptSchema)
@@ -147,59 +124,14 @@ export const ExerciseForStudentsSchema = z.object({
   answer: AnswerSchema.describe(
     "Student's answer/participation in the exercise",
   ),
-  created_by: z
-    .number()
-    .int('Creator user ID must be an integer')
-    .describe('ID of user who created the exercise'),
-  created_at: z
-    .number()
-    .int('Creation timestamp must be an integer')
-    .describe(
-      'Timestamp when the exercise was created (milliseconds since epoch)',
-    ),
-  updated_at: z
-    .number()
-    .int('Last update timestamp must be an integer')
-    .describe(
-      'Timestamp when the exercise was last updated (milliseconds since epoch)',
-    ),
 });
 
-export const ExerciseForStudentsListViewSchema = z.object({
-  id: z
-    .number()
-    .int('Exercise ID must be an integer')
-    .describe('Unique identifier for the exercise'),
-  title: z
-    .string()
-    .min(1, 'Title is required')
-    .max(200, 'Title must be at most 200 characters')
-    .describe('Exercise title'),
-  description: z
-    .string()
-    .min(1, 'Description is required')
-    .describe('Exercise description'),
-  difficulty: z
-    .enum(['easy', 'medium', 'hard'])
-    .describe('Exercise difficulty level'),
+export const ExerciseForStudentsListViewSchema = ExerciseSchema.omit({
+  initial_code: true,
+  solution: true,
+}).extend({
   completed: z
     .boolean()
     .optional()
     .describe('Whether the exercise is completed by the student'),
-  created_by: z
-    .number()
-    .int('Creator user ID must be an integer')
-    .describe('ID of user who created the exercise'),
-  created_at: z
-    .number()
-    .int('Creation timestamp must be an integer')
-    .describe(
-      'Timestamp when the exercise was created (milliseconds since epoch)',
-    ),
-  updated_at: z
-    .number()
-    .int('Last update timestamp must be an integer')
-    .describe(
-      'Timestamp when the exercise was last updated (milliseconds since epoch)',
-    ),
 });

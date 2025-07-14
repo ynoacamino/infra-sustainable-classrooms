@@ -5,7 +5,6 @@ import type {
   AttemptSchema,
   ExerciseForStudentsSchema,
   ExerciseForStudentsListViewSchema,
-  SimpleResponseSchema,
 } from '@/types/codelab/schemas/models';
 import type z from 'zod';
 
@@ -22,5 +21,3 @@ export type ExerciseForStudents = z.infer<typeof ExerciseForStudentsSchema>;
 export type ExerciseForStudentsListView = z.infer<
   typeof ExerciseForStudentsListViewSchema
 >;
-
-export type SimpleResponse = z.infer<typeof SimpleResponseSchema>;

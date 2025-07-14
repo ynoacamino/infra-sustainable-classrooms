@@ -1,7 +1,7 @@
-import { CreateExerciseForm } from '@/components/codelab/forms';
 import Link from 'next/link';
 import { Button } from '@/ui/button';
 import { ArrowLeft } from 'lucide-react';
+import { CreateExerciseForm } from '@/components/codelab/forms/create-exercise-form';
 
 export default function NewExercisePage() {
   return (

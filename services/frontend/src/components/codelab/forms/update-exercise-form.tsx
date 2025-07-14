@@ -34,7 +34,10 @@ function UpdateExerciseForm({ exercise }: UpdateExerciseFormProps) {
   });
 
   const onSubmit = async (values: z.infer<typeof updateExerciseFormSchema>) => {
-    const res = await updateExerciseAction(exercise.id, values);
+    const res = await updateExerciseAction({
+      id: exercise.id,
+      exercise: values,
+    });
     if (!res.success) {
       form.setError('root', { message: res.error.message });
       console.error(res.error);

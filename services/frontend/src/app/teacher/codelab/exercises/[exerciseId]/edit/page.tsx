@@ -1,27 +1,29 @@
-import { notFound } from 'next/navigation'
-import { getExercise } from '@/actions/codelab/actions'
-import { UpdateExerciseForm } from '@/components/codelab/forms/update-exercise-form'
+import { notFound } from 'next/navigation';
+import { getExercise } from '@/actions/codelab/actions';
+import { UpdateExerciseForm } from '@/components/codelab/forms/update-exercise-form';
 
 interface EditExercisePageProps {
   params: Promise<{
-    exerciseId: string
-  }>
+    exerciseId: string;
+  }>;
 }
 
-export default async function EditExercisePage({ params }: EditExercisePageProps) {
-  const exerciseId = parseInt((await params).exerciseId)
-  
+export default async function EditExercisePage({
+  params,
+}: EditExercisePageProps) {
+  const exerciseId = parseInt((await params).exerciseId);
+
   if (isNaN(exerciseId)) {
-    notFound()
+    notFound();
   }
 
-  const exerciseResult = await getExercise(exerciseId)
-  
+  const exerciseResult = await getExercise({ id: exerciseId });
+
   if (!exerciseResult?.success) {
-    notFound()
+    notFound();
   }
 
-  const exercise = exerciseResult.data
+  const exercise = exerciseResult.data;
 
   return (
     <div className="container mx-auto py-8">
@@ -32,9 +34,9 @@ export default async function EditExercisePage({ params }: EditExercisePageProps
             Update the exercise details and configuration
           </p>
         </div>
-        
+
         <UpdateExerciseForm exercise={exercise} />
       </div>
     </div>
-  )
+  );
 }

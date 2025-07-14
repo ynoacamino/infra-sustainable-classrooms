@@ -1,37 +1,43 @@
-import { notFound } from 'next/navigation'
-import { Button } from '@/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/ui/card'
-import { Badge } from '@/ui/badge'
-import { Separator } from '@/ui/separator'
-import { Plus, Edit } from 'lucide-react'
-import Link from 'next/link'
-import { getExercise, getTestsByExercise } from '@/actions/codelab/actions'
-import { DeleteTestButton } from '@/components/codelab/delete-test-button'
+import { notFound } from 'next/navigation';
+import { Button } from '@/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/ui/card';
+import { Badge } from '@/ui/badge';
+import { Separator } from '@/ui/separator';
+import { Plus, Edit } from 'lucide-react';
+import Link from 'next/link';
+import { getExercise, getTestsByExercise } from '@/actions/codelab/actions';
+import { DeleteTestButton } from '@/components/codelab/delete-test-button';
 
 interface TestsPageProps {
   params: Promise<{
-    exerciseId: string
-  }>
+    exerciseId: string;
+  }>;
 }
 
 export default async function TestsPage({ params }: TestsPageProps) {
-  const exerciseId = parseInt((await params).exerciseId)
-  
+  const exerciseId = parseInt((await params).exerciseId);
+
   if (isNaN(exerciseId)) {
-    notFound()
+    notFound();
   }
 
   const [exerciseResult, testsResult] = await Promise.all([
-    getExercise(exerciseId),
-    getTestsByExercise(exerciseId),
-  ])
-  
+    getExercise({ id: exerciseId }),
+    getTestsByExercise({ exercise_id: exerciseId }),
+  ]);
+
   if (!exerciseResult?.success) {
-    notFound()
+    notFound();
   }
 
-  const exercise = exerciseResult.data
-  const tests = testsResult?.success ? testsResult.data : []
+  const exercise = exerciseResult.data;
+  const tests = testsResult?.success ? testsResult.data : [];
 
   return (
     <div className="container mx-auto py-8">
@@ -74,23 +80,19 @@ export default async function TestsPage({ params }: TestsPageProps) {
               <Card key={test.id || index}>
                 <CardHeader>
                   <div className="flex items-center justify-between">
-                    <CardTitle className="text-lg">Test Case #{index + 1}</CardTitle>
+                    <CardTitle className="text-lg">
+                      Test Case #{index + 1}
+                    </CardTitle>
                     <div className="flex gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        asChild
-                      >
-                        <Link href={`/teacher/codelab/exercises/${exerciseId}/tests/${test.id}/edit`}>
+                      <Button variant="outline" size="sm" asChild>
+                        <Link
+                          href={`/teacher/codelab/exercises/${exerciseId}/tests/${test.id}/edit`}
+                        >
                           <Edit className="w-4 h-4 mr-2" />
                           Edit
                         </Link>
                       </Button>
-                      <DeleteTestButton 
-                        testId={test.id} 
-                        exerciseId={exerciseId} 
-                        index={index} 
-                      />
+                      <DeleteTestButton testId={test.id} index={index} />
                     </div>
                   </div>
                 </CardHeader>
@@ -121,12 +123,16 @@ export default async function TestsPage({ params }: TestsPageProps) {
             <Card>
               <CardContent className="py-12">
                 <div className="text-center">
-                  <h3 className="text-lg font-medium mb-2">No test cases yet</h3>
+                  <h3 className="text-lg font-medium mb-2">
+                    No test cases yet
+                  </h3>
                   <p className="text-muted-foreground mb-4">
                     Create your first test case to validate student submissions
                   </p>
                   <Button asChild>
-                    <Link href={`/teacher/codelab/exercises/${exerciseId}/tests/new`}>
+                    <Link
+                      href={`/teacher/codelab/exercises/${exerciseId}/tests/new`}
+                    >
                       <Plus className="w-4 h-4 mr-2" />
                       Create Test Case
                     </Link>
@@ -138,5 +144,5 @@ export default async function TestsPage({ params }: TestsPageProps) {
         </div>
       </div>
     </div>
-  )
+  );
 }

@@ -13,7 +13,7 @@ interface ExercisePageProps {
 export default async function ExercisePage({ params }: ExercisePageProps) {
   const { exerciseId } = await params;
   const codelab = await codelabService(cookies());
-  
+
   const exercise = await codelab.getExercise({
     id: parseInt(exerciseId),
   });
@@ -68,21 +68,26 @@ export default async function ExercisePage({ params }: ExercisePageProps) {
 
           <div>
             <h2 className="text-xl font-semibold mb-3">Difficulty</h2>
-            <span 
+            <span
               className={`px-3 py-1 rounded-full text-sm font-medium ${
-                exercise.data.difficulty === 'easy' ? 'bg-green-100 text-green-800' :
-                exercise.data.difficulty === 'medium' ? 'bg-yellow-100 text-yellow-800' : 
-                'bg-red-100 text-red-800'
+                exercise.data.difficulty === 'easy'
+                  ? 'bg-green-100 text-green-800'
+                  : exercise.data.difficulty === 'medium'
+                    ? 'bg-yellow-100 text-yellow-800'
+                    : 'bg-red-100 text-red-800'
               }`}
             >
-              {exercise.data.difficulty.charAt(0).toUpperCase() + exercise.data.difficulty.slice(1)}
+              {exercise.data.difficulty.charAt(0).toUpperCase() +
+                exercise.data.difficulty.slice(1)}
             </span>
           </div>
         </div>
 
         <div className="space-y-6">
           <div>
-            <h2 className="text-xl font-semibold mb-3">Initial Code Template</h2>
+            <h2 className="text-xl font-semibold mb-3">
+              Initial Code Template
+            </h2>
             <div className="bg-gray-900 text-gray-100 rounded-lg p-4 overflow-x-auto">
               <pre className="text-sm">
                 <code>{exercise.data.initial_code}</code>
@@ -104,8 +109,8 @@ export default async function ExercisePage({ params }: ExercisePageProps) {
       <div className="mt-8 pt-8 border-t">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold">Exercise Information</h2>
-          <DeleteExerciseButton 
-            exerciseId={parseInt(exerciseId)} 
+          <DeleteExerciseButton
+            exerciseId={parseInt(exerciseId)}
             exerciseTitle={exercise.data.title}
           />
         </div>
@@ -119,7 +124,8 @@ export default async function ExercisePage({ params }: ExercisePageProps) {
             {new Date(exercise.data.updated_at).toLocaleDateString()}
           </div>
           <div>
-            <span className="font-medium">Created by:</span> User #{exercise.data.created_by}
+            <span className="font-medium">Created by:</span> User #
+            {exercise.data.created_by}
           </div>
         </div>
       </div>

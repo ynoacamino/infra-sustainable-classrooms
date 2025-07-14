@@ -25,8 +25,10 @@ export const createExerciseFormFields: Field<
     name: 'initial_code',
     label: 'Initial Code Template',
     type: 'textarea',
-    placeholder: 'def sum_two_numbers(a, b):\n    # Write your code here\n    pass',
-    description: 'Provide the initial code template that students will start with.',
+    placeholder:
+      'def sum_two_numbers(a, b):\n    # Write your code here\n    pass',
+    description:
+      'Provide the initial code template that students will start with.',
   },
   {
     name: 'solution',

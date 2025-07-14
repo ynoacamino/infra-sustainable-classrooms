@@ -1,36 +1,36 @@
-import { notFound } from 'next/navigation'
-import { getExercise, getTestsByExercise } from '@/actions/codelab/actions'
-import { UpdateTestForm } from '@/components/codelab/forms/update-test-form'
+import { notFound } from 'next/navigation';
+import { getExercise, getTestsByExercise } from '@/actions/codelab/actions';
+import { UpdateTestForm } from '@/components/codelab/forms/update-test-form';
 
 interface EditTestPageProps {
   params: Promise<{
-    exerciseId: string
-    testId: string
-  }>
+    exerciseId: string;
+    testId: string;
+  }>;
 }
 
 export default async function EditTestPage({ params }: EditTestPageProps) {
-  const exerciseId = parseInt((await params).exerciseId)
-  const testId = parseInt((await params).testId)
-  
+  const exerciseId = parseInt((await params).exerciseId);
+  const testId = parseInt((await params).testId);
+
   if (isNaN(exerciseId) || isNaN(testId)) {
-    notFound()
+    notFound();
   }
 
   const [exerciseResult, testsResult] = await Promise.all([
-    getExercise(exerciseId),
-    getTestsByExercise(exerciseId),
-  ])
-  
+    getExercise({ id: exerciseId }),
+    getTestsByExercise({ exercise_id: exerciseId }),
+  ]);
+
   if (!exerciseResult?.success || !testsResult?.success) {
-    notFound()
+    notFound();
   }
 
-  const exercise = exerciseResult.data
-  const test = testsResult.data.find(t => t.id === testId)
+  const exercise = exerciseResult.data;
+  const test = testsResult.data.find((t) => t.id === testId);
 
   if (!test) {
-    notFound()
+    notFound();
   }
 
   return (
@@ -42,9 +42,9 @@ export default async function EditTestPage({ params }: EditTestPageProps) {
             Update test case for: {exercise.title}
           </p>
         </div>
-        
+
         <UpdateTestForm test={test} />
       </div>
     </div>
-  )
+  );
 }

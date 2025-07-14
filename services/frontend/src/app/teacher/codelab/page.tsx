@@ -15,9 +15,7 @@ export default function TeacherCodelabPage() {
             Create and manage coding exercises for your students.
           </p>
           <Button asChild className="w-full">
-            <Link href="/teacher/codelab/exercises">
-              Manage Exercises
-            </Link>
+            <Link href="/teacher/codelab/exercises">Manage Exercises</Link>
           </Button>
         </div>
 
@@ -27,9 +25,7 @@ export default function TeacherCodelabPage() {
             Create test cases to validate student solutions automatically.
           </p>
           <Button asChild variant="outline" className="w-full">
-            <Link href="/teacher/codelab/exercises">
-              Manage Test Cases
-            </Link>
+            <Link href="/teacher/codelab/exercises">Manage Test Cases</Link>
           </Button>
         </div>
 
@@ -39,9 +35,7 @@ export default function TeacherCodelabPage() {
             Review and grade student code submissions and attempts.
           </p>
           <Button asChild variant="outline" className="w-full">
-            <Link href="/teacher/reports">
-              View Reports
-            </Link>
+            <Link href="/teacher/reports">View Reports</Link>
           </Button>
         </div>
       </div>

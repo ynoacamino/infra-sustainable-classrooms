@@ -1,5 +1,10 @@
 import z from 'zod';
-import { ExerciseSchema, TestSchema } from '@/types/codelab/schemas/models';
+import {
+  AttemptSchema,
+  ExerciseForStudentsSchema,
+  ExerciseSchema,
+  TestSchema,
+} from '@/types/codelab/schemas/models';
 
 // Exercise payload schemas
 export const CreateExercisePayloadSchema = ExerciseSchema.omit({
@@ -8,13 +13,12 @@ export const CreateExercisePayloadSchema = ExerciseSchema.omit({
   updated_at: true,
 });
 
-export const GetExercisePayloadSchema = z.object({
-  id: z.number().int('Exercise ID must be an integer'),
+export const GetExercisePayloadSchema = ExerciseSchema.pick({
+  id: true,
 });
 
-
 export const UpdateExercisePayloadSchema = z.object({
-  id: z.number().int('Exercise ID must be an integer'),
+  id: ExerciseSchema.shape.id,
   exercise: ExerciseSchema.omit({
     id: true,
     created_at: true,
@@ -23,8 +27,8 @@ export const UpdateExercisePayloadSchema = z.object({
   }),
 });
 
-export const DeleteExercisePayloadSchema = z.object({
-  id: z.number().int('Exercise ID must be an integer'),
+export const DeleteExercisePayloadSchema = ExerciseSchema.pick({
+  id: true,
 });
 
 // Test payload schemas
@@ -34,12 +38,12 @@ export const CreateTestPayloadSchema = TestSchema.omit({
   updated_at: true,
 });
 
-export const GetTestsByExercisePayloadSchema = z.object({
-  exercise_id: z.number().int('Exercise ID must be an integer'),
+export const GetTestsByExercisePayloadSchema = TestSchema.pick({
+  exercise_id: true,
 });
 
 export const UpdateTestPayloadSchema = z.object({
-  id: z.number().int('Test ID must be an integer'),
+  id: TestSchema.shape.id,
   test: TestSchema.omit({
     id: true,
     created_at: true,
@@ -48,20 +52,23 @@ export const UpdateTestPayloadSchema = z.object({
   }),
 });
 
-export const DeleteTestPayloadSchema = z.object({
-  id: z.number().int('Test ID must be an integer'),
+export const DeleteTestPayloadSchema = TestSchema.pick({
+  id: true,
 });
 
 // Student exercise payload schemas
-export const GetExerciseForStudentPayloadSchema = z.object({
-  id: z.number().int('Exercise ID must be an integer'),
-});
+export const GetExerciseForStudentPayloadSchema =
+  ExerciseForStudentsSchema.pick({
+    id: true,
+  });
 
 // Attempt payload schemas
-export const CreateAttemptPayloadSchema = z.object({
-  exercise_id: z.number().int('Exercise ID must be an integer'),
-  code: z.string().min(1, 'Code is required').describe('Submitted code'),
-  success: z.boolean().describe('Whether the attempt was successful'),
+export const CreateAttemptPayloadSchema = AttemptSchema.omit({
+  id: true,
+  answer_id: true,
+  created_at: true,
+}).extend({
+  exercise_id: ExerciseSchema.shape.id,
 });
 
 export const GetAttemptsByUserAndExercisePayloadSchema = z.object({
