@@ -8,6 +8,7 @@ import { logoutAction } from '@/actions/auth/actions';
 import { toast } from 'sonner';
 import type { Profile } from '@/types/profiles/models';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface HeaderAuthProps {
   profile: Profile;
@@ -34,10 +35,15 @@ export function HeaderAuth({ profile }: HeaderAuthProps) {
       </PopoverTrigger>
       <PopoverContent className="w-72">
         <div className="flex flex-col gap-3 items-center pt-5">
-          <img
-            src={profile.avatar_url}
+          <Image
+            src={
+              profile.avatar_url ||
+              'https://ynoa-uploader.ynoacamino.site/uploads/1752353997_profile.webp'
+            }
             alt="Profile Avatar"
-            className="w-24 h-24 rounded-full object-cover mb-2"
+            width={96}
+            height={96}
+            className="rounded-full object-cover mb-2"
           />
           <span className="text-sm text-foreground/70">{profile.email}</span>
           <span className="text-lg font-medium text-center">
