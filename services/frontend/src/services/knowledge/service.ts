@@ -55,19 +55,12 @@ class KnowledgeService extends Service {
     });
   }
 
-  async getMyTests(): AsyncResult<Test[]> {
-    return this.get<Test[]>({
-      endpoint: ['tests', 'my'],
-    });
-  }
-
-  async getTest(payload: GetTestPayload): AsyncResult<Test> {
-    return this.get<Test>({
-      endpoint: ['tests', payload.id],
-      payload: {
-        schema: GetTestPayloadSchema,
-        data: payload,
-      },
+  /**
+   * Get my created tests
+   */
+  async getMyTests(): AsyncResult<GetMyTestsResponse> {
+    return this.get<GetMyTestsResponse>({
+      endpoint: 'tests/my',
     });
   }
 
@@ -81,25 +74,22 @@ class KnowledgeService extends Service {
     });
   }
 
-  async deleteTest(payload: DeleteTestPayload): AsyncResult<SimpleResponse> {
-    return this.delete<SimpleResponse>({
-      endpoint: ['tests', payload.id],
-      payload: {
-        schema: DeleteTestPayloadSchema,
-        data: payload,
-      },
+  /**
+   * Delete a test
+   */
+  async deleteTest(
+    payload: DeleteTestPayload,
+  ): AsyncResult<DeleteTestResponse> {
+    return this.delete<DeleteTestResponse>({
+      endpoint: ['tests', payload.test_id.toString()]
     });
   }
 
   async getTestQuestions(
     payload: GetTestQuestionsPayload,
-  ): AsyncResult<Question[]> {
-    return this.get<Question[]>({
-      endpoint: ['tests', payload.id, 'questions'],
-      payload: {
-        schema: GetTestQuestionsPayloadSchema,
-        data: payload,
-      },
+  ): AsyncResult<GetTestQuestionsResponse> {
+    return this.get<GetTestQuestionsResponse>({
+      endpoint: ['tests', payload.test_id, 'questions'],
     });
   }
 
@@ -137,20 +127,19 @@ class KnowledgeService extends Service {
 
   async deleteQuestion(
     payload: DeleteQuestionPayload,
-  ): AsyncResult<SimpleResponse> {
-    return this.delete<SimpleResponse>({
-      endpoint: ['tests', payload.test_id, 'questions', payload.id],
-      payload: {
-        schema: DeleteQuestionPayloadSchema,
-        data: payload,
-      },
+  ): AsyncResult<DeleteQuestionResponse> {
+    return this.delete<DeleteQuestionResponse>({
+      endpoint: ['tests', payload.test_id.toString(), 'questions', payload.question_id.toString()]
     });
   }
 
   // === STUDENT METHODS ===
-  async getAvailableTests(): AsyncResult<Test[]> {
-    return this.get<Test[]>({
-      endpoint: ['tests', 'available'],
+  /**
+   * Get available tests for students
+   */
+  async getAvailableTests(): AsyncResult<GetAvailableTestsResponse> {
+    return this.get<GetAvailableTestsResponse>({
+      endpoint: 'tests/available',
     });
   }
 
@@ -158,11 +147,7 @@ class KnowledgeService extends Service {
     payload: GetTestFormPayload,
   ): AsyncResult<GetTestFormResponse> {
     return this.get<GetTestFormResponse>({
-      endpoint: ['tests', payload.id, 'form'],
-      payload: {
-        schema: GetTestFormPayloadSchema,
-        data: payload,
-      },
+      endpoint: ['tests', payload.test_id, 'form'],
     });
   }
 
@@ -184,25 +169,11 @@ class KnowledgeService extends Service {
     });
   }
 
-  async getSubmission(payload: GetSubmissionPayload): AsyncResult<Submission> {
-    return this.get<Submission>({
-      endpoint: ['submissions', payload.id],
-      payload: {
-        schema: GetSubmissionPayloadSchema,
-        data: payload,
-      },
-    });
-  }
-
   async getSubmissionResult(
     payload: GetSubmissionResultPayload,
   ): AsyncResult<GetSubmissionResultResponse> {
     return this.get<GetSubmissionResultResponse>({
-      endpoint: ['submissions', payload.id, 'result'],
-      payload: {
-        schema: GetSubmissionResultPayloadSchema,
-        data: payload,
-      },
+      endpoint: ['submissions', payload.submission_id, 'result'],
     });
   }
 }

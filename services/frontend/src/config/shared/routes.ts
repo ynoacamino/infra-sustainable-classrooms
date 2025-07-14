@@ -4,7 +4,6 @@ import {
   IconHome,
   IconHomeFilled,
   IconUser,
-  IconUserFilled,
   IconMessage,
   IconMessageFilled,
   IconVideo,
@@ -28,6 +27,10 @@ export const routesConfig = {
     {
       path: '/dashboard/tests',
       name: 'Tests',
+    },
+    {
+      path: '/dashboard/codelab',
+      name: 'Code Lab',
     },
   ],
   teacherRoutes: [
@@ -60,6 +63,12 @@ export const routesConfig = {
       name: 'Tests',
       icon: IconMessage,
       iconSelect: IconMessageFilled,
+    },
+    {
+      path: '/teacher/codelab',
+      name: 'Code Lab',
+      icon: IconVideo,
+      iconSelect: IconVideoFilled,
     },
   ],
 };
