@@ -96,7 +96,11 @@ export abstract class Service {
     // Handle body payload
     const bodyUnsafe: Record<string, unknown> = {};
     Object.keys(payload?.data || {}).forEach((key) => {
-      if (!queryParams.has(key) && payload?.data && payload.data[key]) {
+      if (
+        !queryParams.has(key) &&
+        payload?.data &&
+        payload.data[key] !== undefined
+      ) {
         bodyUnsafe[key] = payload.data[key];
       }
     });
@@ -119,6 +123,7 @@ export abstract class Service {
             ? JSON.stringify(bodyUnsafe)
             : undefined,
       };
+      console.log(payload);
       const finalReqInit = await this.applyRequestInterceptors(url, reqInit);
       const response = await fetch(url, finalReqInit);
       const finalResponse = await this.applyResponseInterceptors(url, response);
