@@ -62,6 +62,7 @@ export abstract class Service {
   private async request<T, B extends ZodSchema = ZodSchema>({
     endpoint,
     payload,
+    query,
     options,
   }: ServiceRequest<B>): AsyncResult<T> {
     // Validate the endpoint type
@@ -80,17 +81,43 @@ export abstract class Service {
         );
       }
     }
+    // Handle query parameters
+    const queryParams = new URLSearchParams();
+    if (query && Array.isArray(query) && query.length > 0) {
+      for (const key of query) {
+        if (payload?.data && key in payload.data) {
+          queryParams.append(key.toString(), String(payload.data[key]));
+        }
+      }
+    }
+
+    const queryString = queryParams.toString();
+
+    // Handle body payload
+    const bodyUnsafe: Record<string, unknown> = {};
+    Object.keys(payload?.data || {}).forEach((key) => {
+      if (!queryParams.has(key) && payload?.data && payload.data[key]) {
+        bodyUnsafe[key] = payload.data[key];
+      }
+    });
     // Make the request
     try {
-      const url = `${this.apiBaseUrl}/${safeEndpointPrefix}${safeEndpoint}`;
+      const url = `${this.apiBaseUrl}/${safeEndpointPrefix}${safeEndpoint}${queryString ? `?${queryString}` : ''}`;
+
+      // Ensure the method is uppercase and defaults to GET
+      const method = options?.method?.toUpperCase() || 'GET';
 
       const reqInit: RequestInit = {
         ...options,
+        method,
         headers: {
           'Content-Type': 'application/json',
           ...(options?.headers || {}),
         },
-        body: payload ? JSON.stringify(payload.data) : undefined,
+        body:
+          method !== 'GET' && Object.keys(bodyUnsafe).length >= 0
+            ? JSON.stringify(bodyUnsafe)
+            : undefined,
       };
       const finalReqInit = await this.applyRequestInterceptors(url, reqInit);
       const response = await fetch(url, finalReqInit);
@@ -161,14 +188,16 @@ export abstract class Service {
   }
 
   // TODO: make payload validation for get requests
-  protected async get<T>({
+  protected async get<T, B extends ZodSchema = ZodSchema>({
     endpoint,
     payload,
+    query,
     options,
-  }: ServiceRequest): AsyncResult<T> {
-    return this.request<T>({
+  }: ServiceRequest<B>): AsyncResult<T> {
+    return this.request<T, B>({
       endpoint,
       payload,
+      query,
       options: { ...options, method: 'GET' },
     });
   }
@@ -176,11 +205,13 @@ export abstract class Service {
   protected async post<T, B extends ZodSchema = ZodSchema>({
     endpoint,
     payload,
+    query,
     options,
   }: ServiceRequest<B>): AsyncResult<T> {
     return this.request<T>({
       endpoint,
       payload,
+      query,
       options: {
         ...options,
         method: 'POST',
@@ -191,11 +222,13 @@ export abstract class Service {
   protected async put<T, B extends ZodSchema = ZodSchema>({
     endpoint,
     payload,
+    query,
     options,
   }: ServiceRequest<B>): AsyncResult<T> {
     return this.request<T>({
       endpoint,
       payload,
+      query,
       options: {
         ...options,
         method: 'PUT',
@@ -206,11 +239,13 @@ export abstract class Service {
   protected async patch<T, B extends ZodSchema = ZodSchema>({
     endpoint,
     payload,
+    query,
     options,
   }: ServiceRequest<B>): AsyncResult<T> {
     return this.request<T>({
       endpoint,
       payload,
+      query,
       options: {
         ...options,
         method: 'PATCH',
@@ -222,11 +257,13 @@ export abstract class Service {
   protected async delete<T, B extends ZodSchema = ZodSchema>({
     endpoint,
     payload,
+    query,
     options,
   }: ServiceRequest<B>): AsyncResult<T> {
     return this.request<T>({
       endpoint,
       payload,
+      query,
       options: { ...options, method: 'DELETE' },
     });
   }

@@ -26,6 +26,8 @@ var _ = Service("video_learning", func() {
 	Error("profile_not_found", String, "User profile not found")
 
 	//  Search videos by query
+	// DONE in frontend
+	// NOT TESTED
 	Method("SearchVideos", func() {
 		Description("Search videos by query string and category")
 
@@ -55,7 +57,7 @@ var _ = Service("video_learning", func() {
 		Result(VideoList)
 
 		HTTP(func() {
-			POST("/search")
+			GET("/search")
 			Cookie("session_token:session")
 			Response(StatusOK)
 			Response("unauthorized", StatusUnauthorized)
@@ -66,6 +68,8 @@ var _ = Service("video_learning", func() {
 	})
 
 	// Get recommendations
+	// DONE in frontend
+	// NOT TESTED
 	Method("GetRecommendations", func() {
 		Description("Get recommended videos for user")
 
@@ -83,7 +87,7 @@ var _ = Service("video_learning", func() {
 		Result(VideoList)
 
 		HTTP(func() {
-			POST("/recommendations")
+			GET("/recommendations")
 			Cookie("session_token:session")
 			Response(StatusOK)
 			Response("unauthorized", StatusUnauthorized)
@@ -93,6 +97,8 @@ var _ = Service("video_learning", func() {
 	})
 
 	// Get video details
+	// DONE in frontend
+	// NOT TESTED
 	Method("GetVideo", func() {
 		Description("Get complete video information including presigned URL")
 
@@ -119,6 +125,9 @@ var _ = Service("video_learning", func() {
 	})
 
 	// Get comments for video
+	// DONE in frontend
+	// NOT TESTED
+	// DOUBT: Video ID should be in URL as parameter?
 	Method("GetComments", func() {
 		Description("Get paginated comments for a video")
 
@@ -143,7 +152,7 @@ var _ = Service("video_learning", func() {
 		Result(CommentList)
 
 		HTTP(func() {
-			POST("/comments")
+			GET("/comments")
 			Cookie("session_token:session")
 			Response(StatusOK)
 			Response("unauthorized", StatusUnauthorized)
@@ -154,6 +163,9 @@ var _ = Service("video_learning", func() {
 	})
 
 	// Create comment
+	// DONE in frontend
+	// NOT TESTED
+	// DOUBT: Video ID should be in URL as parameter?
 	Method("CreateComment", func() {
 		Description("Create a new comment on a video")
 
@@ -188,6 +200,8 @@ var _ = Service("video_learning", func() {
 	})
 
 	// Get user's own videos
+	// DONE in frontend
+	// NOT TESTED
 	Method("GetOwnVideos", func() {
 		Description("Get authenticated user's uploaded videos")
 
@@ -218,6 +232,8 @@ var _ = Service("video_learning", func() {
 	})
 
 	// Initial video upload
+	// DONE in frontend
+	// NOT TESTED
 	Method("InitialUpload", func() {
 		Description("Upload video file and get object name")
 
@@ -244,6 +260,8 @@ var _ = Service("video_learning", func() {
 	})
 
 	// Complete video upload
+	// DONE in frontend
+	// NOT TESTED
 	Method("CompleteUpload", func() {
 		Description("Complete video upload with metadata")
 
@@ -279,6 +297,8 @@ var _ = Service("video_learning", func() {
 	})
 
 	// Upload thumbnail
+	// DONE in frontend
+	// NOT TESTED
 	Method("UploadThumbnail", func() {
 		Description("Upload custom thumbnail for video")
 
@@ -305,6 +325,8 @@ var _ = Service("video_learning", func() {
 	})
 
 	// Full getters for all tables - Video Categories
+	// DONE in frontend
+	// NOT TESTED
 	Method("GetAllCategories", func() {
 		Description("Get all video categories")
 
@@ -326,6 +348,8 @@ var _ = Service("video_learning", func() {
 	})
 
 	// Get all tags
+	// DONE in frontend
+	// NOT TESTED
 	Method("GetAllTags", func() {
 		Description("Get all video tags")
 
@@ -349,6 +373,8 @@ var _ = Service("video_learning", func() {
 	// Additional useful endpoints
 
 	// Like/Unlike video
+	// DONE in frontend
+	// NOT TESTED
 	Method("ToggleVideoLike", func() {
 		Description("Toggle like status for a video")
 
@@ -364,7 +390,7 @@ var _ = Service("video_learning", func() {
 		Result(SimpleResponse)
 
 		HTTP(func() {
-			POST("/video/{video_id}/like")
+			PUT("/video/{video_id}/like")
 			Cookie("session_token:session")
 			Response(StatusOK)
 			Response("unauthorized", StatusUnauthorized)
@@ -375,6 +401,8 @@ var _ = Service("video_learning", func() {
 	})
 
 	// Delete video (for content creators)
+	// DONE in frontend
+	// NOT TESTED
 	Method("DeleteVideo", func() {
 		Description("Delete user's own video")
 
@@ -401,6 +429,9 @@ var _ = Service("video_learning", func() {
 	})
 
 	// Get videos by category
+	// DONE in frontend
+	// NOT TESTED
+	// DOUBT: Use pagination or just amount. Define one
 	Method("GetVideosByCategory", func() {
 		Description("Get videos by category with pagination")
 
@@ -431,6 +462,8 @@ var _ = Service("video_learning", func() {
 	})
 
 	// Get similar videos
+	// DONE in frontend
+	// NOT TESTED
 	Method("GetSimilarVideos", func() {
 		Description("Get videos similar to a specific video")
 
@@ -462,6 +495,8 @@ var _ = Service("video_learning", func() {
 	})
 
 	// Delete comment
+	// DONE in frontend
+	// NOT TESTED
 	Method("DeleteComment", func() {
 		Description("Delete user's own comment")
 
@@ -488,6 +523,9 @@ var _ = Service("video_learning", func() {
 	})
 
 	// Create category
+	// DONE in frontend
+	// NOT TESTED
+	// DOUBT: How can i access to get existing category?
 	Method("GetOrCreateCategory", func() {
 		Description("Create a new video category or get existing one")
 
@@ -516,6 +554,9 @@ var _ = Service("video_learning", func() {
 	// === TAG MANAGEMENT ===
 
 	// Create or get tag
+	// DONE in frontend
+	// NOT TESTED
+	// DOUBT: How can i access to get existing tag?
 	Method("GetOrCreateTag", func() {
 		Description("Create a new tag or get existing one")
 
