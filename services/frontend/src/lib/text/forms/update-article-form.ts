@@ -17,7 +17,7 @@ export const updateArticleFormFields: Field<
   {
     name: 'content',
     label: 'Article Content',
-    type: 'textarea',
+    type: 'html_editor',
     placeholder: 'e.g. Updated article content...',
     description: 'Enter the content of the article (minimum 10 characters).',
   },

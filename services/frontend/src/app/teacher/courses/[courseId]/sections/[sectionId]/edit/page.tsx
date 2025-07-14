@@ -7,21 +7,23 @@ import { ArrowLeft } from 'lucide-react';
 import { notFound } from 'next/navigation';
 
 interface EditSectionPageProps {
-  params: { courseId: string; sectionId: string };
+  params: Promise<{ courseId: string; sectionId: string }>;
 }
 
 export default async function EditSectionPage({
   params,
 }: EditSectionPageProps) {
-  const courseId = parseInt(params.courseId);
-  const sectionId = parseInt(params.sectionId);
+  const asyncParams = await params;
+
+  const courseId = parseInt(asyncParams.courseId);
+  const sectionId = parseInt(asyncParams.sectionId);
 
   if (isNaN(courseId) || isNaN(sectionId)) {
     notFound();
   }
 
   const text = await textService(cookies());
-  const sectionResult = await text.getSection({ section_id: sectionId });
+  const sectionResult = await text.getSection({ id: sectionId });
 
   if (!sectionResult.success) {
     if (sectionResult.error.status === 404) {

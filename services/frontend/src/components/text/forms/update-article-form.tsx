@@ -25,7 +25,7 @@ function UpdateArticleForm({ article }: UpdateArticleFormProps) {
     defaultValues: {
       title: article.title,
       content: article.content,
-      article_id: article.id,
+      id: article.id,
     },
   });
 

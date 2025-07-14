@@ -6,14 +6,15 @@ import { ArrowLeft, BookOpen, Clock } from 'lucide-react';
 import { notFound } from 'next/navigation';
 
 interface StudentArticlePageProps {
-  params: { courseId: string; articleId: string };
+  params: Promise<{ courseId: string; articleId: string }>;
 }
 
 export default async function StudentArticlePage({
   params,
 }: StudentArticlePageProps) {
-  const courseId = parseInt(params.courseId);
-  const articleId = parseInt(params.articleId);
+  const asyncParams = await params;
+  const courseId = parseInt(asyncParams.courseId);
+  const articleId = parseInt(asyncParams.articleId);
 
   if (isNaN(courseId) || isNaN(articleId)) {
     notFound();
@@ -124,18 +125,10 @@ export default async function StudentArticlePage({
 
       {/* Article Content */}
       <div className="bg-white rounded-lg border shadow-sm p-8">
-        <div className="prose prose-lg max-w-none">
-          {/* Format article content with proper paragraph breaks */}
-          {article.content.split('\n').map((paragraph, index) =>
-            paragraph.trim() ? (
-              <p key={index} className="mb-4 text-gray-700 leading-relaxed">
-                {paragraph.trim()}
-              </p>
-            ) : (
-              <div key={index} className="mb-4"></div>
-            ),
-          )}
-        </div>
+        <div
+          className="prose prose-lg max-w-none"
+          dangerouslySetInnerHTML={{ __html: article.content }}
+        ></div>
 
         {/* Article Footer */}
         <div className="mt-8 pt-6 border-t">

@@ -106,7 +106,7 @@ export abstract class Service {
     });
     // Make the request
     try {
-      const url = `${this.apiBaseUrl}/${safeEndpointPrefix}${safeEndpoint}${queryString ? `?${queryString}` : ''}`;
+      const url = `${this.apiBaseUrl}/api/${safeEndpointPrefix}${safeEndpoint}${queryString ? `?${queryString}` : ''}`;
 
       // Ensure the method is uppercase and defaults to GET
       const method = options?.method?.toUpperCase() || 'GET';

@@ -5,15 +5,17 @@ import { Button } from '@/ui/button';
 import { ArrowLeft, BookOpen, FileText, ChevronRight } from 'lucide-react';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
+import { capitalize } from '@/lib/shared/utils';
 
 interface StudentCoursePageProps {
-  params: { courseId: string };
+  params: Promise<{ courseId: string }>;
 }
 
 export default async function StudentCoursePage({
   params,
 }: StudentCoursePageProps) {
-  const courseId = parseInt(params.courseId);
+  const asyncParams = await params;
+  const courseId = parseInt(asyncParams.courseId);
 
   if (isNaN(courseId)) {
     notFound();
@@ -88,7 +90,8 @@ export default async function StudentCoursePage({
                 <Image
                   src={course.imageUrl}
                   alt={course.title}
-                  fill
+                  width={600}
+                  height={400}
                   className="w-full h-full object-cover"
                 />
               ) : (
@@ -101,7 +104,9 @@ export default async function StudentCoursePage({
 
           {/* Course Info */}
           <div className="lg:col-span-2">
-            <h1 className="text-3xl font-bold mb-4">{course.title}</h1>
+            <h1 className="text-3xl font-bold mb-4">
+              {capitalize(course.title)}
+            </h1>
             <p className="text-gray-600 text-lg mb-6">{course.description}</p>
 
             <div className="flex flex-wrap gap-4 text-sm text-gray-500">
@@ -151,7 +156,9 @@ export default async function StudentCoursePage({
                       <span className="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full">
                         Section {section.order}
                       </span>
-                      <h3 className="text-xl font-semibold">{section.title}</h3>
+                      <h3 className="text-xl font-semibold">
+                        {capitalize(section.title)}
+                      </h3>
                     </div>
                     <p className="text-gray-600 mt-2">{section.description}</p>
                   </div>
@@ -180,11 +187,8 @@ export default async function StudentCoursePage({
 
                               <div className="flex-1 min-w-0">
                                 <h4 className="text-lg font-medium group-hover:text-blue-600 transition-colors">
-                                  {article.title}
+                                  {capitalize(article.title)}
                                 </h4>
-                                <p className="text-gray-600 text-sm line-clamp-2 mt-1">
-                                  {article.content.substring(0, 150)}...
-                                </p>
                               </div>
 
                               <div className="flex-shrink-0">
