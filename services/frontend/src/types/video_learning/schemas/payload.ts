@@ -21,6 +21,16 @@ const PaginationSchema = z.object({
     .default(20),
 });
 
+const AmountSchema = z.object({
+  amount: z
+    .number()
+    .int('Amount must be an integer')
+    .min(1, 'Amount must be at least 1')
+    .max(100, 'Amount cannot exceed 100')
+    .default(20)
+    .optional(),
+});
+
 const UploadSchema = z.object({
   file: z
     .instanceof(Buffer)
@@ -36,51 +46,38 @@ export const SearchVideosPayloadSchema = PaginationSchema.extend({
     .string()
     .min(1, 'Query is required')
     .max(200, 'Query cannot exceed 200 characters'),
-  category_id: z
-    .number()
-    .int('Category ID must be an integer')
-    .positive('Category ID must be greater than 0')
-    .optional(),
+  category_id: VideoCategorySchema.shape.id.optional(),
 });
 
-export const GetRecommendationsPayloadSchema = z.object({
-  amount: z
-    .number()
-    .int('Amount must be an integer')
-    .min(1, 'Amount must be at least 1')
-    .max(100, 'Amount cannot exceed 100')
-    .default(20)
-    .optional(),
-});
+export const GetRecommendationsPayloadSchema = AmountSchema;
 
-export const GetVideoDetailsPayloadSchema = VideoDetailsSchema.pick({
+export const GetVideoPayloadSchema = VideoDetailsSchema.pick({
   id: true,
 });
 
-export const GetCommentsPayloadSchema = VideoSchema.pick({
-  id: true,
+export const GetCommentsPayloadSchema = CommentSchema.pick({
+  video_id: true,
 }).merge(PaginationSchema);
 
-export const CreateCommentPayloadSchema = CommentSchema.pick({
-  title: true,
-  body: true,
-}).extend({
-  video_id: z
-    .number()
-    .int('Video ID must be an integer')
-    .positive('Video ID must be greater than 0'),
+export const CreateCommentPayloadSchema = CommentSchema.omit({
+  id: true,
+  date: true,
+  author: true,
 });
 
 export const GetOwnVideosPayloadSchema = PaginationSchema;
 
 export const UploadVideoPayloadSchema = UploadSchema;
 
-export const CompleteUploadPayloadSchema = VideoDetailsSchema.pick({
-  title: true,
-  description: true,
-  tags: true,
+export const CompleteUploadPayloadSchema = VideoDetailsSchema.omit({
+  id: true,
+  author: true,
+  likes: true,
+  thumbnail_url: true,
+  upload_date: true,
+  video_url: true,
+  views: true,
 }).extend({
-  category_id: z.number().int('Id must be an integer'),
   thumbnail_object_name: z
     .string()
     .min(1, 'Thumbnail object name is required')
@@ -101,35 +98,30 @@ export const DeleteVideoPayloadSchema = VideoSchema.pick({
   id: true,
 });
 
-export const GetVideosByCategoryPayloadSchema = z.object({
-  category_id: z.number().int('Id must be an integer'),
-  amount: z
-    .number()
-    .int('Amount must be an integer')
-    .min(1, 'Amount must be at least 1')
-    .max(100, 'Amount cannot exceed 100')
-    .default(20),
-});
+export const GetVideosByCategoryPayloadSchema = VideoCategorySchema.pick({
+  id: true,
+}).merge(AmountSchema);
 
 export const GetSimilarVideosPayloadSchema = VideoSchema.pick({
   id: true,
-}).extend({
-  amount: z
-    .number()
-    .int('Amount must be an integer')
-    .min(1, 'Amount must be at least 1')
-    .max(100, 'Amount cannot exceed 100')
-    .default(20),
-});
+}).merge(AmountSchema);
 
 export const DeleteCommentPayloadSchema = CommentSchema.pick({
   id: true,
 });
 
-export const GetOrCreateCategoryPayloadSchema = VideoCategorySchema.omit({
+export const CreateCategoryPayloadSchema = VideoCategorySchema.omit({
   id: true,
 });
 
-export const GetOrCreateTagPayloadSchema = VideoTagSchema.omit({
+export const GetCategoryPayloadSchema = VideoCategorySchema.pick({
+  id: true,
+});
+
+export const CreateTagPayloadSchema = VideoTagSchema.omit({
+  id: true,
+});
+
+export const GetTagPayloadSchema = VideoTagSchema.pick({
   id: true,
 });

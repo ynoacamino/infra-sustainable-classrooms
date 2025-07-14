@@ -1,15 +1,17 @@
 import type {
   CompleteUploadPayloadSchema,
+  CreateCategoryPayloadSchema,
   CreateCommentPayloadSchema,
+  CreateTagPayloadSchema,
   DeleteCommentPayloadSchema,
   DeleteVideoPayloadSchema,
+  GetCategoryPayloadSchema,
   GetCommentsPayloadSchema,
-  GetOrCreateCategoryPayloadSchema,
-  GetOrCreateTagPayloadSchema,
   GetOwnVideosPayloadSchema,
   GetRecommendationsPayloadSchema,
   GetSimilarVideosPayloadSchema,
-  GetVideoDetailsPayloadSchema,
+  GetTagPayloadSchema,
+  GetVideoPayloadSchema,
   GetVideosByCategoryPayloadSchema,
   SearchVideosPayloadSchema,
   ToggleVideoLikePayloadSchema,
@@ -24,9 +26,7 @@ export type GetRecommendationsPayload = z.infer<
   typeof GetRecommendationsPayloadSchema
 >;
 
-export type GetVideoDetailsPayload = z.infer<
-  typeof GetVideoDetailsPayloadSchema
->;
+export type GetVideoPayload = z.infer<typeof GetVideoPayloadSchema>;
 
 export type GetCommentsPayload = z.infer<typeof GetCommentsPayloadSchema>;
 
@@ -58,8 +58,10 @@ export type GetSimilarVideosPayload = z.infer<
 
 export type DeleteCommentPayload = z.infer<typeof DeleteCommentPayloadSchema>;
 
-export type GetOrCreateCategoryPayload = z.infer<
-  typeof GetOrCreateCategoryPayloadSchema
->;
+export type CreateCategoryPayload = z.infer<typeof CreateCategoryPayloadSchema>;
 
-export type GetOrCreateTagPayload = z.infer<typeof GetOrCreateTagPayloadSchema>;
+export type GetCategoryPayload = z.infer<typeof GetCategoryPayloadSchema>;
+
+export type CreateTagPayload = z.infer<typeof CreateTagPayloadSchema>;
+
+export type GetTagPayload = z.infer<typeof GetTagPayloadSchema>;

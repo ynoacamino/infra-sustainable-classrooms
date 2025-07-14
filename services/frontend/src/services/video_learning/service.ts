@@ -11,16 +11,18 @@ import type {
 } from '@/types/video_learning/models';
 import type {
   CompleteUploadPayload,
+  CreateCategoryPayload,
   CreateCommentPayload,
+  CreateTagPayload,
   DeleteCommentPayload,
   DeleteVideoPaylod,
+  GetCategoryPayload,
   GetCommentsPayload,
-  GetOrCreateCategoryPayload,
-  GetOrCreateTagPayload,
   GetOwnVideosPayload,
   GetRecommendationsPayload,
   GetSimilarVideosPayload,
-  GetVideoDetailsPayload,
+  GetTagPayload,
+  GetVideoPayload,
   GetVideosByCategoryPayload,
   SearchVideosPayload,
   ToggleVideoLikePayload,
@@ -30,16 +32,18 @@ import type {
 import type { UploadResponse } from '@/types/video_learning/responses';
 import {
   CompleteUploadPayloadSchema,
+  CreateCategoryPayloadSchema,
   CreateCommentPayloadSchema,
+  CreateTagPayloadSchema,
   DeleteCommentPayloadSchema,
   DeleteVideoPayloadSchema,
+  GetCategoryPayloadSchema,
   GetCommentsPayloadSchema,
-  GetOrCreateCategoryPayloadSchema,
-  GetOrCreateTagPayloadSchema,
   GetOwnVideosPayloadSchema,
   GetRecommendationsPayloadSchema,
   GetSimilarVideosPayloadSchema,
-  GetVideoDetailsPayloadSchema,
+  GetTagPayloadSchema,
+  GetVideoPayloadSchema,
   GetVideosByCategoryPayloadSchema,
   SearchVideosPayloadSchema,
   ToggleVideoLikePayloadSchema,
@@ -77,13 +81,11 @@ class VideoLearningService extends Service {
     });
   }
 
-  async getVideoDetails(
-    payload: GetVideoDetailsPayload,
-  ): AsyncResult<VideoDetails> {
+  async getVideo(payload: GetVideoPayload): AsyncResult<VideoDetails> {
     return this.get<VideoDetails>({
       endpoint: ['video', payload.id],
       payload: {
-        schema: GetVideoDetailsPayloadSchema,
+        schema: GetVideoPayloadSchema,
         data: payload,
       },
     });
@@ -92,12 +94,12 @@ class VideoLearningService extends Service {
   // Doubt in backend, it must be the video id in the url as a parameter
   async getComments(payload: GetCommentsPayload): AsyncResult<Comment[]> {
     return this.get<Comment[], typeof GetCommentsPayloadSchema>({
-      endpoint: ['comments'],
+      endpoint: ['comments', payload.video_id],
       payload: {
         schema: GetCommentsPayloadSchema,
         data: payload,
       },
-      query: ['id', 'page', 'page_size'],
+      query: ['page', 'page_size'],
     });
   }
 
@@ -105,7 +107,7 @@ class VideoLearningService extends Service {
     payload: CreateCommentPayload,
   ): AsyncResult<SimpleResponse> {
     return this.post<SimpleResponse>({
-      endpoint: ['comment', 'create'],
+      endpoint: ['comments', payload.video_id, 'create'],
       payload: {
         schema: CreateCommentPayloadSchema,
         data: payload,
@@ -199,7 +201,7 @@ class VideoLearningService extends Service {
     payload: GetVideosByCategoryPayload,
   ): AsyncResult<Video[]> {
     return this.get<Video[], typeof GetVideosByCategoryPayloadSchema>({
-      endpoint: ['category', payload.category_id],
+      endpoint: ['category', payload.id],
       payload: {
         schema: GetVideosByCategoryPayloadSchema,
         data: payload,
@@ -233,23 +235,43 @@ class VideoLearningService extends Service {
     });
   }
 
-  async getOrCreateCategory(
-    payload: GetOrCreateCategoryPayload,
+  async createCategory(
+    payload: CreateCategoryPayload,
   ): AsyncResult<VideoCategory> {
     return this.post<VideoCategory>({
       endpoint: 'category',
       payload: {
-        schema: GetOrCreateCategoryPayloadSchema,
+        schema: CreateCategoryPayloadSchema,
         data: payload,
       },
     });
   }
 
-  async getOrCreateTag(payload: GetOrCreateTagPayload): AsyncResult<VideoTag> {
+  async getCategory(payload: GetCategoryPayload): AsyncResult<VideoCategory> {
+    return this.get<VideoCategory>({
+      endpoint: ['category', payload.id],
+      payload: {
+        schema: GetCategoryPayloadSchema,
+        data: payload,
+      },
+    });
+  }
+
+  async createTag(payload: CreateTagPayload): AsyncResult<VideoTag> {
     return this.post<VideoTag>({
       endpoint: 'tag',
       payload: {
-        schema: GetOrCreateTagPayloadSchema,
+        schema: CreateTagPayloadSchema,
+        data: payload,
+      },
+    });
+  }
+
+  async getTag(payload: GetTagPayload): AsyncResult<VideoTag> {
+    return this.get<VideoTag>({
+      endpoint: ['tag', payload.id],
+      payload: {
+        schema: GetTagPayloadSchema,
         data: payload,
       },
     });
