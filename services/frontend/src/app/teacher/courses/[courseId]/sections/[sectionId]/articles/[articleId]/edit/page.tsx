@@ -7,22 +7,24 @@ import { ArrowLeft } from 'lucide-react';
 import { notFound } from 'next/navigation';
 
 interface EditArticlePageProps {
-  params: { courseId: string; sectionId: string; articleId: string };
+  params: Promise<{ courseId: string; sectionId: string; articleId: string }>;
 }
 
 export default async function EditArticlePage({
   params,
 }: EditArticlePageProps) {
-  const courseId = parseInt(params.courseId);
-  const sectionId = parseInt(params.sectionId);
-  const articleId = parseInt(params.articleId);
+  const asyncParams = await params;
+
+  const courseId = parseInt(asyncParams.courseId);
+  const sectionId = parseInt(asyncParams.sectionId);
+  const articleId = parseInt(asyncParams.articleId);
 
   if (isNaN(courseId) || isNaN(sectionId) || isNaN(articleId)) {
     notFound();
   }
 
   const text = await textService(cookies());
-  const articleResult = await text.getArticle({ article_id: articleId });
+  const articleResult = await text.getArticle({ id: articleId });
 
   if (!articleResult.success) {
     if (articleResult.error.status === 404) {

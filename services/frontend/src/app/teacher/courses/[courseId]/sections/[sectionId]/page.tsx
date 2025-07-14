@@ -6,12 +6,14 @@ import { ArrowLeft, Edit, Plus, FileText } from 'lucide-react';
 import { notFound } from 'next/navigation';
 
 interface SectionPageProps {
-  params: { courseId: string; sectionId: string };
+  params: Promise<{ courseId: string; sectionId: string }>;
 }
 
 export default async function SectionPage({ params }: SectionPageProps) {
-  const courseId = parseInt(params.courseId);
-  const sectionId = parseInt(params.sectionId);
+  const asyncParams = await params;
+
+  const courseId = parseInt(asyncParams.courseId);
+  const sectionId = parseInt(asyncParams.sectionId);
 
   if (isNaN(courseId) || isNaN(sectionId)) {
     notFound();
@@ -19,7 +21,7 @@ export default async function SectionPage({ params }: SectionPageProps) {
 
   const text = await textService(cookies());
   const [sectionResult, articlesResult] = await Promise.all([
-    text.getSection({ section_id: sectionId }),
+    text.getSection({ id: sectionId }),
     text.listArticles({ section_id: sectionId }),
   ]);
 
@@ -128,9 +130,12 @@ export default async function SectionPage({ params }: SectionPageProps) {
                                 {article.title}
                               </h3>
                             </div>
-                            <p className="text-gray-600 mb-4">
-                              {article.content.substring(0, 200)}...
-                            </p>
+                            <div
+                              className="text-gray-600 mb-4 prose mt-10"
+                              dangerouslySetInnerHTML={{
+                                __html: article.content.substring(0, 60),
+                              }}
+                            ></div>
                             <div className="text-sm text-gray-500">
                               Created:{' '}
                               {new Date(

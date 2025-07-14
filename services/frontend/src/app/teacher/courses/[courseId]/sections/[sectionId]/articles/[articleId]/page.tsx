@@ -6,20 +6,22 @@ import { ArrowLeft, Edit } from 'lucide-react';
 import { notFound } from 'next/navigation';
 
 interface ArticlePageProps {
-  params: { courseId: string; sectionId: string; articleId: string };
+  params: Promise<{ courseId: string; sectionId: string; articleId: string }>;
 }
 
 export default async function ArticlePage({ params }: ArticlePageProps) {
-  const courseId = parseInt(params.courseId);
-  const sectionId = parseInt(params.sectionId);
-  const articleId = parseInt(params.articleId);
+  const asyncParams = await params;
+
+  const courseId = parseInt(asyncParams.courseId);
+  const sectionId = parseInt(asyncParams.sectionId);
+  const articleId = parseInt(asyncParams.articleId);
 
   if (isNaN(courseId) || isNaN(sectionId) || isNaN(articleId)) {
     notFound();
   }
 
   const text = await textService(cookies());
-  const articleResult = await text.getArticle({ article_id: articleId });
+  const articleResult = await text.getArticle({ id: articleId });
 
   if (!articleResult.success) {
     if (articleResult.error.status === 404) {
@@ -53,9 +55,10 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         <div className="lg:col-span-3">
           <div className="bg-white rounded-lg border shadow-sm p-8">
             <h1 className="text-3xl font-bold mb-6">{article.title}</h1>
-            <div className="prose max-w-none">
-              <div className="whitespace-pre-wrap">{article.content}</div>
-            </div>
+            <div
+              className="prose max-w-none"
+              dangerouslySetInnerHTML={{ __html: article.content }}
+            ></div>
           </div>
         </div>
 

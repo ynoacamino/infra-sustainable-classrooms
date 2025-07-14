@@ -7,11 +7,12 @@ import { notFound } from 'next/navigation';
 import Image from 'next/image';
 
 interface CoursePageProps {
-  params: { courseId: string };
+  params: Promise<{ courseId: string }>;
 }
 
 export default async function CoursePage({ params }: CoursePageProps) {
-  const courseId = parseInt(params.courseId);
+  const asyncParams = await params;
+  const courseId = parseInt(asyncParams.courseId);
 
   if (isNaN(courseId)) {
     notFound();
@@ -82,7 +83,8 @@ export default async function CoursePage({ params }: CoursePageProps) {
               <Image
                 src={course.imageUrl}
                 alt={course.title}
-                fill
+                width={600}
+                height={600}
                 className="w-full h-64 object-cover rounded-md mt-4"
               />
             )}
