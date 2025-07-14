@@ -323,7 +323,7 @@ var _ = Service("text", func() {
 	})
 
 	Method("GetArticle", func() {
-		Description("Get article details by ID")
+		Description("Get article details by ID. Automatically marks the article as completed when viewed by a student.")
 		Payload(func() {
 			Field(1, "session_token", String, "Authentication session token")
 			Field(2, "article_id", Int64, "Article unique identifier")
@@ -409,6 +409,79 @@ var _ = Service("text", func() {
 			Response("not_found", StatusNotFound)
 			Response("internal_error", StatusInternalServerError)
 			Response("service_unavailable", StatusServiceUnavailable)
+		})
+	})
+
+	// --- Article Progress Methods ---
+	Method("MarkArticleCompleted", func() {
+		Description("Mark an article as completed by a user")
+		Payload(func() {
+			Field(1, "session_token", String, "Authentication session token")
+			Field(2, "article_id", Int64, "Article unique identifier")
+			Required("session_token", "article_id")
+		})
+		Result(SimpleResponse)
+		HTTP(func() {
+			POST("/articles/{article_id}/complete")
+			Cookie("session_token:session")
+			Response(StatusOK)
+			Response("invalid_input", StatusBadRequest)
+			Response("unauthorized", StatusUnauthorized)
+			Response("not_found", StatusNotFound)
+			Response("internal_error", StatusInternalServerError)
+			Response("service_unavailable", StatusServiceUnavailable)
+		})
+		GRPC(func() {
+			// gRPC method for microservice communication
+		})
+	})
+
+	Method("UnmarkArticleCompleted", func() {
+		Description("Unmark an article as completed by a user")
+		Payload(func() {
+			Field(1, "session_token", String, "Authentication session token")
+			Field(2, "article_id", Int64, "Article unique identifier")
+			Required("session_token", "article_id")
+		})
+		Result(SimpleResponse)
+		HTTP(func() {
+			DELETE("/articles/{article_id}/complete")
+			Cookie("session_token:session")
+			Response(StatusOK)
+			Response("invalid_input", StatusBadRequest)
+			Response("unauthorized", StatusUnauthorized)
+			Response("not_found", StatusNotFound)
+			Response("internal_error", StatusInternalServerError)
+			Response("service_unavailable", StatusServiceUnavailable)
+		})
+		GRPC(func() {
+			// gRPC method for microservice communication
+		})
+	})
+
+	Method("CheckArticleCompleted", func() {
+		Description("Check if an article is completed by a user")
+		Payload(func() {
+			Field(1, "session_token", String, "Authentication session token")
+			Field(2, "article_id", Int64, "Article unique identifier")
+			Required("session_token", "article_id")
+		})
+		Result(func() {
+			Field(1, "completed", Boolean, "Whether the article is completed")
+			Required("completed")
+		})
+		HTTP(func() {
+			GET("/articles/{article_id}/completed")
+			Cookie("session_token:session")
+			Response(StatusOK)
+			Response("invalid_input", StatusBadRequest)
+			Response("unauthorized", StatusUnauthorized)
+			Response("not_found", StatusNotFound)
+			Response("internal_error", StatusInternalServerError)
+			Response("service_unavailable", StatusServiceUnavailable)
+		})
+		GRPC(func() {
+			// gRPC method for microservice communication
 		})
 	})
 })

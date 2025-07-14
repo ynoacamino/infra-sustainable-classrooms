@@ -29,9 +29,21 @@ CREATE TABLE articles (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+-- Tabla de progreso de artículos (para tracking de completados)
+CREATE TABLE article_progress (
+    id BIGSERIAL PRIMARY KEY,
+    user_id BIGINT NOT NULL, -- ID del usuario del servicio de profiles
+    article_id BIGINT NOT NULL REFERENCES articles(id) ON DELETE CASCADE,
+    completed_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    -- Constraint para evitar duplicados
+    UNIQUE(user_id, article_id)
+);
+
 -- Índices para optimización de consultas
 CREATE INDEX idx_sections_course_id ON sections(course_id);
 CREATE INDEX idx_articles_section_id ON articles(section_id);
 CREATE INDEX idx_courses_title ON courses(title);
 CREATE INDEX idx_sections_title ON sections(title);
 CREATE INDEX idx_articles_title ON articles(title);
+CREATE INDEX idx_article_progress_user_id ON article_progress(user_id);
+CREATE INDEX idx_article_progress_article_id ON article_progress(article_id);

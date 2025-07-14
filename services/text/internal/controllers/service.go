@@ -7,10 +7,11 @@ import (
 )
 
 type textsrvc struct {
-	articleRepo ports.ArticleRepository
-	sectionRepo ports.SectionRepository
-	courseRepo  ports.CourseRepository
+	articleRepo         ports.ArticleRepository
+	sectionRepo         ports.SectionRepository
+	courseRepo          ports.CourseRepository
 	profilesServiceRepo ports.ProfilesServiceRepository
+	progressRepo        ports.ProgressRepository
 }
 
 func NewText(
@@ -21,5 +22,6 @@ func NewText(
 		sectionRepo:         repoManager.SectionRepo,
 		courseRepo:          repoManager.CourseRepo,
 		profilesServiceRepo: repoManager.ProfilesServiceRepo,
+		progressRepo:        repoManager.ProgressRepo,
 	}
 }

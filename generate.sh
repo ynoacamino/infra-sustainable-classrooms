@@ -9,5 +9,8 @@ goa gen github.com/ynoacamino/infra-sustainable-classrooms/services/profiles/des
 echo "Generating code for text service..."
 goa gen github.com/ynoacamino/infra-sustainable-classrooms/services/text/design/api -o ./services/text/
 
+echo "Generating code for stats service..."
+goa gen github.com/ynoacamino/infra-sustainable-classrooms/services/stats/design/api -o ./services/stats/
+
 echo "Generating SQL code..."
 sqlc generate

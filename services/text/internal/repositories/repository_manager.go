@@ -11,6 +11,7 @@ type RepositoryManager struct {
 	ArticleRepo         ports.ArticleRepository
 	SectionRepo         ports.SectionRepository
 	ProfilesServiceRepo ports.ProfilesServiceRepository
+	ProgressRepo        ports.ProgressRepository
 	pool               *pgxpool.Pool
 }
 
@@ -22,6 +23,7 @@ func NewRepositoryManager(
 		ArticleRepo:         NewArticleRepository(pool),
 		SectionRepo:         NewSectionRepository(pool),
 		ProfilesServiceRepo: NewProfilesServiceRepository(grpccoon),
+		ProgressRepo:        NewProgressRepository(pool),
 		pool :               pool,
 	}
 }

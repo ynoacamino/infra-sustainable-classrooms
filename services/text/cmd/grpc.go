@@ -18,7 +18,7 @@ import (
 
 func handleGRPCServer(ctx context.Context, u *url.URL, textEndpoints *text.Endpoints, wg *sync.WaitGroup, errc chan error, dbg bool) {
 	var textServer *textsvr.Server
-	textServer = textsvr.New(textEndpoints)
+	textServer = textsvr.New(textEndpoints, nil)
 
 	chain := grpc.ChainUnaryInterceptor(log.UnaryServerInterceptor(ctx))
 	if dbg {

@@ -292,7 +292,7 @@ func (s *textsrvc) CreateArticle(ctx context.Context, payload *text.CreateArticl
 }
 
 func (s *textsrvc) GetArticle(ctx context.Context, payload *text.GetArticlePayload) (res *text.Article, err error) {
-	_, err = s.profilesServiceRepo.GetCompleteProfile(ctx, &profiles.GetCompleteProfilePayload{
+	profileInfo, err := s.profilesServiceRepo.GetCompleteProfile(ctx, &profiles.GetCompleteProfilePayload{
 		SessionToken: payload.SessionToken,
 	})
 	if err != nil {
@@ -302,6 +302,13 @@ func (s *textsrvc) GetArticle(ctx context.Context, payload *text.GetArticlePaylo
 	article, err := s.articleRepo.GetArticle(ctx, payload.ArticleID)
 	if err != nil {
 		return nil, text.NotFound("Article not found: " + err.Error())
+	}
+
+	// Marcar automáticamente el artículo como completado cuando se accede a él
+	// Solo para estudiantes (no profesores)
+	if profileInfo.Role == "student" {
+		_ = s.progressRepo.MarkArticleAsCompleted(ctx, profileInfo.UserID, payload.ArticleID)
+		// Ignoramos errores aquí para no afectar la obtención del artículo
 	}
 
 	return mappers.ArticleDBToAPI(&article), nil
@@ -376,5 +383,87 @@ func (s *textsrvc) DeleteArticle(ctx context.Context, payload *text.DeleteArticl
 	return &text.SimpleResponse{
 		Message: "Article deleted successfully",
 		Success: true,
+	}, nil
+}
+
+// --- Progress Methods Implementation ---
+
+func (s *textsrvc) MarkArticleCompleted(ctx context.Context, payload *text.MarkArticleCompletedPayload) (res *text.SimpleResponse, err error) {
+	// Obtener información del perfil del usuario
+	profileInfo, err := s.profilesServiceRepo.GetCompleteProfile(ctx, &profiles.GetCompleteProfilePayload{
+		SessionToken: payload.SessionToken,
+	})
+	if err != nil {
+		return nil, text.Unauthorized("Invalid session: " + err.Error())
+	}
+
+	// Verificar que el artículo existe
+	_, err = s.articleRepo.GetArticle(ctx, payload.ArticleID)
+	if err != nil {
+		return nil, text.NotFound("Article not found: " + err.Error())
+	}
+
+	// Marcar como completado
+	err = s.progressRepo.MarkArticleAsCompleted(ctx, profileInfo.UserID, payload.ArticleID)
+	if err != nil {
+		return nil, text.InternalError("Failed to mark article as completed: " + err.Error())
+	}
+
+	return &text.SimpleResponse{
+		Message: "Article marked as completed successfully",
+		Success: true,
+	}, nil
+}
+
+func (s *textsrvc) UnmarkArticleCompleted(ctx context.Context, payload *text.UnmarkArticleCompletedPayload) (res *text.SimpleResponse, err error) {
+	// Obtener información del perfil del usuario
+	profileInfo, err := s.profilesServiceRepo.GetCompleteProfile(ctx, &profiles.GetCompleteProfilePayload{
+		SessionToken: payload.SessionToken,
+	})
+	if err != nil {
+		return nil, text.Unauthorized("Invalid session: " + err.Error())
+	}
+
+	// Verificar que el artículo existe
+	_, err = s.articleRepo.GetArticle(ctx, payload.ArticleID)
+	if err != nil {
+		return nil, text.NotFound("Article not found: " + err.Error())
+	}
+
+	// Desmarcar como completado
+	err = s.progressRepo.UnmarkArticleAsCompleted(ctx, profileInfo.UserID, payload.ArticleID)
+	if err != nil {
+		return nil, text.InternalError("Failed to unmark article as completed: " + err.Error())
+	}
+
+	return &text.SimpleResponse{
+		Message: "Article unmarked as completed successfully",
+		Success: true,
+	}, nil
+}
+
+func (s *textsrvc) CheckArticleCompleted(ctx context.Context, payload *text.CheckArticleCompletedPayload) (res *text.CheckArticleCompletedResult, err error) {
+	// Obtener información del perfil del usuario
+	profileInfo, err := s.profilesServiceRepo.GetCompleteProfile(ctx, &profiles.GetCompleteProfilePayload{
+		SessionToken: payload.SessionToken,
+	})
+	if err != nil {
+		return nil, text.Unauthorized("Invalid session: " + err.Error())
+	}
+
+	// Verificar que el artículo existe
+	_, err = s.articleRepo.GetArticle(ctx, payload.ArticleID)
+	if err != nil {
+		return nil, text.NotFound("Article not found: " + err.Error())
+	}
+
+	// Verificar si está completado
+	completed, err := s.progressRepo.IsArticleCompleted(ctx, profileInfo.UserID, payload.ArticleID)
+	if err != nil {
+		return nil, text.InternalError("Failed to check article completion status: " + err.Error())
+	}
+
+	return &text.CheckArticleCompletedResult{
+		Completed: completed,
 	}, nil
 }
