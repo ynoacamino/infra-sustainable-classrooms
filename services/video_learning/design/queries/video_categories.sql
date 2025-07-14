@@ -9,5 +9,10 @@ SET
 RETURNING
     *;
 
+-- name: GetCategoryById :one
+SELECT *
+FROM video_categories
+WHERE id = $1;
+
 -- name: GetAllCategories :many
 SELECT * FROM video_categories ORDER BY name ASC;
