@@ -294,6 +294,7 @@ var _ = Service("video_learning", func() {
 			Field(4, "category_id", Int64, "Video category ID", func() {
 				Minimum(1)
 			})
+			// BUG: Fails here, send tags ids
 			Field(5, "tags", ArrayOf(String), "Video tags")
 			Field(6, "thumbnail_object_name", String, "Thumbnail object name in Minio")
 			Field(7, "video_object_name", String, "Video object name in Minio")

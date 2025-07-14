@@ -1,5 +1,15 @@
 import z from 'zod';
 
+export const VideoCategorySchema = z.object({
+  id: z.number().int('Id must be an integer'),
+  name: z.string().min(1, 'Name is required'),
+});
+
+export const VideoTagSchema = z.object({
+  id: z.number().int('Id must be an integer'),
+  name: z.string().min(1, 'Name is required'),
+});
+
 export const VideoSchema = z.object({
   id: z.number().int('Id must be an integer'),
   title: z.string().min(1, 'Title is required'),
@@ -19,8 +29,8 @@ export const VideoDetailsSchema = VideoSchema.extend({
   description: z.string(),
   video_url: z.string().url('Video URL must be a valid URL'),
   upload_date: z.number().int('Upload date must be an integer'),
-  category: z.string().min(1, 'Category is required'),
-  tags: z.array(z.string()),
+  category_id: VideoCategorySchema.shape.id,
+  tags_ids: z.array(VideoTagSchema.shape.id),
 });
 
 export const OwnVideoSchema = VideoSchema.omit({
@@ -35,14 +45,5 @@ export const CommentSchema = z.object({
   date: z.number().int('Date must be an integer'),
   title: z.string().min(1, 'Title is required'),
   body: z.string().min(1, 'Body is required'),
-});
-
-export const VideoCategorySchema = z.object({
-  id: z.number().int('Id must be an integer'),
-  name: z.string().min(1, 'Name is required'),
-});
-
-export const VideoTagSchema = z.object({
-  id: z.number().int('Id must be an integer'),
-  name: z.string().min(1, 'Name is required'),
+  video_id: VideoSchema.shape.id,
 });
