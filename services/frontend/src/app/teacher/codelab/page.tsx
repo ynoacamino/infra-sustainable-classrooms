@@ -28,16 +28,6 @@ export default function TeacherCodelabPage() {
             <Link href="/teacher/codelab/exercises">Manage Test Cases</Link>
           </Button>
         </div>
-
-        <div className="p-6 border rounded-lg hover:shadow-md transition-shadow">
-          <h2 className="text-xl font-semibold mb-4">Student Attempts</h2>
-          <p className="text-gray-600 mb-4">
-            Review and grade student code submissions and attempts.
-          </p>
-          <Button asChild variant="outline" className="w-full">
-            <Link href="/teacher/reports">View Reports</Link>
-          </Button>
-        </div>
       </div>
     </div>
   );

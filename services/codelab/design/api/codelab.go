@@ -10,7 +10,7 @@ var _ = Service("codelab", func() {
 
 	// HTTP transport for client communication only
 	HTTP(func() {
-		Path("/codelab")
+		Path("/api/codelab")
 	})
 
 	// gRPC transport for inter-service communication

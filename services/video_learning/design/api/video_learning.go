@@ -8,7 +8,7 @@ var _ = Service("video_learning", func() {
 	Description("Video Learning microservice")
 
 	HTTP(func() {
-		Path("/video_learning")
+		Path("/api/video_learning")
 	})
 
 	GRPC(func() {
