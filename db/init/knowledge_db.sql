@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS questions (
     option_d TEXT NOT NULL,
     correct_answer INTEGER NOT NULL CHECK (correct_answer BETWEEN 0 AND 3), -- 0=A, 1=B, 2=C, 3=D
     question_order INTEGER NOT NULL CHECK (question_order > 0),
-    
+
     -- Ensure unique ordering within each test
     UNIQUE(test_id, question_order)
 );
@@ -50,7 +50,6 @@ CREATE TABLE IF NOT EXISTS answer_submissions (
 );
 
 -- === INDEXES FOR PERFORMANCE ===
-CREATE INDEX IF NOT EXISTS idx_tests_created_by ON tests(created_by);
 CREATE INDEX IF NOT EXISTS idx_questions_test_id ON questions(test_id);
 CREATE INDEX IF NOT EXISTS idx_submissions_test_id ON test_submissions(test_id);
 CREATE INDEX IF NOT EXISTS idx_submissions_user_id ON test_submissions(user_id);
