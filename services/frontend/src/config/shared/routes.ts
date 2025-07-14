@@ -4,7 +4,6 @@ import {
   IconHome,
   IconHomeFilled,
   IconUser,
-  IconUserFilled,
   IconMessage,
   IconMessageFilled,
   IconVideo,
