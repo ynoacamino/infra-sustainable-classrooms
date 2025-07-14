@@ -10,6 +10,14 @@ import (
 	"github.com/ynoacamino/infra-sustainable-classrooms/services/text/internal/mappers"
 )
 
+// Helper function for timestamp conversion
+func timestampToMillis(timestamp pgtype.Timestamptz) int64 {
+	if timestamp.Valid {
+		return timestamp.Time.UnixMilli()
+	}
+	return 0
+}
+
 func (s *textsrvc) CreateCourse(ctx context.Context, payload *text.CreateCoursePayload) (res *text.SimpleResponse, err error) {
 	profileInfo, err := s.profilesServiceRepo.GetCompleteProfile(ctx, &profiles.GetCompleteProfilePayload{
 		SessionToken: payload.SessionToken,
@@ -307,7 +315,10 @@ func (s *textsrvc) GetArticle(ctx context.Context, payload *text.GetArticlePaylo
 	// Marcar automáticamente el artículo como completado cuando se accede a él
 	// Solo para estudiantes (no profesores)
 	if profileInfo.Role == "student" {
-		_ = s.progressRepo.MarkArticleAsCompleted(ctx, profileInfo.UserID, payload.ArticleID)
+		_ = s.progressRepo.MarkArticleAsCompleted(ctx, textdb.MarkArticleAsCompletedParams{
+			UserID:   profileInfo.UserID,
+			ArticleID: payload.ArticleID,
+		})
 		// Ignoramos errores aquí para no afectar la obtención del artículo
 	}
 
@@ -404,7 +415,10 @@ func (s *textsrvc) MarkArticleCompleted(ctx context.Context, payload *text.MarkA
 	}
 
 	// Marcar como completado
-	err = s.progressRepo.MarkArticleAsCompleted(ctx, profileInfo.UserID, payload.ArticleID)
+	err = s.progressRepo.MarkArticleAsCompleted(ctx, textdb.MarkArticleAsCompletedParams{
+		UserID:    profileInfo.UserID,
+		ArticleID: payload.ArticleID,
+	})
 	if err != nil {
 		return nil, text.InternalError("Failed to mark article as completed: " + err.Error())
 	}
@@ -431,7 +445,10 @@ func (s *textsrvc) UnmarkArticleCompleted(ctx context.Context, payload *text.Unm
 	}
 
 	// Desmarcar como completado
-	err = s.progressRepo.UnmarkArticleAsCompleted(ctx, profileInfo.UserID, payload.ArticleID)
+	err = s.progressRepo.UnmarkArticleAsCompleted(ctx, textdb.UnmarkArticleAsCompletedParams{
+		UserID:    profileInfo.UserID,
+		ArticleID: payload.ArticleID,
+	})
 	if err != nil {
 		return nil, text.InternalError("Failed to unmark article as completed: " + err.Error())
 	}
@@ -458,7 +475,10 @@ func (s *textsrvc) CheckArticleCompleted(ctx context.Context, payload *text.Chec
 	}
 
 	// Verificar si está completado
-	completed, err := s.progressRepo.IsArticleCompleted(ctx, profileInfo.UserID, payload.ArticleID)
+	completed, err := s.progressRepo.CheckArticleCompleted(ctx, textdb.CheckArticleCompletedParams{
+		UserID:    profileInfo.UserID,
+		ArticleID: payload.ArticleID,
+	})
 	if err != nil {
 		return nil, text.InternalError("Failed to check article completion status: " + err.Error())
 	}
@@ -466,4 +486,240 @@ func (s *textsrvc) CheckArticleCompleted(ctx context.Context, payload *text.Chec
 	return &text.CheckArticleCompletedResult{
 		Completed: completed,
 	}, nil
+}
+
+// --- Course Content and Progress Methods Implementation ---
+
+func (s *textsrvc) GetCourseContent(ctx context.Context, payload *text.GetCourseContentPayload) (res *text.CourseContent, err error) {
+	// Validar sesión del usuario
+	_, err = s.profilesServiceRepo.GetCompleteProfile(ctx, &profiles.GetCompleteProfilePayload{
+		SessionToken: payload.SessionToken,
+	})
+	if err != nil {
+		return nil, text.Unauthorized("Invalid session: " + err.Error())
+	}
+
+	// Obtener información del curso
+	course, err := s.courseRepo.GetCourse(ctx, payload.CourseID)
+	if err != nil {
+		return nil, text.NotFound("Course not found: " + err.Error())
+	}
+
+	// Obtener todas las secciones del curso
+	sections, err := s.sectionRepo.ListSectionsByCourse(ctx, payload.CourseID)
+	if err != nil {
+		return nil, text.InternalError("Failed to get course sections: " + err.Error())
+	}
+
+	// Para cada sección, obtener sus artículos
+	var sectionsWithArticles []*text.SectionWithArticles
+	totalArticles := int64(0)
+
+	for _, section := range sections {
+		// Obtener artículos de la sección
+		articles, err := s.articleRepo.ListArticlesBySection(ctx, section.ID)
+		if err != nil {
+			return nil, text.InternalError("Failed to get articles for section: " + err.Error())
+		}
+
+		// Convertir artículos a formato API
+		var apiArticles []*text.Article
+		for _, article := range articles {
+			apiArticles = append(apiArticles, mappers.ArticleDBToAPI(&article))
+		}
+
+		// Crear sección con artículos
+		sectionWithArticles := &text.SectionWithArticles{
+			ID:          section.ID,
+			CourseID:    section.CourseID,
+			Title:       section.Title,
+			Description: section.Description,
+			Order:       int64(section.Order),
+			CreatedAt:   timestampToMillis(section.CreatedAt),
+			UpdatedAt:   timestampToMillis(section.UpdatedAt),
+			Articles:    apiArticles,
+		}
+
+		sectionsWithArticles = append(sectionsWithArticles, sectionWithArticles)
+		totalArticles += int64(len(articles))
+	}
+
+	// Crear respuesta completa
+	courseContent := &text.CourseContent{
+		Course:        mappers.CourseDBToAPI(&course),
+		Sections:      sectionsWithArticles,
+		TotalSections: int64(len(sections)),
+		TotalArticles: totalArticles,
+	}
+
+	return courseContent, nil
+}
+
+func (s *textsrvc) GetUserCourseProgress(ctx context.Context, payload *text.GetUserCourseProgressPayload) (res *text.UserCourseProgress, err error) {
+	// Validar sesión del usuario
+	profileInfo, err := s.profilesServiceRepo.GetCompleteProfile(ctx, &profiles.GetCompleteProfilePayload{
+		SessionToken: payload.SessionToken,
+	})
+	if err != nil {
+		return nil, text.Unauthorized("Invalid session: " + err.Error())
+	}
+
+	// Determinar el usuario del cual obtener el progreso
+	targetUserID := profileInfo.UserID
+	if payload.UserID != nil {
+		// Solo permitir ver el progreso de otros usuarios si es profesor o admin
+		if profileInfo.Role != "teacher" && profileInfo.Role != "admin" {
+			return nil, text.PermissionDenied("Only teachers and admins can view other users' progress")
+		}
+		targetUserID = *payload.UserID
+	}
+
+	// Obtener información del curso
+	course, err := s.courseRepo.GetCourse(ctx, payload.CourseID)
+	if err != nil {
+		return nil, text.NotFound("Course not found: " + err.Error())
+	}
+
+	// Obtener todas las secciones del curso
+	sections, err := s.sectionRepo.ListSectionsByCourse(ctx, payload.CourseID)
+	if err != nil {
+		return nil, text.InternalError("Failed to get course sections: " + err.Error())
+	}
+
+	// Para cada sección, obtener sus artículos con progreso
+	var sectionsWithProgress []*text.SectionWithProgress
+	totalArticles := int64(0)
+	totalCompletedArticles := int64(0)
+	var lastAccessed int64 = 0
+
+	for _, section := range sections {
+		// Obtener artículos de la sección
+		articles, err := s.articleRepo.ListArticlesBySection(ctx, section.ID)
+		if err != nil {
+			return nil, text.InternalError("Failed to get articles for section: " + err.Error())
+		}
+
+		// Para cada artículo, verificar si está completado
+		var articlesWithProgress []*text.ArticleWithProgress
+		sectionCompletedArticles := int64(0)
+
+		for _, article := range articles {
+			// Verificar si el artículo está completado
+			completed, err := s.progressRepo.CheckArticleCompleted(ctx, textdb.CheckArticleCompletedParams{
+				UserID:    targetUserID,
+				ArticleID: article.ID,
+			})
+			if err != nil {
+				// Si hay error, asumir que no está completado
+				completed = false
+			}
+
+			var completedAt int64 = 0
+			if completed {
+				sectionCompletedArticles++
+				totalCompletedArticles++
+				// Aquí podrías obtener la fecha exacta de completación desde la base de datos
+				// Por ahora usamos un timestamp placeholder
+				completedAt = timestampToMillis(article.UpdatedAt)
+				if completedAt > lastAccessed {
+					lastAccessed = completedAt
+				}
+			}
+
+			articleWithProgress := &text.ArticleWithProgress{
+				ID:          article.ID,
+				SectionID:   article.SectionID,
+				Title:       article.Title,
+				Content:     article.Content,
+				CreatedAt:   timestampToMillis(article.CreatedAt),
+				UpdatedAt:   timestampToMillis(article.UpdatedAt),
+				Completed:   completed,
+				CompletedAt: completedAt,
+			}
+
+			articlesWithProgress = append(articlesWithProgress, articleWithProgress)
+		}
+
+		// Calcular porcentaje de completación de la sección
+		var sectionCompletionPercentage float64 = 0
+		if len(articles) > 0 {
+			sectionCompletionPercentage = float64(sectionCompletedArticles) / float64(len(articles)) * 100
+		}
+
+		// Crear sección con progreso
+		sectionWithProgress := &text.SectionWithProgress{
+			ID:                   section.ID,
+			CourseID:            section.CourseID,
+			Title:               section.Title,
+			Description:         section.Description,
+			Order:               int64(section.Order),
+			CreatedAt:           timestampToMillis(section.CreatedAt),
+			UpdatedAt:           timestampToMillis(section.UpdatedAt),
+			Articles:            articlesWithProgress,
+			TotalArticles:       int64(len(articles)),
+			CompletedArticles:   sectionCompletedArticles,
+			CompletionPercentage: sectionCompletionPercentage,
+		}
+
+		sectionsWithProgress = append(sectionsWithProgress, sectionWithProgress)
+		totalArticles += int64(len(articles))
+	}
+
+	// Calcular porcentaje de completación general del curso
+	var overallCompletionPercentage float64 = 0
+	if totalArticles > 0 {
+		overallCompletionPercentage = float64(totalCompletedArticles) / float64(totalArticles) * 100
+	}
+
+	// Crear respuesta completa
+	userCourseProgress := &text.UserCourseProgress{
+		Course:               mappers.CourseDBToAPI(&course),
+		UserID:              targetUserID,
+		Sections:            sectionsWithProgress,
+		TotalSections:       int64(len(sections)),
+		TotalArticles:       totalArticles,
+		CompletedArticles:   totalCompletedArticles,
+		CompletionPercentage: overallCompletionPercentage,
+		LastAccessed:        lastAccessed,
+	}
+
+	return userCourseProgress, nil
+}
+
+func (s *textsrvc) GetCourseCompletionStats(ctx context.Context, payload *text.GetCourseCompletionStatsPayload) (res *text.CourseCompletionStats, err error) {
+	// Validar sesión del usuario
+	profileInfo, err := s.profilesServiceRepo.GetCompleteProfile(ctx, &profiles.GetCompleteProfilePayload{
+		SessionToken: payload.SessionToken,
+	})
+	if err != nil {
+		return nil, text.Unauthorized("Invalid session: " + err.Error())
+	}
+
+	// Usar el ID del usuario autenticado
+	targetUserID := profileInfo.UserID
+
+	// Verificar que el curso existe
+	_, err = s.courseRepo.GetCourse(ctx, payload.CourseID)
+	if err != nil {
+		return nil, text.NotFound("Course not found: " + err.Error())
+	}
+
+	// Obtener estadísticas de completación del curso
+	stats, err := s.progressRepo.GetCourseCompletionStats(ctx, textdb.GetCourseCompletionStatsParams{
+		UserID:   targetUserID,
+		CourseID: payload.CourseID,
+	})
+	if err != nil {
+		return nil, text.InternalError("Failed to get course completion stats: " + err.Error())
+	}
+
+	// Crear respuesta
+	courseStats := &text.CourseCompletionStats{
+		CourseID:            payload.CourseID,
+		TotalArticles:       stats.TotalArticles,
+		CompletedArticles:   stats.CompletedArticles,
+		CompletionPercentage: float64(stats.CompletionPercentage),
+	}
+
+	return courseStats, nil
 }

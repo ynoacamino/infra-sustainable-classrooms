@@ -7,7 +7,7 @@ ON CONFLICT (user_id, article_id) DO NOTHING;
 DELETE FROM article_progress
 WHERE user_id = $1 AND article_id = $2;
 
--- name: IsArticleCompleted :one
+-- name: CheckArticleCompleted :one
 SELECT EXISTS(
     SELECT 1 FROM article_progress
     WHERE user_id = $1 AND article_id = $2

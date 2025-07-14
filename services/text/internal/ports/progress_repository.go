@@ -7,21 +7,15 @@ import (
 )
 
 type ProgressRepository interface {
-	// Marcar un artículo como completado por un usuario
-	MarkArticleAsCompleted(ctx context.Context, userID int64, articleID int64) error
+	MarkArticleAsCompleted(ctx context.Context, arg textdb.MarkArticleAsCompletedParams) error
 	
-	// Desmarcar un artículo como completado por un usuario
-	UnmarkArticleAsCompleted(ctx context.Context, userID int64, articleID int64) error
+	UnmarkArticleAsCompleted(ctx context.Context, arg textdb.UnmarkArticleAsCompletedParams) error
 	
-	// Verificar si un artículo está completado por un usuario
-	IsArticleCompleted(ctx context.Context, userID int64, articleID int64) (bool, error)
+	CheckArticleCompleted(ctx context.Context, arg textdb.CheckArticleCompletedParams) (bool, error)
 	
-	// Obtener todos los artículos completados por un usuario
 	GetUserCompletedArticles(ctx context.Context, userID int64) ([]textdb.GetUserCompletedArticlesRow, error)
 	
-	// Obtener el progreso de un usuario en un curso específico
-	GetUserProgressForCourse(ctx context.Context, userID int64, courseID int64) ([]textdb.GetUserProgressForCourseRow, error)
+	GetUserProgressForCourse(ctx context.Context, arg textdb.GetUserProgressForCourseParams) ([]textdb.GetUserProgressForCourseRow, error)
 	
-	// Obtener estadísticas de completación de un curso para un usuario
-	GetCourseCompletionStats(ctx context.Context, userID int64, courseID int64) (textdb.GetCourseCompletionStatsRow, error)
+	GetCourseCompletionStats(ctx context.Context, arg textdb.GetCourseCompletionStatsParams) (textdb.GetCourseCompletionStatsRow, error)
 }

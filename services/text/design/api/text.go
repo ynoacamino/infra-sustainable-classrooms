@@ -484,4 +484,85 @@ var _ = Service("text", func() {
 			// gRPC method for microservice communication
 		})
 	})
+
+	// --- Course Content and Progress Methods ---
+	Method("GetCourseContent", func() {
+		Description("Get all sections and articles for a course with complete structure")
+		Payload(func() {
+			Field(1, "session_token", String, "Authentication session token")
+			Field(2, "course_id", Int64, "Course unique identifier")
+			Required("session_token", "course_id")
+		})
+		Result(CourseContent)
+		HTTP(func() {
+			GET("/courses/{course_id}/content")
+			Cookie("session_token:session")
+			Response(StatusOK)
+			Response("invalid_input", StatusBadRequest)
+			Response("unauthorized", StatusUnauthorized)
+			Response("not_found", StatusNotFound)
+			Response("internal_error", StatusInternalServerError)
+			Response("service_unavailable", StatusServiceUnavailable)
+		})
+		GRPC(func() {
+			// gRPC method for microservice communication
+		})
+	})
+
+	Method("GetUserCourseProgress", func() {
+		Description("Get sections and articles completed by a user for a specific course")
+		Payload(func() {
+			Field(1, "session_token", String, "Authentication session token")
+			Field(2, "course_id", Int64, "Course unique identifier")
+			Field(3, "user_id", Int64, "User unique identifier (optional, if not provided uses session user)")
+			Required("session_token", "course_id")
+		})
+		
+		Result(UserCourseProgress)
+
+		HTTP(func() {
+			GET("/courses/{course_id}/progress")
+			Cookie("session_token:session")
+			Param("user_id")
+			Response(StatusOK)
+			Response("invalid_input", StatusBadRequest)
+			Response("unauthorized", StatusUnauthorized)
+			Response("not_found", StatusNotFound)
+			Response("internal_error", StatusInternalServerError)
+			Response("service_unavailable", StatusServiceUnavailable)
+		})
+		GRPC(func() {
+			Response(CodeOK)
+			Response("unauthorized", CodePermissionDenied)
+			Response("not_found", CodeNotFound)
+		})
+	})
+
+	Method("GetCourseCompletionStats", func() {
+		Description("Get course completion statistics for a user")
+		Payload(func() {
+			Field(1, "session_token", String, "Authentication session token")
+			Field(2, "course_id", Int64, "Course unique identifier")
+			Required("session_token", "course_id")
+		})
+
+		Result(CourseCompletionStats)
+
+		HTTP(func() {
+			GET("/courses/{course_id}/completion")
+			Cookie("session_token:session")
+			Response(StatusOK)
+			Response("invalid_input", StatusBadRequest)
+			Response("unauthorized", StatusUnauthorized)
+			Response("not_found", StatusNotFound)
+			Response("internal_error", StatusInternalServerError)
+			Response("service_unavailable", StatusServiceUnavailable)
+		})
+
+		GRPC(func() {
+			Response(CodeOK)
+			Response("unauthorized", CodePermissionDenied)
+			Response("not_found", CodeNotFound)
+		})
+	})
 })
