@@ -13,10 +13,7 @@ export default function TestsLoading() {
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {Array.from({ length: 6 }).map((_, i) => (
-          <div
-            key={i}
-            className="border border-gray-200 rounded-lg p-6"
-          >
+          <div key={i} className="border border-gray-200 rounded-lg p-6">
             <div className="flex items-start justify-between mb-4">
               <Skeleton className="h-6 w-48" />
               <Skeleton className="h-5 w-5 rounded-full" />

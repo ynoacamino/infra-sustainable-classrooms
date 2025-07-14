@@ -6,16 +6,12 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { InferItem } from '@/ui/infer-field';
 import { Button } from '@/ui/button';
-import { verifyTotpAction } from '@/actions/auth/actions';
 import { toast } from 'sonner';
 import {
   updateProfileFormFields,
   updateProfilePayloadSchema,
 } from '@/lib/profiles/forms/update-profile-form';
-import {
-  createTeacherProfileAction,
-  updateProfileAction,
-} from '@/actions/profiles/actions';
+import { updateProfileAction } from '@/actions/profiles/actions';
 import type { CompleteProfile } from '@/types/profiles/models';
 import { redirect } from 'next/navigation';
 

@@ -29,8 +29,8 @@ export default async function EditQuestionPage({
 
   // Get test details and questions in parallel
   const [testResult, questionsResult] = await Promise.all([
-    getTestAction(testId),
-    getTestQuestionsAction(testId),
+    getTestAction({ id: testId }),
+    getTestQuestionsAction({ id: testId }),
   ]);
 
   if (!testResult.success) {
@@ -79,7 +79,7 @@ export default async function EditQuestionPage({
           <div>
             <h1 className="text-3xl font-bold">Edit Question</h1>
             <p className="text-muted-foreground">
-              Test: {testResult.data.title}
+              Test: {testResult.data.test.title}
             </p>
           </div>
         </div>

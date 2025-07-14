@@ -1,22 +1,29 @@
-import { SubmitTestPayloadSchema } from '@/types/knowledge/schemas/payload';
+import type { QuestionForm } from '@/types/knowledge/models';
+import { QuestionFormSchema } from '@/types/knowledge/schemas/models';
 import type { Field } from '@/types/shared/field';
-import type z from 'zod';
-
-export const submitTestFormSchema = SubmitTestPayloadSchema;
+import z from 'zod';
 
 // Note: Este formulario es especial porque las preguntas son dinámicas
 // Los campos se generarán dinámicamente basándose en las preguntas del test
 // Cada pregunta tendrá un campo de radio button group con las opciones A, B, C, D
 
+export const createSubmitTestFormSchema = (questions: QuestionForm[]) =>
+  z.object({
+    id: QuestionFormSchema.shape.id,
+    answers: z.object(
+      Object.fromEntries(
+        questions.map((question) => [
+          `question_${question.id}`,
+          z.string().min(1, {
+            message: `Please select an answer for question ${question.id}`,
+          }),
+        ]),
+      ),
+    ),
+  });
+
 export const createSubmitTestFormFields = (
-  questions: Array<{
-    id: number;
-    question_text: string;
-    option_a: string;
-    option_b: string;
-    option_c: string;
-    option_d: string;
-  }>,
+  questions: QuestionForm[],
 ): Field<string>[] => {
   return questions.map((question, index) => ({
     name: `question_${question.id}`,

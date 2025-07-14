@@ -17,7 +17,7 @@ export default async function EditTestPage({ params }: EditTestPageProps) {
     notFound();
   }
 
-  const testResult = await getTestAction(testId);
+  const testResult = await getTestAction({ id: testId });
 
   if (!testResult.success) {
     if (testResult.error.status === 404) {
@@ -33,7 +33,7 @@ export default async function EditTestPage({ params }: EditTestPageProps) {
     );
   }
 
-  const test = testResult.data;
+  const test = testResult.data.test;
 
   return (
     <div className="container mx-auto p-6">

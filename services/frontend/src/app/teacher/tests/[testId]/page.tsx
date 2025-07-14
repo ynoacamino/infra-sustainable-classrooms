@@ -21,8 +21,8 @@ export default async function TestPage({ params }: TestPageProps) {
 
   // Get test details and questions in parallel
   const [testResult, questionsResult] = await Promise.all([
-    getTestAction(testId),
-    getTestQuestionsAction(testId),
+    getTestAction({ id: testId }),
+    getTestQuestionsAction({ id: testId }),
   ]);
 
   if (!testResult.success) {
@@ -50,8 +50,10 @@ export default async function TestPage({ params }: TestPageProps) {
     );
   }
 
-  const test = testResult.data;
+  const test = testResult.data.test;
   const questions = questionsResult.data.questions;
+
+  console.log(questionsResult);
 
   return (
     <div className="container mx-auto px-4 py-8">
