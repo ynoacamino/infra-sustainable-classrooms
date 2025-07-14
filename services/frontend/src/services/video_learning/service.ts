@@ -73,7 +73,7 @@ class VideoLearningService extends Service {
         schema: GetRecommendationsPayloadSchema,
         data: payload,
       },
-      query: ['ammount'],
+      query: ['amount'],
     });
   }
 

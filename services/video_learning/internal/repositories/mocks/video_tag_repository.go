@@ -22,6 +22,11 @@ func (m *MockVideoTagRepository) GetAllTags(ctx context.Context) ([]videolearnin
 	return args.Get(0).([]videolearningdb.VideoTag), args.Error(1)
 }
 
+func (m *MockVideoTagRepository) GetTagById(ctx context.Context, id int64) (videolearningdb.VideoTag, error) {
+	args := m.Called(ctx, id)
+	return args.Get(0).(videolearningdb.VideoTag), args.Error(1)
+}
+
 func (m *MockVideoTagRepository) GetTagsByVideoID(ctx context.Context, videoID int64) ([]videolearningdb.VideoTag, error) {
 	args := m.Called(ctx, videoID)
 	return args.Get(0).([]videolearningdb.VideoTag), args.Error(1)

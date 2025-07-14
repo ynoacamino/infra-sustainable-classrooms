@@ -24,33 +24,22 @@ RETURNING
     *;
 
 -- name: GetVideoByID :one
-SELECT v.*, vc.name as category_name
-FROM video v
-    JOIN video_categories vc ON v.category_id = vc.id
-WHERE
-    v.id = $1;
+SELECT v.* FROM video v WHERE v.id = $1;
 
 -- name: GetVideosByCategory :many
-SELECT v.*, vc.name as category_name
-FROM video v
-    JOIN video_categories vc ON v.category_id = vc.id
-WHERE
-    v.category_id = $1;
+SELECT v.* FROM video v WHERE v.category_id = $1;
 
 -- name: GetRecentVideos :many
-SELECT v.*, vc.name as category_name
+SELECT v.*
 FROM video v
-    JOIN video_categories vc ON v.category_id = vc.id
 WHERE
     v.created_at >= NOW() - INTERVAL $1;
 
 -- name: SearchVideos :many
 SELECT DISTINCT
-    v.*,
-    vc.name as category_name
+    v.*
 FROM
     video v
-    JOIN video_categories vc ON v.category_id = vc.id
     LEFT JOIN video_video_tags vvt ON v.id = vvt.video_id
     LEFT JOIN video_tags vt ON vvt.tag_id = vt.id
 WHERE (
@@ -67,9 +56,8 @@ OFFSET
     $4;
 
 -- name: GetSimilarVideos :many
-SELECT v.*, vc.name as category_name
+SELECT v.*
 FROM video v
-    JOIN video_categories vc ON v.category_id = vc.id
 WHERE
     v.id != $1
     AND v.category_id = (
@@ -80,9 +68,8 @@ WHERE
     );
 
 -- name: GetVideosByUser :many
-SELECT v.*, vc.name as category_name
+SELECT v.*
 FROM video v
-    JOIN video_categories vc ON v.category_id = vc.id
 WHERE
     v.user_id = $1
 ORDER BY v.created_at DESC
