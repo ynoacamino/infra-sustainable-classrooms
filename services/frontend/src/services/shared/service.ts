@@ -123,7 +123,6 @@ export abstract class Service {
             ? JSON.stringify(bodyUnsafe)
             : undefined,
       };
-      console.log(payload);
       const finalReqInit = await this.applyRequestInterceptors(url, reqInit);
       const response = await fetch(url, finalReqInit);
       const finalResponse = await this.applyResponseInterceptors(url, response);

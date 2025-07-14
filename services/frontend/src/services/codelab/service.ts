@@ -16,17 +16,12 @@ import type {
 } from '@/types/codelab/payload';
 import {
   CreateExercisePayloadSchema,
-  GetExercisePayloadSchema,
   UpdateExercisePayloadSchema,
   DeleteExercisePayloadSchema,
   CreateTestPayloadSchema,
-  GetTestsByExercisePayloadSchema,
   UpdateTestPayloadSchema,
   DeleteTestPayloadSchema,
-  GetExerciseForStudentPayloadSchema,
   CreateAttemptPayloadSchema,
-  GetAttemptsByUserAndExercisePayloadSchema,
-  GetAnswerByUserAndExercisePayloadSchema,
 } from '@/types/codelab/schemas/payload';
 import type { AsyncResult } from '@/types/shared/services/result';
 import type { ReadonlyRequestCookies } from 'next/dist/server/web/spec-extension/adapters/request-cookies';
@@ -44,10 +39,6 @@ class CodelabService extends Service {
   constructor() {
     super('codelab');
   }
-
-  // ========================================
-  // EXERCISE CRUD METHODS (for professors)
-  // ========================================
 
   async createExercise(
     payload: CreateExercisePayload,

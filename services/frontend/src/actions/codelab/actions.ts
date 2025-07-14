@@ -2,91 +2,65 @@
 
 import { codelabService } from '@/services/codelab/service';
 import type {
-  CreateExercisePayloadSchema,
-  UpdateExercisePayloadSchema,
-  DeleteExercisePayloadSchema,
-  CreateTestPayloadSchema,
-  UpdateTestPayloadSchema,
-  DeleteTestPayloadSchema,
-  CreateAttemptPayloadSchema,
-} from '@/types/codelab/schemas/payload';
-import { revalidatePath } from 'next/cache';
+  CreateAttemptPayload,
+  CreateExercisePayload,
+  CreateTestPayload,
+  DeleteExercisePayload,
+  DeleteTestPayload,
+  GetExercisePayload,
+  GetTestsByExercisePayload,
+  UpdateExercisePayload,
+  UpdateTestPayload,
+} from '@/types/codelab/payload';
 import { cookies } from 'next/headers';
-import type z from 'zod';
 
 // === EXERCISE ACTIONS ===
-export async function getExercise(exerciseId: number) {
+export async function getExercise(payload: GetExercisePayload) {
   const codelab = await codelabService(cookies());
-  return codelab.getExercise({
-    id: exerciseId,
-  });
+  return codelab.getExercise(payload);
 }
 
-export async function createExerciseAction(
-  payload: z.infer<typeof CreateExercisePayloadSchema>,
-) {
+export async function createExerciseAction(payload: CreateExercisePayload) {
   const codelab = await codelabService(cookies());
   return codelab.createExercise(payload);
 }
 
-export async function updateExerciseAction(
-  exerciseId: number,
-  exercise: z.infer<typeof UpdateExercisePayloadSchema>['exercise'],
-) {
+export async function updateExerciseAction(payload: UpdateExercisePayload) {
   const codelab = await codelabService(cookies());
-  return codelab.updateExercise({
-    id: exerciseId,
-    exercise,
-  });
+  return codelab.updateExercise(payload);
 }
 
-export async function deleteExerciseAction(exerciseId: number) {
+export async function deleteExerciseAction(payload: DeleteExercisePayload) {
   const codelab = await codelabService(cookies());
-  return codelab.deleteExercise({
-    id: exerciseId,
-  });
+  return codelab.deleteExercise(payload);
 }
 
 // === TEST ACTIONS ===
-export async function getTestsByExercise(exerciseId: number) {
+export async function getTestsByExercise(payload: GetTestsByExercisePayload) {
   const codelab = await codelabService(cookies());
-  return codelab.getTestsByExercise({
-    exercise_id: exerciseId,
-  });
+  return codelab.getTestsByExercise(payload);
 }
 
-export async function createTestAction(
-  payload: z.infer<typeof CreateTestPayloadSchema>,
-) {
+export async function createTestAction(payload: CreateTestPayload) {
   const codelab = await codelabService(cookies());
   return codelab.createTest(payload);
 }
 
-export async function updateTestAction(
-  testId: number,
-  test: z.infer<typeof UpdateTestPayloadSchema>['test'],
-) {
+export async function updateTestAction(payload: UpdateTestPayload) {
   const codelab = await codelabService(cookies());
-  return codelab.updateTest({
-    id: testId,
-    test,
-  });
+  return codelab.updateTest(payload);
 }
 
-export async function deleteTestAction(testId: number) {
+export async function deleteTestAction(payload: DeleteTestPayload) {
   const codelab = await codelabService(cookies());
-  return codelab.deleteTest({
-    id: testId,
-  });
+  return codelab.deleteTest(payload);
 }
 
 // === ATTEMPT ACTIONS ===
-export async function createAttemptAction(
-  payload: z.infer<typeof CreateAttemptPayloadSchema>,
-) {
+export async function createAttemptAction(payload: CreateAttemptPayload) {
   const codelab = await codelabService(cookies());
 
-  revalidatePath(`/dashboard/codelab/exercises/${payload.exercise_id}`);
+  // revalidatePath(`/dashboard/codelab/exercises/${payload.exercise_id}`);
 
   return codelab.createAttempt(payload);
 }
