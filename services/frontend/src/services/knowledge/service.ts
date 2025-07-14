@@ -1,6 +1,5 @@
 import { SessionInterceptor } from '@/services/auth/interceptor';
 import { Service } from '@/services/shared/service';
-import type { Test, Question, Submission } from '@/types/knowledge/models';
 import type {
   CreateTestPayload,
   UpdateTestPayload,
@@ -37,7 +36,13 @@ import type { SimpleResponse } from '@/services/shared/response';
 import type {
   GetSubmissionResultResponse,
   GetTestFormResponse,
+  QuestionResponse,
+  QuestionsResponse,
+  SubmissionResponse,
+  SubmissionsResponse,
   SubmitTestResponse,
+  TestResponse,
+  TestsResponse,
 } from '@/types/knowledge/responses';
 
 class KnowledgeService extends Service {
@@ -55,14 +60,14 @@ class KnowledgeService extends Service {
     });
   }
 
-  async getMyTests(): AsyncResult<Test[]> {
-    return this.get<Test[]>({
+  async getMyTests(): AsyncResult<TestsResponse> {
+    return this.get<TestsResponse>({
       endpoint: ['tests', 'my'],
     });
   }
 
-  async getTest(payload: GetTestPayload): AsyncResult<Test> {
-    return this.get<Test>({
+  async getTest(payload: GetTestPayload): AsyncResult<TestResponse> {
+    return this.get<TestResponse>({
       endpoint: ['tests', payload.id],
       payload: {
         schema: GetTestPayloadSchema,
@@ -93,8 +98,8 @@ class KnowledgeService extends Service {
 
   async getTestQuestions(
     payload: GetTestQuestionsPayload,
-  ): AsyncResult<Question[]> {
-    return this.get<Question[]>({
+  ): AsyncResult<QuestionsResponse> {
+    return this.get<QuestionsResponse>({
       endpoint: ['tests', payload.id, 'questions'],
       payload: {
         schema: GetTestQuestionsPayloadSchema,
@@ -113,8 +118,10 @@ class KnowledgeService extends Service {
     });
   }
 
-  async getQuestion(payload: GetQuestionPayload): AsyncResult<Question> {
-    return this.get<Question>({
+  async getQuestion(
+    payload: GetQuestionPayload,
+  ): AsyncResult<QuestionResponse> {
+    return this.get<QuestionResponse>({
       endpoint: ['tests', payload.test_id, 'questions', payload.id],
       payload: {
         schema: GetQuestionPayloadSchema,
@@ -148,8 +155,8 @@ class KnowledgeService extends Service {
   }
 
   // === STUDENT METHODS ===
-  async getAvailableTests(): AsyncResult<Test[]> {
-    return this.get<Test[]>({
+  async getAvailableTests(): AsyncResult<TestsResponse> {
+    return this.get<TestsResponse>({
       endpoint: ['tests', 'available'],
     });
   }
@@ -178,14 +185,16 @@ class KnowledgeService extends Service {
     });
   }
 
-  async getMySubmissions(): AsyncResult<Submission[]> {
-    return this.get<Submission[]>({
+  async getMySubmissions(): AsyncResult<SubmissionsResponse> {
+    return this.get<SubmissionsResponse>({
       endpoint: 'submissions/my',
     });
   }
 
-  async getSubmission(payload: GetSubmissionPayload): AsyncResult<Submission> {
-    return this.get<Submission>({
+  async getSubmission(
+    payload: GetSubmissionPayload,
+  ): AsyncResult<SubmissionResponse> {
+    return this.get<SubmissionResponse>({
       endpoint: ['submissions', payload.id],
       payload: {
         schema: GetSubmissionPayloadSchema,

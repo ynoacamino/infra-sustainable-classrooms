@@ -12,7 +12,8 @@ export default function TestNotFound() {
             Test Not Found
           </h1>
           <p className="text-gray-600">
-            The test you're looking for doesn't exist or may have been removed.
+            The test you&apos;re looking for doesn&apos;t exist or may have been
+            removed.
           </p>
         </div>
 
@@ -23,11 +24,9 @@ export default function TestNotFound() {
               Back to Tests
             </Link>
           </Button>
-          
+
           <Button variant="outline" asChild className="w-full">
-            <Link href="/dashboard">
-              Go to Dashboard
-            </Link>
+            <Link href="/dashboard">Go to Dashboard</Link>
           </Button>
         </div>
       </div>

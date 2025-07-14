@@ -13,10 +13,7 @@ export default function ResultsLoading() {
 
       <div className="space-y-4">
         {Array.from({ length: 5 }).map((_, i) => (
-          <div
-            key={i}
-            className="border border-gray-200 rounded-lg p-6"
-          >
+          <div key={i} className="border border-gray-200 rounded-lg p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="flex-1">
                 <Skeleton className="h-6 w-48 mb-2" />

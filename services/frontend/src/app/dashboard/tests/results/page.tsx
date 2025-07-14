@@ -30,7 +30,9 @@ export default async function MySubmissionsPage() {
         </Button>
         <div>
           <h1 className="text-3xl font-bold">My Test Results</h1>
-          <p className="text-gray-600 mt-2">View your completed test submissions</p>
+          <p className="text-gray-600 mt-2">
+            View your completed test submissions
+          </p>
         </div>
       </div>
 
@@ -44,9 +46,7 @@ export default async function MySubmissionsPage() {
             Complete some tests to see your results here
           </p>
           <Button asChild>
-            <Link href="/dashboard/tests">
-              Take a Test
-            </Link>
+            <Link href="/dashboard/tests">Take a Test</Link>
           </Button>
         </div>
       ) : (
@@ -62,7 +62,12 @@ export default async function MySubmissionsPage() {
                     Test #{submission.test_id}
                   </h3>
                   <div className="flex items-center gap-4 text-sm text-gray-600">
-                    <span>Submitted: {new Date(submission.submitted_at * 1000).toLocaleString()}</span>
+                    <span>
+                      Submitted:{' '}
+                      {new Date(
+                        submission.submitted_at * 1000,
+                      ).toLocaleString()}
+                    </span>
                     {submission.score !== undefined && (
                       <div className="flex items-center">
                         {submission.score >= 70 ? (
@@ -70,9 +75,13 @@ export default async function MySubmissionsPage() {
                         ) : (
                           <XCircle className="h-4 w-4 mr-1 text-red-500" />
                         )}
-                        <span className={`font-medium ${
-                          submission.score >= 70 ? 'text-green-600' : 'text-red-600'
-                        }`}>
+                        <span
+                          className={`font-medium ${
+                            submission.score >= 70
+                              ? 'text-green-600'
+                              : 'text-red-600'
+                          }`}
+                        >
                           Score: {submission.score}%
                         </span>
                       </div>

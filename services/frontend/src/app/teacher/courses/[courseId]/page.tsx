@@ -2,8 +2,9 @@ import { textService } from '@/services/text/service';
 import { cookies } from 'next/headers';
 import Link from 'next/link';
 import { Button } from '@/ui/button';
-import { ArrowLeft, Edit, FileText, Plus } from 'lucide-react';
+import { ArrowLeft, Edit, Plus } from 'lucide-react';
 import { notFound } from 'next/navigation';
+import Image from 'next/image';
 
 interface CoursePageProps {
   params: { courseId: string };
@@ -18,7 +19,7 @@ export default async function CoursePage({ params }: CoursePageProps) {
 
   const text = await textService(cookies());
   const [courseResult, sectionsResult] = await Promise.all([
-    text.getCourse({ course_id: courseId }),
+    text.getCourse({ id: courseId }),
     text.listSections({ course_id: courseId }),
   ]);
 
@@ -78,9 +79,10 @@ export default async function CoursePage({ params }: CoursePageProps) {
               </Button>
             </div>
             {course.imageUrl && (
-              <img
+              <Image
                 src={course.imageUrl}
                 alt={course.title}
+                fill
                 className="w-full h-64 object-cover rounded-md mt-4"
               />
             )}

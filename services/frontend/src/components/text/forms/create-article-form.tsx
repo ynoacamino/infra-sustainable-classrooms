@@ -12,8 +12,6 @@ import {
   createArticleFormSchema,
 } from '@/lib/text/forms/create-article-form';
 import { createArticleAction } from '@/actions/text/actions';
-import { redirect } from 'next/navigation';
-
 interface CreateArticleFormProps {
   sectionId: number;
 }

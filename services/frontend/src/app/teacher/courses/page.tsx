@@ -2,10 +2,11 @@ import { textService } from '@/services/text/service';
 import { cookies } from 'next/headers';
 import Link from 'next/link';
 import { Button } from '@/ui/button';
+import Image from 'next/image';
 
 export default async function CoursesPage() {
   const text = await textService(cookies());
-  const courses = await text.listCourses({});
+  const courses = await text.listCourses();
 
   if (!courses.success) {
     return (
@@ -48,9 +49,10 @@ export default async function CoursesPage() {
               </div>
               {course.imageUrl && (
                 <div className="px-6 pb-4">
-                  <img
+                  <Image
                     src={course.imageUrl}
                     alt={course.title}
+                    fill
                     className="w-full h-48 object-cover rounded-md"
                   />
                 </div>

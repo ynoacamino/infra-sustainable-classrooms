@@ -1,7 +1,6 @@
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import LayoutLogin from '@/layout/shared/layout-login';
-import { RegisterForm } from '@/components/auth/forms/register-form';
 import { authService } from '@/services/auth/service';
 import { cookies } from 'next/headers';
 import { profilesService } from '@/services/profiles/service';
