@@ -18,9 +18,9 @@ func (m *MockVideoRepository) CreateVideo(ctx context.Context, params videolearn
 	return args.Get(0).(videolearningdb.Video), args.Error(1)
 }
 
-func (m *MockVideoRepository) GetVideoByID(ctx context.Context, id int64) (videolearningdb.GetVideoByIDRow, error) {
+func (m *MockVideoRepository) GetVideoByID(ctx context.Context, id int64) (videolearningdb.Video, error) {
 	args := m.Called(ctx, id)
-	return args.Get(0).(videolearningdb.GetVideoByIDRow), args.Error(1)
+	return args.Get(0).(videolearningdb.Video), args.Error(1)
 }
 
 func (m *MockVideoRepository) DeleteVideo(ctx context.Context, id int64) error {
@@ -28,29 +28,29 @@ func (m *MockVideoRepository) DeleteVideo(ctx context.Context, id int64) error {
 	return args.Error(0)
 }
 
-func (m *MockVideoRepository) SearchVideos(ctx context.Context, params videolearningdb.SearchVideosParams) ([]videolearningdb.SearchVideosRow, error) {
+func (m *MockVideoRepository) SearchVideos(ctx context.Context, params videolearningdb.SearchVideosParams) ([]videolearningdb.Video, error) {
 	args := m.Called(ctx, params)
-	return args.Get(0).([]videolearningdb.SearchVideosRow), args.Error(1)
+	return args.Get(0).([]videolearningdb.Video), args.Error(1)
 }
 
-func (m *MockVideoRepository) GetVideosByCategory(ctx context.Context, id int64) ([]videolearningdb.GetVideosByCategoryRow, error) {
+func (m *MockVideoRepository) GetVideosByCategory(ctx context.Context, id int64) ([]videolearningdb.Video, error) {
 	args := m.Called(ctx, id)
-	return args.Get(0).([]videolearningdb.GetVideosByCategoryRow), args.Error(1)
+	return args.Get(0).([]videolearningdb.Video), args.Error(1)
 }
 
-func (m *MockVideoRepository) GetVideosByUser(ctx context.Context, params videolearningdb.GetVideosByUserParams) ([]videolearningdb.GetVideosByUserRow, error) {
+func (m *MockVideoRepository) GetVideosByUser(ctx context.Context, params videolearningdb.GetVideosByUserParams) ([]videolearningdb.Video, error) {
 	args := m.Called(ctx, params)
-	return args.Get(0).([]videolearningdb.GetVideosByUserRow), args.Error(1)
+	return args.Get(0).([]videolearningdb.Video), args.Error(1)
 }
 
-func (m *MockVideoRepository) GetSimilarVideos(ctx context.Context, id int64) ([]videolearningdb.GetSimilarVideosRow, error) {
+func (m *MockVideoRepository) GetSimilarVideos(ctx context.Context, id int64) ([]videolearningdb.Video, error) {
 	args := m.Called(ctx, id)
-	return args.Get(0).([]videolearningdb.GetSimilarVideosRow), args.Error(1)
+	return args.Get(0).([]videolearningdb.Video), args.Error(1)
 }
 
-func (m *MockVideoRepository) GetRecentVideos(ctx context.Context, interval pgtype.Interval) ([]videolearningdb.GetRecentVideosRow, error) {
+func (m *MockVideoRepository) GetRecentVideos(ctx context.Context, interval pgtype.Interval) ([]videolearningdb.Video, error) {
 	args := m.Called(ctx, interval)
-	return args.Get(0).([]videolearningdb.GetRecentVideosRow), args.Error(1)
+	return args.Get(0).([]videolearningdb.Video), args.Error(1)
 }
 
 func (m *MockVideoRepository) IncrementVideoViews(ctx context.Context, params videolearningdb.IncrementVideoViewsParams) error {

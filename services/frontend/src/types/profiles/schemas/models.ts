@@ -50,13 +50,19 @@ export const PublicProfileSchema = ProfileSchema.pick({
 
 export const StudentProfileSchema = ProfileSchema.extend({
   role: z.literal('student'),
-  grade_level: z.string().describe('Student grade level'),
+  grade_level: z
+    .string()
+    .min(1, 'Grade level is required')
+    .describe('Student grade level'),
   major: z.string().optional().describe('Student major or field of study'),
 });
 
 export const TeacherProfileSchema = ProfileSchema.extend({
   role: z.literal('teacher'),
-  position: z.string().describe('Teacher position or title'),
+  position: z
+    .string()
+    .min(1, 'Position is required')
+    .describe('Teacher position or title'),
 });
 
 export const CompleteProfileSchema = z.discriminatedUnion('role', [

@@ -11,15 +11,15 @@ import (
 type VideoRepository interface {
 	// Video CRUD operations
 	CreateVideo(ctx context.Context, params videolearningdb.CreateVideoParams) (videolearningdb.Video, error)
-	GetVideoByID(ctx context.Context, id int64) (videolearningdb.GetVideoByIDRow, error)
+	GetVideoByID(ctx context.Context, id int64) (videolearningdb.Video, error)
 	DeleteVideo(ctx context.Context, id int64) error
 
 	// Video search and filtering
-	SearchVideos(ctx context.Context, params videolearningdb.SearchVideosParams) ([]videolearningdb.SearchVideosRow, error)
-	GetVideosByCategory(ctx context.Context, id int64) ([]videolearningdb.GetVideosByCategoryRow, error)
-	GetVideosByUser(ctx context.Context, params videolearningdb.GetVideosByUserParams) ([]videolearningdb.GetVideosByUserRow, error)
-	GetSimilarVideos(ctx context.Context, id int64) ([]videolearningdb.GetSimilarVideosRow, error)
-	GetRecentVideos(ctx context.Context, interval pgtype.Interval) ([]videolearningdb.GetRecentVideosRow, error)
+	SearchVideos(ctx context.Context, params videolearningdb.SearchVideosParams) ([]videolearningdb.Video, error)
+	GetVideosByCategory(ctx context.Context, id int64) ([]videolearningdb.Video, error)
+	GetVideosByUser(ctx context.Context, params videolearningdb.GetVideosByUserParams) ([]videolearningdb.Video, error)
+	GetSimilarVideos(ctx context.Context, id int64) ([]videolearningdb.Video, error)
+	GetRecentVideos(ctx context.Context, interval pgtype.Interval) ([]videolearningdb.Video, error)
 
 	// Video interactions
 	IncrementVideoViews(ctx context.Context, params videolearningdb.IncrementVideoViewsParams) error

@@ -12,5 +12,6 @@ type VideoTagRepository interface {
 	GetOrCreateTag(ctx context.Context, name string) (videolearningdb.VideoTag, error)
 	GetTagByName(ctx context.Context, name string) (videolearningdb.VideoTag, error)
 	GetAllTags(ctx context.Context) ([]videolearningdb.VideoTag, error)
+	GetTagById(ctx context.Context, id int64) (videolearningdb.VideoTag, error)
 	GetTagsByVideoID(ctx context.Context, videoID int64) ([]videolearningdb.VideoTag, error)
 }

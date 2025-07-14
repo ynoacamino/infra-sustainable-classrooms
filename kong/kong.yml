@@ -61,6 +61,18 @@ services:
           - DELETE
           - PATCH
 
+  - name: mailing-service
+    host: mailing-service
+    port: 8080
+    protocol: http
+    routes:
+      - name: mailing-route
+        paths:
+          - /mailing
+        strip_path: false
+        methods:
+          - POST
+
   - name: knowledge-service
     host: knowledge-service
     port: 8080

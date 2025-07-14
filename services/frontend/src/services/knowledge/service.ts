@@ -12,52 +12,41 @@ import type {
   GetTestFormPayload,
   SubmitTestPayload,
   GetSubmissionResultPayload,
+  GetTestPayload,
+  GetQuestionPayload,
+  GetSubmissionPayload,
 } from '@/types/knowledge/payload';
-import type {
-  CreateTestResponse,
-  GetMyTestsResponse,
-  UpdateTestResponse,
-  DeleteTestResponse,
-  GetTestQuestionsResponse,
-  AddQuestionResponse,
-  UpdateQuestionResponse,
-  DeleteQuestionResponse,
-  GetAvailableTestsResponse,
-  GetTestFormResponse,
-  SubmitTestResponse,
-  GetMySubmissionsResponse,
-  GetSubmissionResultResponse,
-} from '@/types/knowledge/responses';
 import {
   CreateTestPayloadSchema,
-  GetMyTestsPayloadSchema,
   UpdateTestPayloadSchema,
   GetTestQuestionsPayloadSchema,
   AddQuestionPayloadSchema,
   UpdateQuestionPayloadSchema,
-  GetAvailableTestsPayloadSchema,
   GetTestFormPayloadSchema,
   SubmitTestPayloadSchema,
-  GetMySubmissionsPayloadSchema,
   GetSubmissionResultPayloadSchema,
+  GetTestPayloadSchema,
+  DeleteTestPayloadSchema,
+  GetQuestionPayloadSchema,
+  DeleteQuestionPayloadSchema,
+  GetSubmissionPayloadSchema,
 } from '@/types/knowledge/schemas/payload';
 import type { ReadonlyRequestCookies } from 'next/dist/server/web/spec-extension/adapters/request-cookies';
 import type { AsyncResult } from '@/types/shared/services/result';
+import type { SimpleResponse } from '@/services/shared/response';
+import type {
+  GetSubmissionResultResponse,
+  GetTestFormResponse,
+  SubmitTestResponse,
+} from '@/types/knowledge/responses';
 
 class KnowledgeService extends Service {
   constructor() {
     super('knowledge');
   }
 
-  // === TEACHER METHODS ===
-
-  /**
-   * Create a new test
-   */
-  async createTest(
-    payload: CreateTestPayload,
-  ): AsyncResult<CreateTestResponse> {
-    return this.post<CreateTestResponse>({
+  async createTest(payload: CreateTestPayload): AsyncResult<SimpleResponse> {
+    return this.post<SimpleResponse>({
       endpoint: 'tests',
       payload: {
         schema: CreateTestPayloadSchema,
@@ -75,14 +64,9 @@ class KnowledgeService extends Service {
     });
   }
 
-  /**
-   * Update test title
-   */
-  async updateTest(
-    payload: UpdateTestPayload,
-  ): AsyncResult<UpdateTestResponse> {
-    return this.put<UpdateTestResponse>({
-      endpoint: ['tests', payload.test_id],
+  async updateTest(payload: UpdateTestPayload): AsyncResult<SimpleResponse> {
+    return this.put<SimpleResponse>({
+      endpoint: ['tests', payload.id],
       payload: {
         schema: UpdateTestPayloadSchema,
         data: payload,
@@ -101,9 +85,6 @@ class KnowledgeService extends Service {
     });
   }
 
-  /**
-   * Get questions for a test
-   */
   async getTestQuestions(
     payload: GetTestQuestionsPayload,
   ): AsyncResult<GetTestQuestionsResponse> {
@@ -112,13 +93,8 @@ class KnowledgeService extends Service {
     });
   }
 
-  /**
-   * Add a question to a test
-   */
-  async addQuestion(
-    payload: AddQuestionPayload,
-  ): AsyncResult<AddQuestionResponse> {
-    return this.post<AddQuestionResponse>({
+  async addQuestion(payload: AddQuestionPayload): AsyncResult<SimpleResponse> {
+    return this.post<SimpleResponse>({
       endpoint: ['tests', payload.test_id, 'questions'],
       payload: {
         schema: AddQuestionPayloadSchema,
@@ -127,14 +103,21 @@ class KnowledgeService extends Service {
     });
   }
 
-  /**
-   * Update a question
-   */
+  async getQuestion(payload: GetQuestionPayload): AsyncResult<Question> {
+    return this.get<Question>({
+      endpoint: ['tests', payload.test_id, 'questions', payload.id],
+      payload: {
+        schema: GetQuestionPayloadSchema,
+        data: payload,
+      },
+    });
+  }
+
   async updateQuestion(
     payload: UpdateQuestionPayload,
-  ): AsyncResult<UpdateQuestionResponse> {
-    return this.put<UpdateQuestionResponse>({
-      endpoint: ['tests', payload.test_id, 'questions', payload.question_id],
+  ): AsyncResult<SimpleResponse> {
+    return this.put<SimpleResponse>({
+      endpoint: ['tests', payload.test_id, 'questions', payload.id],
       payload: {
         schema: UpdateQuestionPayloadSchema,
         data: payload,
@@ -142,9 +125,6 @@ class KnowledgeService extends Service {
     });
   }
 
-  /**
-   * Delete a question
-   */
   async deleteQuestion(
     payload: DeleteQuestionPayload,
   ): AsyncResult<DeleteQuestionResponse> {
@@ -154,7 +134,6 @@ class KnowledgeService extends Service {
   }
 
   // === STUDENT METHODS ===
-
   /**
    * Get available tests for students
    */
@@ -164,9 +143,6 @@ class KnowledgeService extends Service {
     });
   }
 
-  /**
-   * Get test form for taking
-   */
   async getTestForm(
     payload: GetTestFormPayload,
   ): AsyncResult<GetTestFormResponse> {
@@ -175,14 +151,11 @@ class KnowledgeService extends Service {
     });
   }
 
-  /**
-   * Submit test answers
-   */
   async submitTest(
     payload: SubmitTestPayload,
   ): AsyncResult<SubmitTestResponse> {
     return this.post<SubmitTestResponse>({
-      endpoint: ['tests', payload.test_id, 'submit'],
+      endpoint: ['tests', payload.id, 'submit'],
       payload: {
         schema: SubmitTestPayloadSchema,
         data: payload,
@@ -190,126 +163,18 @@ class KnowledgeService extends Service {
     });
   }
 
-  /**
-   * Get my test submissions
-   */
-  async getMySubmissions(): AsyncResult<GetMySubmissionsResponse> {
-    return this.get<GetMySubmissionsResponse>({
+  async getMySubmissions(): AsyncResult<Submission[]> {
+    return this.get<Submission[]>({
       endpoint: 'submissions/my',
     });
   }
 
-  /**
-   * Get detailed submission result
-   */
   async getSubmissionResult(
     payload: GetSubmissionResultPayload,
   ): AsyncResult<GetSubmissionResultResponse> {
     return this.get<GetSubmissionResultResponse>({
       endpoint: ['submissions', payload.submission_id, 'result'],
     });
-  }
-
-  // === CONVENIENCE METHODS ===
-
-  /**
-   * Get a specific test by ID (for teachers)
-   * This uses getMyTests and filters by test ID since there's no direct getTest endpoint
-   */
-  async getTest(testId: number): AsyncResult<Test> {
-    const result = await this.getMyTests();
-    if (!result.success) {
-      return result;
-    }
-
-    const test = result.data.tests.find((t) => t.id === testId);
-    if (!test) {
-      return {
-        success: false,
-        error: {
-          message: 'Test not found',
-          status: 404,
-          reason: 'NOT_FOUND',
-          extend: {},
-        },
-      };
-    }
-
-    return {
-      success: true,
-      data: test,
-    };
-  }
-
-  /**
-   * Get a specific question by ID
-   * This uses getTestQuestions and filters by question ID since there's no direct endpoint
-   */
-  async getQuestion(testId: number, questionId: number): AsyncResult<Question> {
-    try {
-      const result = await this.getTestQuestions({ test_id: testId });
-      if (!result.success) {
-        return result;
-      }
-
-      const question = result.data.questions.find((q) => q.id === questionId);
-      if (!question) {
-        return {
-          success: false,
-          error: {
-            message: 'Question not found',
-            status: 404,
-            reason: 'NOT_FOUND',
-            extend: {},
-          },
-        };
-      }
-
-      return {
-        success: true,
-        data: question,
-      };
-    } catch (error) {
-      return {
-        success: false,
-        error: {
-          message: 'Failed to fetch question',
-          status: 500,
-          reason: 'INTERNAL_ERROR',
-          extend: {},
-        },
-      };
-    }
-  }
-
-  /**
-   * Get a specific submission by ID
-   * This uses getSubmissionResult and extracts the submission data
-   */
-  async getSubmission(submissionId: number): AsyncResult<Submission> {
-    try {
-      const result = await this.getSubmissionResult({
-        submission_id: submissionId,
-      });
-      if (!result.success) {
-        return result;
-      }
-
-      return {
-        success: true,
-        data: result.data.submission,
-      };
-    } catch (error) {
-      return {
-        success: false,
-        error: {
-          message: 'Failed to fetch submission',
-          status: 500,
-          reason: 'INTERNAL_ERROR',
-          extend: {},
-        },
-      };
-    }
   }
 }
 

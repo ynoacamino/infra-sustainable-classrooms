@@ -96,6 +96,7 @@ func createTestPublicProfile() *profiles.PublicProfileResponse {
 
 // createTestVideo creates a test Video for use in tests
 func createTestVideo() videolearningdb.Video {
+	now := time.Now()
 	return videolearningdb.Video{
 		ID:           1,
 		Title:        "Test Video",
@@ -106,36 +107,23 @@ func createTestVideo() videolearningdb.Video {
 		VideoObjName: pgtype.Text{String: "test_video.mp4", Valid: true},
 		ThumbObjName: pgtype.Text{String: "test_thumb.jpg", Valid: true},
 		CategoryID:   1,
-		CreatedAt:    pgtype.Timestamptz{Time: time.Now(), Valid: true},
+		CreatedAt:    pgtype.Timestamptz{Time: now, Valid: true},
+		UpdatedAt:    pgtype.Timestamptz{Time: now, Valid: true},
 	}
 }
 
-// createTestVideoByIDRow creates a test GetVideoByIDRow for use in tests
-func createTestVideoByIDRow() videolearningdb.GetVideoByIDRow {
-	return videolearningdb.GetVideoByIDRow{
+// createTestSearchVideo creates a test Video for use in search tests
+func createTestSearchVideo() videolearningdb.Video {
+	return videolearningdb.Video{
 		ID:           1,
 		Title:        "Test Video",
 		UserID:       1,
-		Description:  pgtype.Text{String: "Test description", Valid: true},
 		Views:        100,
 		Likes:        50,
-		VideoObjName: pgtype.Text{String: "test_video.mp4", Valid: true},
 		ThumbObjName: pgtype.Text{String: "test_thumb.jpg", Valid: true},
 		CategoryID:   1,
-		CategoryName: "Education",
 		CreatedAt:    pgtype.Timestamptz{Time: time.Now(), Valid: true},
-	}
-}
-
-// createTestSearchVideosRow creates a test SearchVideosRow for use in tests
-func createTestSearchVideosRow() videolearningdb.SearchVideosRow {
-	return videolearningdb.SearchVideosRow{
-		ID:           1,
-		Title:        "Test Video",
-		UserID:       1,
-		Views:        100,
-		Likes:        50,
-		ThumbObjName: pgtype.Text{String: "test_thumb.jpg", Valid: true},
+		UpdatedAt:    pgtype.Timestamptz{Time: time.Now(), Valid: true},
 	}
 }
 
@@ -206,7 +194,7 @@ func TestSearchVideos(t *testing.T) {
 					Limit:   int32(10),
 					Offset:  int32(0),
 				}
-				videos := []videolearningdb.SearchVideosRow{createTestSearchVideosRow()}
+				videos := []videolearningdb.Video{createTestSearchVideo()}
 				videoRepo.On("SearchVideos", mock.Anything, searchParams).Return(videos, nil)
 
 				// Setup cache expectations for video views and likes
@@ -258,7 +246,7 @@ func TestSearchVideos(t *testing.T) {
 					Limit:   int32(10),
 					Offset:  int32(0),
 				}
-				videos := []videolearningdb.SearchVideosRow{createTestSearchVideosRow()}
+				videos := []videolearningdb.Video{createTestSearchVideo()}
 				videoRepo.On("SearchVideos", mock.Anything, searchParams).Return(videos, nil)
 
 				// Setup cache expectations for video views and likes
@@ -325,7 +313,7 @@ func TestSearchVideos(t *testing.T) {
 					Limit:   int32(10),
 					Offset:  int32(0),
 				}
-				videoRepo.On("SearchVideos", mock.Anything, searchParams).Return([]videolearningdb.SearchVideosRow(nil), errors.New("database error"))
+				videoRepo.On("SearchVideos", mock.Anything, searchParams).Return([]videolearningdb.Video(nil), errors.New("database error"))
 			},
 			expectedResult: nil,
 			expectedError:  videolearning.ServiceUnavailable("failed to search videos"),
@@ -391,7 +379,7 @@ func TestGetVideo(t *testing.T) {
 					SessionToken: "valid_token",
 				}).Return(createTestCompleteProfile("student"), nil)
 
-				videoData := createTestVideoByIDRow()
+				videoData := createTestVideo()
 				videoRepo.On("GetVideoByID", mock.Anything, int64(1)).Return(videoData, nil)
 
 				// Mock cache operations for views and likes
@@ -427,8 +415,9 @@ func TestGetVideo(t *testing.T) {
 				Likes:        55,  // 50 + 5 cached
 				VideoURL:     "https://example.com/video.mp4",
 				ThumbnailURL: "https://example.com/thumb.jpg",
-				Category:     "Education",
-				Tags:         []string{"test-tag"},
+				UploadDate:   1234567890000,
+				CategoryID:   1,
+				TagIds:       []int64{1},
 			},
 			expectedError: nil,
 		},
@@ -443,7 +432,7 @@ func TestGetVideo(t *testing.T) {
 					SessionToken: "valid_token",
 				}).Return(createTestCompleteProfile("student"), nil)
 
-				videoRepo.On("GetVideoByID", mock.Anything, int64(999)).Return(videolearningdb.GetVideoByIDRow{}, errors.New("video not found"))
+				videoRepo.On("GetVideoByID", mock.Anything, int64(999)).Return(videolearningdb.Video{}, errors.New("video not found"))
 			},
 			expectedResult: nil,
 			expectedError:  videolearning.VideoNotFound("video not found"),
@@ -617,10 +606,12 @@ func TestGetComments(t *testing.T) {
 			expectedResult: &videolearning.CommentList{
 				Comments: []*videolearning.Comment{
 					{
-						ID:     1,
-						Author: "John Doe",
-						Title:  "Test Comment",
-						Body:   "This is a test comment",
+						ID:      1,
+						Author:  "John Doe",
+						Date:    1234567890000,
+						Title:   "Test Comment",
+						Body:    "This is a test comment",
+						VideoID: 1,
 					},
 				},
 			},
@@ -684,7 +675,7 @@ func TestToggleVideoLike(t *testing.T) {
 					SessionToken: "valid_token",
 				}).Return(createTestCompleteProfile("student"), nil)
 
-				videoData := createTestVideoByIDRow()
+				videoData := createTestVideo()
 				videoRepo.On("GetVideoByID", mock.Anything, int64(1)).Return(videoData, nil)
 
 				// Cache key for user like status
@@ -1165,7 +1156,7 @@ func TestDeleteVideo(t *testing.T) {
 					SessionToken: "teacher_token",
 				}).Return(createTestCompleteProfile("teacher"), nil)
 
-				videoData := createTestVideoByIDRow()
+				videoData := createTestVideo()
 				videoRepo.On("GetVideoByID", mock.Anything, int64(1)).Return(videoData, nil)
 
 				// Mock file deletion
@@ -1199,7 +1190,7 @@ func TestDeleteVideo(t *testing.T) {
 					SessionToken: "other_teacher_token",
 				}).Return(otherTeacher, nil)
 
-				videoData := createTestVideoByIDRow()
+				videoData := createTestVideo()
 				videoRepo.On("GetVideoByID", mock.Anything, int64(1)).Return(videoData, nil)
 			},
 			expectedResult: nil,
@@ -1216,7 +1207,7 @@ func TestDeleteVideo(t *testing.T) {
 					SessionToken: "teacher_token",
 				}).Return(createTestCompleteProfile("teacher"), nil)
 
-				videoRepo.On("GetVideoByID", mock.Anything, int64(999)).Return(videolearningdb.GetVideoByIDRow{}, errors.New("video not found"))
+				videoRepo.On("GetVideoByID", mock.Anything, int64(999)).Return(videolearningdb.Video{}, errors.New("video not found"))
 			},
 			expectedResult: nil,
 			expectedError:  videolearning.VideoNotFound("video not found"),
@@ -1280,7 +1271,7 @@ func TestGetVideosByCategory(t *testing.T) {
 					SessionToken: "valid_token",
 				}).Return(createTestCompleteProfile("student"), nil)
 
-				categoryVideos := []videolearningdb.GetVideosByCategoryRow{
+				categoryVideos := []videolearningdb.Video{
 					{
 						ID:           1,
 						Title:        "Category Video 1",
@@ -1288,7 +1279,9 @@ func TestGetVideosByCategory(t *testing.T) {
 						Views:        100,
 						Likes:        50,
 						ThumbObjName: pgtype.Text{String: "thumb1.jpg", Valid: true},
+						CategoryID:   1,
 						CreatedAt:    pgtype.Timestamptz{Time: time.Now(), Valid: true},
+						UpdatedAt:    pgtype.Timestamptz{Time: time.Now(), Valid: true},
 					},
 				}
 				videoRepo.On("GetVideosByCategory", mock.Anything, int64(1)).Return(categoryVideos, nil)
@@ -1334,7 +1327,7 @@ func TestGetVideosByCategory(t *testing.T) {
 					SessionToken: "valid_token",
 				}).Return(createTestCompleteProfile("student"), nil)
 
-				videoRepo.On("GetVideosByCategory", mock.Anything, int64(1)).Return([]videolearningdb.GetVideosByCategoryRow(nil), errors.New("database error"))
+				videoRepo.On("GetVideosByCategory", mock.Anything, int64(1)).Return([]videolearningdb.Video(nil), errors.New("database error"))
 			},
 			expectedResult: nil,
 			expectedError:  videolearning.ServiceUnavailable("failed to get videos by category"),
@@ -1401,7 +1394,7 @@ func TestGetSimilarVideos(t *testing.T) {
 					SessionToken: "valid_token",
 				}).Return(createTestCompleteProfile("student"), nil)
 
-				similarVideos := []videolearningdb.GetSimilarVideosRow{
+				similarVideos := []videolearningdb.Video{
 					{
 						ID:           2,
 						Title:        "Similar Video",
@@ -1409,6 +1402,9 @@ func TestGetSimilarVideos(t *testing.T) {
 						Views:        80,
 						Likes:        40,
 						ThumbObjName: pgtype.Text{String: "similar_thumb.jpg", Valid: true},
+						CategoryID:   1,
+						CreatedAt:    pgtype.Timestamptz{Time: time.Now(), Valid: true},
+						UpdatedAt:    pgtype.Timestamptz{Time: time.Now(), Valid: true},
 					},
 				}
 				videoRepo.On("GetSimilarVideos", mock.Anything, int64(1)).Return(similarVideos, nil)
@@ -1741,14 +1737,17 @@ func TestGetOwnVideos(t *testing.T) {
 					Limit:  10,
 					Offset: 0,
 				}
-				userVideos := []videolearningdb.GetVideosByUserRow{
+				userVideos := []videolearningdb.Video{
 					{
 						ID:           1,
 						Title:        "My Video",
+						UserID:       1,
 						Views:        100,
 						Likes:        50,
 						ThumbObjName: pgtype.Text{String: "my_thumb.jpg", Valid: true},
+						CategoryID:   1,
 						CreatedAt:    pgtype.Timestamptz{Time: time.Now(), Valid: true},
+						UpdatedAt:    pgtype.Timestamptz{Time: time.Now(), Valid: true},
 					},
 				}
 				videoRepo.On("GetVideosByUser", mock.Anything, getParams).Return(userVideos, nil)
@@ -1844,7 +1843,7 @@ func TestGetRecommendations(t *testing.T) {
 			name: "successful get recommendations without user preferences",
 			payload: &videolearning.GetRecommendationsPayload{
 				SessionToken: "valid_token",
-				Ammount:      1, // Set to 1 so we have more videos than requested amount
+				Amount:       1, // Set to 1 so we have more videos than requested amount
 			},
 			setupMocks: func(videoRepo *mocks.MockVideoRepository, userCatRepo *mocks.MockUserCategoryLikeRepository, profilesRepo *mocks.MockProfilesServiceRepository, cacheRepo *mocks.MockCacheRepository, storageRepo *mocks.MockStorageRepository) {
 				profilesRepo.On("GetCompleteProfile", mock.Anything, &profiles.GetCompleteProfilePayload{
@@ -1853,7 +1852,7 @@ func TestGetRecommendations(t *testing.T) {
 
 				// Mock recent videos
 				interval := pgtype.Interval{Days: 7, Valid: true}
-				recentVideos := []videolearningdb.GetRecentVideosRow{
+				recentVideos := []videolearningdb.Video{
 					{
 						ID:           1,
 						Title:        "Recent Video 1",
@@ -1862,7 +1861,8 @@ func TestGetRecommendations(t *testing.T) {
 						Likes:        50,
 						ThumbObjName: pgtype.Text{String: "recent_thumb1.jpg", Valid: true},
 						CategoryID:   1,
-						CategoryName: "Education",
+						CreatedAt:    pgtype.Timestamptz{Time: time.Now(), Valid: true},
+						UpdatedAt:    pgtype.Timestamptz{Time: time.Now(), Valid: true},
 					},
 					{
 						ID:           2,
@@ -1872,7 +1872,8 @@ func TestGetRecommendations(t *testing.T) {
 						Likes:        40,
 						ThumbObjName: pgtype.Text{String: "recent_thumb2.jpg", Valid: true},
 						CategoryID:   2,
-						CategoryName: "Science",
+						CreatedAt:    pgtype.Timestamptz{Time: time.Now(), Valid: true},
+						UpdatedAt:    pgtype.Timestamptz{Time: time.Now(), Valid: true},
 					},
 				}
 				videoRepo.On("GetRecentVideos", mock.Anything, interval).Return(recentVideos, nil)
@@ -1919,7 +1920,7 @@ func TestGetRecommendations(t *testing.T) {
 			name: "invalid session",
 			payload: &videolearning.GetRecommendationsPayload{
 				SessionToken: "invalid_token",
-				Ammount:      5,
+				Amount:       5,
 			},
 			setupMocks: func(videoRepo *mocks.MockVideoRepository, userCatRepo *mocks.MockUserCategoryLikeRepository, profilesRepo *mocks.MockProfilesServiceRepository, cacheRepo *mocks.MockCacheRepository, storageRepo *mocks.MockStorageRepository) {
 				profilesRepo.On("GetCompleteProfile", mock.Anything, &profiles.GetCompleteProfilePayload{
@@ -1933,7 +1934,7 @@ func TestGetRecommendations(t *testing.T) {
 			name: "database error getting recent videos",
 			payload: &videolearning.GetRecommendationsPayload{
 				SessionToken: "valid_token",
-				Ammount:      5,
+				Amount:       5,
 			},
 			setupMocks: func(videoRepo *mocks.MockVideoRepository, userCatRepo *mocks.MockUserCategoryLikeRepository, profilesRepo *mocks.MockProfilesServiceRepository, cacheRepo *mocks.MockCacheRepository, storageRepo *mocks.MockStorageRepository) {
 				profilesRepo.On("GetCompleteProfile", mock.Anything, &profiles.GetCompleteProfilePayload{
@@ -1941,7 +1942,7 @@ func TestGetRecommendations(t *testing.T) {
 				}).Return(createTestCompleteProfile("student"), nil)
 
 				interval := pgtype.Interval{Days: 7, Valid: true}
-				videoRepo.On("GetRecentVideos", mock.Anything, interval).Return([]videolearningdb.GetRecentVideosRow(nil), errors.New("database error"))
+				videoRepo.On("GetRecentVideos", mock.Anything, interval).Return([]videolearningdb.Video(nil), errors.New("database error"))
 			},
 			expectedResult: nil,
 			expectedError:  videolearning.ServiceUnavailable("failed to get recommendations"),
@@ -1974,7 +1975,7 @@ func TestGetRecommendations(t *testing.T) {
 				assert.NotNil(t, result)
 				assert.NotNil(t, result.Videos)
 				// For recommendations, we expect some videos but the exact count may vary due to randomization
-				assert.LessOrEqual(t, len(result.Videos), tt.payload.Ammount)
+				assert.LessOrEqual(t, len(result.Videos), tt.payload.Amount)
 			}
 
 			// Verify mocks

@@ -9,6 +9,7 @@ require (
 	github.com/pquerna/otp v1.5.0
 	github.com/redis/go-redis/v9 v9.11.0
 	github.com/stretchr/testify v1.10.0
+	github.com/wneessen/go-mail v0.6.2
 	goa.design/clue v1.2.1
 	goa.design/goa/v3 v3.21.1
 	golang.org/x/crypto v0.39.0

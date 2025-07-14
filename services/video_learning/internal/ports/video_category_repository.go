@@ -11,4 +11,5 @@ type VideoCategoryRepository interface {
 	// Category CRUD operations
 	GetOrCreateCategory(ctx context.Context, name string) (videolearningdb.VideoCategory, error)
 	GetAllCategories(ctx context.Context) ([]videolearningdb.VideoCategory, error)
+	GetCategoryById(ctx context.Context, id int64) (videolearningdb.VideoCategory, error)
 }

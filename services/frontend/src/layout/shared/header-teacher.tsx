@@ -1,8 +1,8 @@
-import { IconWifi, IconBell } from '@tabler/icons-react';
+import { IconWifi } from '@tabler/icons-react';
 import { routesConfig } from '@/config/shared/routes';
 import { HeaderAuth } from '@/layout/auth/header-auth';
 import { Link } from '@/ui/link';
-import { Button } from '@/ui/button';
+import { ThemeToggle } from '@/ui/theme-toggle';
 import type { Profile } from '@/types/profiles/models';
 
 interface HeaderProps {
@@ -24,6 +24,9 @@ export default function HeaderTeacher({ profile }: HeaderProps) {
       <nav className="text-sm flex flex-col gap-4 font-medium items-center">
         <div className="min-w-30 flex justify-center items-center mb-4">
           <HeaderAuth profile={profile} />
+        </div>
+        <div className="flex justify-center mb-2">
+          <ThemeToggle />
         </div>
         {routesConfig.teacherRoutes.map((route) => (
           <Link

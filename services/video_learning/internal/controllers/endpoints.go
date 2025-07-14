@@ -75,7 +75,7 @@ func (s *videolearningsrvc) GetRecommendations(ctx context.Context, p *videolear
 	}
 
 	// If we have fewer or equal videos than requested, return all of them
-	if len(recentVideos) <= p.Ammount {
+	if len(recentVideos) <= p.Amount {
 		var apiVideos []*videolearning.Video
 		for _, video := range recentVideos {
 			apiVideo, err := s.convertVideoToAPIVideo(ctx, video)
@@ -94,7 +94,7 @@ func (s *videolearningsrvc) GetRecommendations(ctx context.Context, p *videolear
 	categoryLikes, err := s.userCategoryLikeRepo.GetUserCategoryLikes(ctx, userID)
 	if err != nil || len(categoryLikes) == 0 {
 		// If no preferences found, randomly select from recent videos
-		selectedVideos := randomSelectVideos(recentVideos, p.Ammount)
+		selectedVideos := randomSelectVideos(recentVideos, p.Amount)
 
 		var apiVideos []*videolearning.Video
 		for _, video := range selectedVideos {
@@ -137,26 +137,39 @@ func (s *videolearningsrvc) GetRecommendations(ctx context.Context, p *videolear
 	}
 
 	// Group recent videos by category
-	videosByCategory := make(map[int64][]videolearningdb.GetRecentVideosRow)
+	videosByCategory := make(map[int64][]videolearningdb.Video)
 	for _, video := range recentVideos {
 		videosByCategory[video.CategoryID] = append(videosByCategory[video.CategoryID], video)
 	}
 
-	// Create a map from category names to category IDs from user likes
-	categoryNameToID := make(map[string]int64)
-	for _, catLike := range categoryLikes {
-		// Find the category ID by looking through videos with matching category name
-		for _, video := range recentVideos {
-			if video.CategoryName == catLike.Name {
-				categoryNameToID[catLike.Name] = video.CategoryID
-				break
+	// Create a map from category names to category IDs by getting all categories
+	allCategories, err := s.videoCategoryRepo.GetAllCategories(ctx)
+	if err != nil {
+		// If we can't get categories, fall back to random selection
+		selectedVideos := randomSelectVideos(recentVideos, p.Amount)
+
+		var apiVideos []*videolearning.Video
+		for _, video := range selectedVideos {
+			apiVideo, err := s.convertVideoToAPIVideo(ctx, video)
+			if err != nil {
+				continue
 			}
+			apiVideos = append(apiVideos, apiVideo)
 		}
+
+		return &videolearning.VideoList{
+			Videos: apiVideos,
+		}, nil
+	}
+
+	categoryNameToID := make(map[string]int64)
+	for _, category := range allCategories {
+		categoryNameToID[category.Name] = category.ID
 	}
 
 	// Distribute amount across categories proportionally
 	var allRecommendedVideos []*videolearning.Video
-	remaining := p.Ammount
+	remaining := p.Amount
 
 	for _, catLike := range categoryLikes {
 		if remaining <= 0 {
@@ -176,7 +189,7 @@ func (s *videolearningsrvc) GetRecommendations(ctx context.Context, p *videolear
 
 		// Calculate how many videos to get from this category
 		proportion := float64(catLike.Likes.Int32) / float64(totalLikes)
-		videoCount := int(float64(p.Ammount) * proportion)
+		videoCount := int(float64(p.Amount) * proportion)
 		if videoCount > remaining {
 			videoCount = remaining
 		}
@@ -202,7 +215,7 @@ func (s *videolearningsrvc) GetRecommendations(ctx context.Context, p *videolear
 
 	// If we still have remaining slots and there are unassigned videos, fill randomly
 	if remaining > 0 {
-		var allUnassignedVideos []videolearningdb.GetRecentVideosRow
+		var allUnassignedVideos []videolearningdb.Video
 		usedVideoIDs := make(map[int64]bool)
 
 		// Mark used videos
@@ -294,8 +307,8 @@ func (s *videolearningsrvc) GetVideo(ctx context.Context, p *videolearning.GetVi
 		VideoURL:     videoURL,
 		ThumbnailURL: thumbnailURL,
 		UploadDate:   video.CreatedAt.Time.UnixMilli(),
-		Category:     video.CategoryName,
-		Tags:         apiTags,
+		CategoryID:   video.CategoryID,
+		TagIds:       apiTags,
 	}, nil
 }
 
@@ -390,11 +403,12 @@ func (s *videolearningsrvc) GetComments(ctx context.Context, p *videolearning.Ge
 		}
 
 		apiComments = append(apiComments, &videolearning.Comment{
-			ID:     comment.ID,
-			Author: author,
-			Date:   comment.CreatedAt.Time.UnixMilli(),
-			Title:  comment.Title,
-			Body:   comment.Content,
+			ID:      comment.ID,
+			Author:  author,
+			Date:    comment.CreatedAt.Time.UnixMilli(),
+			Title:   comment.Title,
+			Body:    comment.Content,
+			VideoID: comment.VideoID,
 		})
 	}
 
@@ -675,6 +689,25 @@ func (s *videolearningsrvc) GetAllCategories(ctx context.Context, p *videolearni
 	return apiCategories, nil
 }
 
+func (s *videolearningsrvc) GetCategoryByID(ctx context.Context, p *videolearning.GetCategoryByIDPayload) (res *videolearning.VideoCategory, err error) {
+	// Validate session
+	_, err = s.validateSessionAndGetUserID(ctx, p.SessionToken)
+	if err != nil {
+		return nil, videolearning.InvalidSession("invalid session")
+	}
+
+	// Get category by ID
+	category, err := s.videoCategoryRepo.GetCategoryById(ctx, p.CategoryID)
+	if err != nil {
+		return nil, videolearning.CategoryNotFound("category not found")
+	}
+
+	return &videolearning.VideoCategory{
+		ID:   category.ID,
+		Name: category.Name,
+	}, nil
+}
+
 // GetOrCreateTag retrieves or creates a video tag
 func (s *videolearningsrvc) GetOrCreateTag(ctx context.Context, p *videolearning.GetOrCreateTagPayload) (res *videolearning.VideoTag, err error) {
 	// Validate session
@@ -719,6 +752,26 @@ func (s *videolearningsrvc) GetAllTags(ctx context.Context, p *videolearning.Get
 	}
 
 	return apiTags, nil
+}
+
+// GetTagByID returns a video tag by ID
+func (s *videolearningsrvc) GetTagByID(ctx context.Context, p *videolearning.GetTagByIDPayload) (res *videolearning.VideoTag, err error) {
+	// Validate session
+	_, err = s.validateSessionAndGetUserID(ctx, p.SessionToken)
+	if err != nil {
+		return nil, videolearning.InvalidSession("invalid session")
+	}
+
+	// Get tag by ID
+	tag, err := s.videoTagRepo.GetTagById(ctx, p.TagID)
+	if err != nil {
+		return nil, videolearning.TagNotFound("tag not found")
+	}
+
+	return &videolearning.VideoTag{
+		ID:   tag.ID,
+		Name: tag.Name,
+	}, nil
 }
 
 // ToggleVideoLike toggles like status for a video

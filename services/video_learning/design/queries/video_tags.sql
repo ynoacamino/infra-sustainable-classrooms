@@ -12,6 +12,9 @@ FROM
 WHERE
     vvt.video_id = $1;
 
+-- name: GetTagById :one
+SELECT * FROM video_tags WHERE id = $1;
+
 -- name: GetOrCreateTag :one
 INSERT INTO
     video_tags (name)

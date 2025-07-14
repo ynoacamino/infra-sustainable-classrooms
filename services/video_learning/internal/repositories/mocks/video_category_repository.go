@@ -21,3 +21,8 @@ func (m *MockVideoCategoryRepository) GetAllCategories(ctx context.Context) ([]v
 	args := m.Called(ctx)
 	return args.Get(0).([]videolearningdb.VideoCategory), args.Error(1)
 }
+
+func (m *MockVideoCategoryRepository) GetCategoryById(ctx context.Context, id int64) (videolearningdb.VideoCategory, error) {
+	args := m.Called(ctx, id)
+	return args.Get(0).(videolearningdb.VideoCategory), args.Error(1)
+}

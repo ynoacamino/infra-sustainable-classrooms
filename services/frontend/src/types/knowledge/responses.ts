@@ -1,54 +1,26 @@
+import type { SimpleResponse } from '@/services/shared/response';
 import type {
-  Test,
   Question,
   QuestionForm,
   Submission,
-  SubmissionResult,
-  SimpleResponse,
-  TestsResponse,
-  QuestionsResponse,
-  FormResponse,
-  SubmissionsResponse,
-  SubmitResponse,
-  UserAccessResponse,
-  TestPreviewResponse,
-  BulkQuestionResponse,
+  Test,
 } from '@/types/knowledge/models';
 
-// === TEACHER RESPONSE TYPES ===
+export type GetTestFormResponse = {
+  test: Test;
+  questions: QuestionForm[];
+};
 
-// Test response types
-export type CreateTestResponse = SimpleResponse;
-export type GetMyTestsResponse = TestsResponse;
-export type UpdateTestResponse = SimpleResponse;
-export type DeleteTestResponse = SimpleResponse;
-export type GetTestQuestionsResponse = QuestionsResponse;
+export type SubmitTestResponse = SimpleResponse & {
+  submission_id: number;
+  score: number;
+};
 
-// Question response types
-export type AddQuestionResponse = SimpleResponse;
-export type UpdateQuestionResponse = SimpleResponse;
-export type DeleteQuestionResponse = SimpleResponse;
-
-// === STUDENT RESPONSE TYPES ===
-export type GetAvailableTestsResponse = TestsResponse;
-export type GetTestFormResponse = FormResponse;
-export type SubmitTestResponse = SubmitResponse;
-export type GetMySubmissionsResponse = SubmissionsResponse;
-export type GetSubmissionResultResponse = SubmissionResult;
-
-// === AUTH RESPONSE TYPES ===
-export type UserAccessResponseType = UserAccessResponse;
-
-// === ENHANCED RESPONSE TYPES ===
-export type GetTestPreviewResponseType = TestPreviewResponse;
-export type BulkAddQuestionsResponse = BulkQuestionResponse;
-
-// === LIST RESPONSE TYPES ===
-export type ListTestsResponse = TestsResponse;
-export type ListQuestionsResponse = QuestionsResponse;
-export type ListSubmissionsResponse = SubmissionsResponse;
-
-// === INDIVIDUAL ENTITY RESPONSE TYPES ===
-export type GetTestResponse = Test;
-export type GetQuestionResponse = Question;
-export type GetSubmissionResponse = Submission;
+export type GetSubmissionResultResponse = {
+  submission: Submission;
+  questions: {
+    question: Question;
+    selected_answer: number;
+    is_correct: boolean;
+  }[];
+};
