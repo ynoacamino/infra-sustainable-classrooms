@@ -50,7 +50,10 @@ export const PublicProfileSchema = ProfileSchema.pick({
 
 export const StudentProfileSchema = ProfileSchema.extend({
   role: z.literal('student'),
-  grade_level: z.string().describe('Student grade level'),
+  grade_level: z
+    .string()
+    .min(1, 'Grade level is required')
+    .describe('Student grade level'),
   major: z.string().optional().describe('Student major or field of study'),
 });
 
