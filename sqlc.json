@@ -60,6 +60,18 @@
           "sql_package": "pgx/v5"
         }
       }
+    },
+    {
+      "engine": "postgresql",
+      "queries": "services/codelab/design/queries",
+      "schema": "db/init/codelab_db.sql",
+      "gen": {
+        "go": {
+          "package": "codelabdb",
+          "out": "services/codelab/gen/database",
+          "sql_package": "pgx/v5"
+        }
+      }
     }
   ]
 }

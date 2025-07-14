@@ -86,13 +86,6 @@ class KnowledgeService extends Service {
     });
   }
 
-  async deleteTest(payload: DeleteTestPayload): AsyncResult<SimpleResponse> {
-    return this.delete<SimpleResponse>({
-      endpoint: ['tests', payload.id],
-      payload: {
-        schema: DeleteTestPayloadSchema,
-        data: payload,
-      },
     });
   }
 
@@ -144,13 +137,6 @@ class KnowledgeService extends Service {
 
   async deleteQuestion(
     payload: DeleteQuestionPayload,
-  ): AsyncResult<SimpleResponse> {
-    return this.delete<SimpleResponse>({
-      endpoint: ['tests', payload.test_id, 'questions', payload.id],
-      payload: {
-        schema: DeleteQuestionPayloadSchema,
-        data: payload,
-      },
     });
   }
 
@@ -165,11 +151,6 @@ class KnowledgeService extends Service {
     payload: GetTestFormPayload,
   ): AsyncResult<GetTestFormResponse> {
     return this.get<GetTestFormResponse>({
-      endpoint: ['tests', payload.id, 'form'],
-      payload: {
-        schema: GetTestFormPayloadSchema,
-        data: payload,
-      },
     });
   }
 
@@ -207,11 +188,6 @@ class KnowledgeService extends Service {
     payload: GetSubmissionResultPayload,
   ): AsyncResult<GetSubmissionResultResponse> {
     return this.get<GetSubmissionResultResponse>({
-      endpoint: ['submissions', payload.id, 'result'],
-      payload: {
-        schema: GetSubmissionResultPayloadSchema,
-        data: payload,
-      },
     });
   }
 }
