@@ -3,6 +3,7 @@ import { routesConfig } from '@/config/shared/routes';
 import { HeaderAuth } from '@/layout/auth/header-auth';
 import { Link } from '@/ui/link';
 import { Button } from '@/ui/button';
+import { ThemeToggle } from '@/ui/theme-toggle';
 import type { Profile } from '@/types/profiles/models';
 
 interface HeaderProps {
@@ -41,6 +42,7 @@ export default function Header({ profile }: HeaderProps) {
         <Button className="rounded-full" size="icon" variant="secondary">
           <IconBell />
         </Button>
+        <ThemeToggle />
         <div className="min-w-30">
           <HeaderAuth profile={profile} />
         </div>

@@ -7,6 +7,7 @@ export default function DashboardPage() {
   return (
     <>
       <H1>My Dashboard</H1>
+
       <Section title="Course Progress">
         <Courses />
       </Section>
