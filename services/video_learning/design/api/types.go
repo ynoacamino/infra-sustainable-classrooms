@@ -19,6 +19,7 @@ var Video = Type("Video", func() {
 })
 
 // VideoDetails type for complete video information
+// DOUBT: Should we set category as VideoCategory id and tags as VideoTag ids?
 var VideoDetails = Type("VideoDetails", func() {
 	Description("Complete video information")
 
@@ -52,6 +53,7 @@ var OwnVideo = Type("OwnVideo", func() {
 })
 
 // Comment type for video comments
+// DOUBT: May have video_id field to link comments to videos
 var Comment = Type("Comment", func() {
 	Description("Video comment information")
 
