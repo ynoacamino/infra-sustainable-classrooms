@@ -156,7 +156,7 @@ var _ = Service("video_learning", func() {
 				Maximum(50)
 			})
 
-			Required("session_token")
+			Required("video_id", "session_token")
 		})
 
 		Result(CommentList)

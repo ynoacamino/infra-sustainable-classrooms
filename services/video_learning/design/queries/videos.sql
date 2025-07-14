@@ -56,7 +56,7 @@ OFFSET
     $4;
 
 -- name: GetSimilarVideos :many
-SELECT v.* as category_name
+SELECT v.*
 FROM video v
 WHERE
     v.id != $1
@@ -68,7 +68,7 @@ WHERE
     );
 
 -- name: GetVideosByUser :many
-SELECT v.* as category_name
+SELECT v.*
 FROM video v
 WHERE
     v.user_id = $1
