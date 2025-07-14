@@ -83,7 +83,7 @@ var _ = Service("video_learning", func() {
 
 		Payload(func() {
 			Field(1, "session_token", String, "User session token")
-			Field(2, "ammount", Int, "How many videos to get", func() {
+			Field(2, "amount", Int, "How many videos to get", func() {
 				Default(20)
 				Minimum(1)
 				Maximum(100)
@@ -97,7 +97,7 @@ var _ = Service("video_learning", func() {
 		HTTP(func() {
 			GET("/recommendations")
 			Params(func() {
-				Param("ammount")
+				Param("amount")
 			})
 			Cookie("session_token:session")
 			Response(StatusOK)
@@ -179,7 +179,6 @@ var _ = Service("video_learning", func() {
 	// Create comment
 	// DONE in frontend
 	// NOT TESTED
-	// DOUBT: Video ID should be in URL as parameter?
 	Method("CreateComment", func() {
 		Description("Create a new comment on a video")
 

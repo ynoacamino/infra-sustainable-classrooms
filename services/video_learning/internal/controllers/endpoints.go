@@ -75,7 +75,7 @@ func (s *videolearningsrvc) GetRecommendations(ctx context.Context, p *videolear
 	}
 
 	// If we have fewer or equal videos than requested, return all of them
-	if len(recentVideos) <= p.Ammount {
+	if len(recentVideos) <= p.Amount {
 		var apiVideos []*videolearning.Video
 		for _, video := range recentVideos {
 			apiVideo, err := s.convertVideoToAPIVideo(ctx, video)
@@ -94,7 +94,7 @@ func (s *videolearningsrvc) GetRecommendations(ctx context.Context, p *videolear
 	categoryLikes, err := s.userCategoryLikeRepo.GetUserCategoryLikes(ctx, userID)
 	if err != nil || len(categoryLikes) == 0 {
 		// If no preferences found, randomly select from recent videos
-		selectedVideos := randomSelectVideos(recentVideos, p.Ammount)
+		selectedVideos := randomSelectVideos(recentVideos, p.Amount)
 
 		var apiVideos []*videolearning.Video
 		for _, video := range selectedVideos {
@@ -146,7 +146,7 @@ func (s *videolearningsrvc) GetRecommendations(ctx context.Context, p *videolear
 	allCategories, err := s.videoCategoryRepo.GetAllCategories(ctx)
 	if err != nil {
 		// If we can't get categories, fall back to random selection
-		selectedVideos := randomSelectVideos(recentVideos, p.Ammount)
+		selectedVideos := randomSelectVideos(recentVideos, p.Amount)
 
 		var apiVideos []*videolearning.Video
 		for _, video := range selectedVideos {
@@ -169,7 +169,7 @@ func (s *videolearningsrvc) GetRecommendations(ctx context.Context, p *videolear
 
 	// Distribute amount across categories proportionally
 	var allRecommendedVideos []*videolearning.Video
-	remaining := p.Ammount
+	remaining := p.Amount
 
 	for _, catLike := range categoryLikes {
 		if remaining <= 0 {
@@ -189,7 +189,7 @@ func (s *videolearningsrvc) GetRecommendations(ctx context.Context, p *videolear
 
 		// Calculate how many videos to get from this category
 		proportion := float64(catLike.Likes.Int32) / float64(totalLikes)
-		videoCount := int(float64(p.Ammount) * proportion)
+		videoCount := int(float64(p.Amount) * proportion)
 		if videoCount > remaining {
 			videoCount = remaining
 		}

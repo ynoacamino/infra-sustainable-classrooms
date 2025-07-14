@@ -44,7 +44,7 @@ export const SearchVideosPayloadSchema = PaginationSchema.extend({
 });
 
 export const GetRecommendationsPayloadSchema = z.object({
-  ammount: z
+  amount: z
     .number()
     .int('Amount must be an integer')
     .min(1, 'Amount must be at least 1')
