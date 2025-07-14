@@ -3,7 +3,6 @@ import { Service } from '@/services/shared/service';
 import type {
   CreateTestPayload,
   UpdateTestPayload,
-  DeleteTestPayload,
   GetTestQuestionsPayload,
   AddQuestionPayload,
   UpdateQuestionPayload,
@@ -25,7 +24,6 @@ import {
   SubmitTestPayloadSchema,
   GetSubmissionResultPayloadSchema,
   GetTestPayloadSchema,
-  DeleteTestPayloadSchema,
   GetQuestionPayloadSchema,
   DeleteQuestionPayloadSchema,
   GetSubmissionPayloadSchema,
@@ -86,6 +84,13 @@ class KnowledgeService extends Service {
     });
   }
 
+  async deleteTest(payload: GetTestPayload): AsyncResult<SimpleResponse> {
+    return this.delete<SimpleResponse>({
+      endpoint: ['tests', payload.id],
+      payload: {
+        schema: GetTestPayloadSchema,
+        data: payload,
+      },
     });
   }
 
@@ -137,6 +142,13 @@ class KnowledgeService extends Service {
 
   async deleteQuestion(
     payload: DeleteQuestionPayload,
+  ): AsyncResult<SimpleResponse> {
+    return this.delete<SimpleResponse>({
+      endpoint: ['tests', payload.test_id, 'questions', payload.id],
+      payload: {
+        schema: DeleteQuestionPayloadSchema,
+        data: payload,
+      },
     });
   }
 
@@ -151,6 +163,11 @@ class KnowledgeService extends Service {
     payload: GetTestFormPayload,
   ): AsyncResult<GetTestFormResponse> {
     return this.get<GetTestFormResponse>({
+      endpoint: ['tests', payload.id, 'form'],
+      payload: {
+        schema: GetTestFormPayloadSchema,
+        data: payload,
+      },
     });
   }
 
@@ -188,6 +205,11 @@ class KnowledgeService extends Service {
     payload: GetSubmissionResultPayload,
   ): AsyncResult<GetSubmissionResultResponse> {
     return this.get<GetSubmissionResultResponse>({
+      endpoint: ['submissions', payload.id, 'result'],
+      payload: {
+        schema: GetSubmissionResultPayloadSchema,
+        data: payload,
+      },
     });
   }
 }
