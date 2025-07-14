@@ -72,10 +72,6 @@ class KnowledgeService extends Service {
   async getMyTests(): AsyncResult<GetMyTestsResponse> {
     return this.get<GetMyTestsResponse>({
       endpoint: 'tests/my',
-      payload: {
-        schema: GetMyTestsPayloadSchema,
-        data: {},
-      },
     });
   }
 
@@ -100,10 +96,9 @@ class KnowledgeService extends Service {
   async deleteTest(
     payload: DeleteTestPayload,
   ): AsyncResult<DeleteTestResponse> {
-    return this.delete<DeleteTestResponse>([
-      'tests',
-      payload.test_id.toString(),
-    ]);
+    return this.delete<DeleteTestResponse>({
+      endpoint: ['tests', payload.test_id.toString()]
+    });
   }
 
   /**
@@ -114,10 +109,6 @@ class KnowledgeService extends Service {
   ): AsyncResult<GetTestQuestionsResponse> {
     return this.get<GetTestQuestionsResponse>({
       endpoint: ['tests', payload.test_id, 'questions'],
-      payload: {
-        schema: GetTestQuestionsPayloadSchema,
-        data: payload,
-      },
     });
   }
 
@@ -157,12 +148,9 @@ class KnowledgeService extends Service {
   async deleteQuestion(
     payload: DeleteQuestionPayload,
   ): AsyncResult<DeleteQuestionResponse> {
-    return this.delete<DeleteQuestionResponse>([
-      'tests',
-      payload.test_id.toString(),
-      'questions',
-      payload.question_id.toString(),
-    ]);
+    return this.delete<DeleteQuestionResponse>({
+      endpoint: ['tests', payload.test_id.toString(), 'questions', payload.question_id.toString()]
+    });
   }
 
   // === STUDENT METHODS ===
@@ -173,10 +161,6 @@ class KnowledgeService extends Service {
   async getAvailableTests(): AsyncResult<GetAvailableTestsResponse> {
     return this.get<GetAvailableTestsResponse>({
       endpoint: 'tests/available',
-      payload: {
-        schema: GetAvailableTestsPayloadSchema,
-        data: {},
-      },
     });
   }
 
@@ -188,10 +172,6 @@ class KnowledgeService extends Service {
   ): AsyncResult<GetTestFormResponse> {
     return this.get<GetTestFormResponse>({
       endpoint: ['tests', payload.test_id, 'form'],
-      payload: {
-        schema: GetTestFormPayloadSchema,
-        data: payload,
-      },
     });
   }
 
@@ -216,10 +196,6 @@ class KnowledgeService extends Service {
   async getMySubmissions(): AsyncResult<GetMySubmissionsResponse> {
     return this.get<GetMySubmissionsResponse>({
       endpoint: 'submissions/my',
-      payload: {
-        schema: GetMySubmissionsPayloadSchema,
-        data: {},
-      },
     });
   }
 
@@ -231,10 +207,6 @@ class KnowledgeService extends Service {
   ): AsyncResult<GetSubmissionResultResponse> {
     return this.get<GetSubmissionResultResponse>({
       endpoint: ['submissions', payload.submission_id, 'result'],
-      payload: {
-        schema: GetSubmissionResultPayloadSchema,
-        data: payload,
-      },
     });
   }
 

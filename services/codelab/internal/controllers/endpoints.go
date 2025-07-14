@@ -307,6 +307,43 @@ func (s *codelabsvrc) GetExerciseForStudent(ctx context.Context, payload *codela
 		return nil, codelab.NotFound("Exercise not found")
 	}
 
+	publicTests, err := s.testsRepo.GetPublicTestsByExercise(ctx, exercise.ID)
+	if err != nil {
+		return nil, codelab.InternalError("Failed to get public tests: " + err.Error())
+	}
+
+	publicTestsToAPI := make([]*codelab.Test, len(publicTests))
+	for i, test := range publicTests {
+		publicTestsToAPI[i] = &codelab.Test{
+			ID:         test.ID,
+			Input:      test.Input,
+			Output:     test.Output,
+			Public:     test.Public,
+			ExerciseID: test.ExerciseID,
+			CreatedAt:  test.CreatedAt.Time.UnixMilli(),
+			UpdatedAt:  test.UpdatedAt.Time.UnixMilli(),
+		}
+	}
+
+	attempts, err := s.attemptsRepo.GetAttemptsByUserAndExercise(ctx, codelabdb.GetAttemptsByUserAndExerciseParams{
+		ExerciseID: exercise.ID,
+		UserID:     profile.UserID,
+	})
+	if err != nil {
+		return nil, codelab.InternalError("Failed to get attempts: " + err.Error())
+	}
+
+	attemptsToAPI := make([]*codelab.Attempt, len(attempts))
+	for i, attempt := range attempts {
+		attemptsToAPI[i] = &codelab.Attempt{
+			ID:        attempt.ID,
+			AnswerID:  attempt.AnswerID,
+			Code:      attempt.Code,
+			Success:   attempt.Success,
+			CreatedAt: attempt.CreatedAt.Time.UnixMilli(),
+		}
+	}
+
 	return &codelab.ExerciseForStudents{
 		ID:          exercise.ID,
 		Title:       exercise.Title,
@@ -314,6 +351,8 @@ func (s *codelabsvrc) GetExerciseForStudent(ctx context.Context, payload *codela
 		InitialCode: exercise.InitialCode,
 		Difficulty:  exercise.Difficulty,
 		CreatedBy:   exercise.CreatedBy,
+		Tests:       publicTestsToAPI,
+		Attempts:    attemptsToAPI,
 		CreatedAt:   exercise.CreatedAt.Time.UnixMilli(),
 		UpdatedAt:   exercise.UpdatedAt.Time.UnixMilli(),
 	}, nil

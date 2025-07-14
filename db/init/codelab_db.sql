@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS exercises (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE TABLE tests (
+CREATE TABLE IF NOT EXISTS tests (
     id BIGSERIAL PRIMARY KEY,
     input TEXT NOT NULL,
     output TEXT NOT NULL,
@@ -53,7 +53,7 @@ CREATE INDEX IF NOT EXISTS idx_answers_exercise_id ON answers(exercise_id);
 CREATE INDEX IF NOT EXISTS idx_answers_user_id ON answers(user_id);
 CREATE INDEX IF NOT EXISTS idx_answers_completed ON answers(completed);
 
-CREATE INDEX IF NOT EXISTS idx_attempts_exercise_id ON attempts(exercise_id);
+CREATE INDEX IF NOT EXISTS idx_attempts_answer_id ON attempts(answer_id);
 CREATE INDEX IF NOT EXISTS idx_attempts_success ON attempts(success);
 CREATE INDEX IF NOT EXISTS idx_attempts_created_at ON attempts(created_at);
 

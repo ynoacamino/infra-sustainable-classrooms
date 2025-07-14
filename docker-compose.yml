@@ -156,6 +156,22 @@ services:
         condition: service_started
     networks:
       - infrastructure-network
+  
+  codelab-service:
+    build:
+      context: .
+      dockerfile: services/codelab/Dockerfile
+    container_name: codelab-service
+    restart: unless-stopped
+    env_file:
+      - ./services/codelab/.env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      profiles-service:
+        condition: service_started
+    networks:
+      - infrastructure-network
 
   frontend-service:
     build:
