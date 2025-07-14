@@ -51,10 +51,10 @@ func (s *videolearningsrvc) validateTeacherRole(ctx context.Context, sessionToke
 	return profile, nil
 }
 
-func (s *videolearningsrvc) convertTagsToAPITags(ctx context.Context, tags []videolearningdb.VideoTag) []string {
-	apiTags := make([]string, len(tags))
+func (s *videolearningsrvc) convertTagsToAPITags(ctx context.Context, tags []videolearningdb.VideoTag) []int64 {
+	apiTags := make([]int64, len(tags))
 	for i, tag := range tags {
-		apiTags[i] = tag.Name
+		apiTags[i] = tag.ID
 	}
 	return apiTags
 }
@@ -69,45 +69,13 @@ func (s *videolearningsrvc) convertVideoToAPIVideo(ctx context.Context, video in
 	var thumbObjName pgtype.Text
 
 	// Handle different video row types
-	switch v := video.(type) {
-	case videolearningdb.SearchVideosRow:
-		id = v.ID
-		title = v.Title
-		userID = v.UserID
-		views = v.Views
-		likes = v.Likes
-		thumbObjName = v.ThumbObjName
-	case videolearningdb.GetVideosByCategoryRow:
-		id = v.ID
-		title = v.Title
-		userID = v.UserID
-		views = v.Views
-		likes = v.Likes
-		thumbObjName = v.ThumbObjName
-	case videolearningdb.GetSimilarVideosRow:
-		id = v.ID
-		title = v.Title
-		userID = v.UserID
-		views = v.Views
-		likes = v.Likes
-		thumbObjName = v.ThumbObjName
-	case videolearningdb.GetRecentVideosRow:
-		id = v.ID
-		title = v.Title
-		userID = v.UserID
-		views = v.Views
-		likes = v.Likes
-		thumbObjName = v.ThumbObjName
-	case videolearningdb.GetVideosByUserRow:
-		id = v.ID
-		title = v.Title
-		userID = v.UserID
-		views = v.Views
-		likes = v.Likes
-		thumbObjName = v.ThumbObjName
-	default:
-		return nil, fmt.Errorf("unsupported video type")
-	}
+	v := video.(videolearningdb.Video)
+	id = v.ID
+	title = v.Title
+	userID = v.UserID
+	views = v.Views
+	likes = v.Likes
+	thumbObjName = v.ThumbObjName
 
 	// Get cached views and likes
 	cachedViews, _ := s.getCachedVideoViews(ctx, id)
