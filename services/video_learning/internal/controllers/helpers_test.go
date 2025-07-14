@@ -256,19 +256,22 @@ func BenchmarkSanitizeFilename(b *testing.B) {
 }
 
 // Test data factories for consistent test data creation
-func createTestVideosByUserRow() videolearningdb.GetVideosByUserRow {
-	return videolearningdb.GetVideosByUserRow{
+func createTestVideosByUser() videolearningdb.Video {
+	return videolearningdb.Video{
 		ID:           1,
 		Title:        "User Video",
+		UserID:       1,
 		Views:        100,
 		Likes:        50,
 		ThumbObjName: pgtype.Text{String: "user_thumb.jpg", Valid: true},
+		CategoryID:   1,
 		CreatedAt:    pgtype.Timestamptz{Time: time.Now(), Valid: true},
+		UpdatedAt:    pgtype.Timestamptz{Time: time.Now(), Valid: true},
 	}
 }
 
-func createTestRecentVideosRow() videolearningdb.GetRecentVideosRow {
-	return videolearningdb.GetRecentVideosRow{
+func createTestRecentVideo() videolearningdb.Video {
+	return videolearningdb.Video{
 		ID:           1,
 		Title:        "Recent Video",
 		UserID:       1,
@@ -276,7 +279,8 @@ func createTestRecentVideosRow() videolearningdb.GetRecentVideosRow {
 		Likes:        50,
 		ThumbObjName: pgtype.Text{String: "recent_thumb.jpg", Valid: true},
 		CategoryID:   1,
-		CategoryName: "Education",
+		CreatedAt:    pgtype.Timestamptz{Time: time.Now(), Valid: true},
+		UpdatedAt:    pgtype.Timestamptz{Time: time.Now(), Valid: true},
 	}
 }
 
