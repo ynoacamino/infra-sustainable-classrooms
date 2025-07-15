@@ -175,18 +175,18 @@ services:
     networks:
       - infrastructure-network
 
-  # frontend-service:
-  #   build:
-  #     context: .
-  #     dockerfile: services/frontend/Dockerfile
-  #   container_name: frontend-service
-  #   restart: unless-stopped
-  #   env_file:
-  #     - ./services/frontend/.env.prod
-  #   ports:
-  #     - "3000:3000"
-  #   networks:
-  #     - infrastructure-network
+  frontend-service:
+    build:
+      context: .
+      dockerfile: services/frontend/Dockerfile
+    container_name: frontend-service
+    restart: unless-stopped
+    env_file:
+      - ./services/frontend/.env.prod
+    ports:
+      - "3000:3000"
+    networks:
+      - infrastructure-network
 
 volumes:
   postgres_data:
