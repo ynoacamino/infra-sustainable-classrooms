@@ -30,6 +30,8 @@ This project implements a microservices architecture using:
 - **HTTP/REST** - Client-facing APIs
 - **Goa Framework v3** - Code generation and API design
 
+<img src="./img/architecture.png">
+
 ## 📁 Project Structure
 
 ```
