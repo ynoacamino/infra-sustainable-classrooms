@@ -1,3 +1,4 @@
+import { PAGINATION_DEFAULT_SIZE } from '@/config/shared/const';
 import {
   CommentSchema,
   VideoCategorySchema,
@@ -18,7 +19,8 @@ const PaginationSchema = z.object({
     .int('Page size must be an integer')
     .positive('Page size must be greater than 0')
     .max(100, 'Page size cannot exceed 100')
-    .default(20),
+    .default(PAGINATION_DEFAULT_SIZE)
+    .optional(),
 });
 
 const AmountSchema = z.object({
@@ -33,8 +35,8 @@ const AmountSchema = z.object({
 
 const UploadSchema = z.object({
   file: z
-    .instanceof(Buffer)
-    .refine((file) => file.length > 0, 'File data is required'),
+    .instanceof(File)
+    .refine((file) => file.size > 0, 'File data is required'),
   filename: z
     .string()
     .min(1, 'Filename is required')
@@ -125,3 +127,9 @@ export const CreateTagPayloadSchema = VideoTagSchema.omit({
 export const GetTagPayloadSchema = VideoTagSchema.pick({
   id: true,
 });
+
+export const GetTagsByVideoPayloadSchema = VideoSchema.pick({
+  id: true,
+});
+
+export const GetVideosGroupedByCategoryPayloadSchema = AmountSchema;

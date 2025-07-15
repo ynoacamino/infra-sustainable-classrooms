@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   Plus,
   Edit,
@@ -13,8 +13,6 @@ import {
   Eye,
 } from 'lucide-react';
 import { Button } from '@/ui/button';
-import { Input } from '@/ui/input';
-import { Label } from '@/ui/label';
 import {
   Card,
   CardContent,
@@ -32,125 +30,34 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/ui/dialog';
-import { videoLearningService } from '@/services/video_learning/service';
-import { cookies } from 'next/headers';
 import type { VideoCategory, VideoTag } from '@/types/video_learning/models';
-import { Skeleton } from '@/ui/skeleton';
-import { toast } from 'sonner';
+import { CreateCategoryForm } from '@/components/video_learning/forms/create-category-form';
+import { CreateTagForm } from '@/components/video_learning/forms/create-tag-form';
 
-export function VideoManagement() {
-  const [categories, setCategories] = useState<VideoCategory[]>([]);
-  const [tags, setTags] = useState<VideoTag[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [newCategoryName, setNewCategoryName] = useState('');
-  const [newTagName, setNewTagName] = useState('');
-  const [isCreatingCategory, setIsCreatingCategory] = useState(false);
-  const [isCreatingTag, setIsCreatingTag] = useState(false);
+interface VideoManagementProps {
+  categories: VideoCategory[];
+  tags: VideoTag[];
+}
+
+export function VideoManagement({
+  categories: initialCategories,
+  tags: initialTags,
+}: VideoManagementProps) {
+  const [categories, setCategories] =
+    useState<VideoCategory[]>(initialCategories);
+  const [tags, setTags] = useState<VideoTag[]>(initialTags);
   const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
   const [tagDialogOpen, setTagDialogOpen] = useState(false);
 
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  const loadData = async () => {
-    try {
-      setLoading(true);
-      const service = await videoLearningService(cookies());
-
-      const [categoriesResult, tagsResult] = await Promise.all([
-        service.getAllCategories(),
-        service.getAllTags(),
-      ]);
-
-      if (categoriesResult.success) {
-        setCategories(categoriesResult.data);
-      }
-
-      if (tagsResult.success) {
-        setTags(tagsResult.data);
-      }
-    } catch (error) {
-      console.error('Failed to load data:', error);
-      toast.error('Failed to load categories and tags');
-    } finally {
-      setLoading(false);
-    }
+  const handleCategorySuccess = (category: VideoCategory) => {
+    setCategories((prev) => [...prev, category]);
+    setCategoryDialogOpen(false);
   };
 
-  const handleCreateCategory = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!newCategoryName.trim()) {
-      toast.error('Please enter a category name');
-      return;
-    }
-
-    setIsCreatingCategory(true);
-    try {
-      const service = await videoLearningService(cookies());
-      const result = await service.createCategory({
-        name: newCategoryName.trim(),
-      });
-
-      if (result.success) {
-        setCategories((prev) => [...prev, result.data]);
-        setNewCategoryName('');
-        setCategoryDialogOpen(false);
-        toast.success('Category created successfully');
-      } else {
-        toast.error('Failed to create category');
-      }
-    } catch (error) {
-      console.error('Failed to create category:', error);
-      toast.error('An error occurred while creating category');
-    } finally {
-      setIsCreatingCategory(false);
-    }
+  const handleTagSuccess = (tag: VideoTag) => {
+    setTags((prev) => [...prev, tag]);
+    setTagDialogOpen(false);
   };
-
-  const handleCreateTag = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!newTagName.trim()) {
-      toast.error('Please enter a tag name');
-      return;
-    }
-
-    setIsCreatingTag(true);
-    try {
-      const service = await videoLearningService(cookies());
-      const result = await service.createTag({
-        name: newTagName.trim(),
-      });
-
-      if (result.success) {
-        setTags((prev) => [...prev, result.data]);
-        setNewTagName('');
-        setTagDialogOpen(false);
-        toast.success('Tag created successfully');
-      } else {
-        toast.error('Failed to create tag');
-      }
-    } catch (error) {
-      console.error('Failed to create tag:', error);
-      toast.error('An error occurred while creating tag');
-    } finally {
-      setIsCreatingTag(false);
-    }
-  };
-
-  const getRandomUsageCount = () => Math.floor(Math.random() * 50) + 1;
-
-  if (loading) {
-    return (
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <Skeleton key={i} className="h-64 w-full" />
-        ))}
-      </div>
-    );
-  }
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -184,31 +91,10 @@ export function VideoManagement() {
                     Add a new category to organize your videos
                   </DialogDescription>
                 </DialogHeader>
-                <form onSubmit={handleCreateCategory} className="space-y-4">
-                  <div>
-                    <Label htmlFor="category-name">Category Name</Label>
-                    <Input
-                      id="category-name"
-                      value={newCategoryName}
-                      onChange={(e) => setNewCategoryName(e.target.value)}
-                      placeholder="Enter category name"
-                      disabled={isCreatingCategory}
-                    />
-                  </div>
-                  <div className="flex justify-end gap-2">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => setCategoryDialogOpen(false)}
-                      disabled={isCreatingCategory}
-                    >
-                      Cancel
-                    </Button>
-                    <Button type="submit" disabled={isCreatingCategory}>
-                      {isCreatingCategory ? 'Creating...' : 'Create Category'}
-                    </Button>
-                  </div>
-                </form>
+                <CreateCategoryForm
+                  onSuccess={handleCategorySuccess}
+                  onCancel={() => setCategoryDialogOpen(false)}
+                />
               </DialogContent>
             </Dialog>
           </div>
@@ -234,9 +120,6 @@ export function VideoManagement() {
                   <div className="flex items-center gap-3">
                     <Folder className="h-4 w-4 text-muted-foreground" />
                     <span className="font-medium">{category.name}</span>
-                    <Badge variant="secondary" className="text-xs">
-                      {getRandomUsageCount()} videos
-                    </Badge>
                   </div>
                   <div className="flex items-center gap-1">
                     <Button variant="ghost" size="sm">
@@ -284,31 +167,10 @@ export function VideoManagement() {
                     Add a new tag to help classify your videos
                   </DialogDescription>
                 </DialogHeader>
-                <form onSubmit={handleCreateTag} className="space-y-4">
-                  <div>
-                    <Label htmlFor="tag-name">Tag Name</Label>
-                    <Input
-                      id="tag-name"
-                      value={newTagName}
-                      onChange={(e) => setNewTagName(e.target.value)}
-                      placeholder="Enter tag name"
-                      disabled={isCreatingTag}
-                    />
-                  </div>
-                  <div className="flex justify-end gap-2">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => setTagDialogOpen(false)}
-                      disabled={isCreatingTag}
-                    >
-                      Cancel
-                    </Button>
-                    <Button type="submit" disabled={isCreatingTag}>
-                      {isCreatingTag ? 'Creating...' : 'Create Tag'}
-                    </Button>
-                  </div>
-                </form>
+                <CreateTagForm
+                  onSuccess={handleTagSuccess}
+                  onCancel={() => setTagDialogOpen(false)}
+                />
               </DialogContent>
             </Dialog>
           </div>
@@ -394,67 +256,6 @@ export function VideoManagement() {
                 <Button variant="outline" size="sm" className="justify-start">
                   <Settings className="h-4 w-4 mr-2" />
                   Content Settings
-                </Button>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Management Tools */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Settings className="h-5 w-5" />
-            Management Tools
-          </CardTitle>
-          <CardDescription>
-            Tools to help manage your video content
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="p-4 border rounded-lg">
-              <h4 className="font-medium mb-2">Bulk Operations</h4>
-              <p className="text-sm text-muted-foreground mb-3">
-                Apply actions to multiple videos at once
-              </p>
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm">
-                  Bulk Edit
-                </Button>
-                <Button variant="outline" size="sm">
-                  Bulk Delete
-                </Button>
-              </div>
-            </div>
-
-            <div className="p-4 border rounded-lg">
-              <h4 className="font-medium mb-2">Import/Export</h4>
-              <p className="text-sm text-muted-foreground mb-3">
-                Manage your content data
-              </p>
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm">
-                  Export Data
-                </Button>
-                <Button variant="outline" size="sm">
-                  Import Videos
-                </Button>
-              </div>
-            </div>
-
-            <div className="p-4 border rounded-lg">
-              <h4 className="font-medium mb-2">Moderation</h4>
-              <p className="text-sm text-muted-foreground mb-3">
-                Review and moderate content
-              </p>
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm">
-                  Review Queue
-                </Button>
-                <Button variant="outline" size="sm">
-                  Reports
                 </Button>
               </div>
             </div>

@@ -3,6 +3,9 @@ import H1 from '@/ui/h1';
 import Section from '@/ui/section';
 import { Skeleton } from '@/ui/skeleton';
 import { VideosByCategory } from '@/components/video_learning/student/videos-by-category';
+import { notFound } from 'next/navigation';
+import { videoLearningService } from '@/services/video_learning/service';
+import { cookies } from 'next/headers';
 
 interface CategoryPageProps {
   params: {
@@ -10,8 +13,29 @@ interface CategoryPageProps {
   };
 }
 
-export default function CategoryPage({ params }: CategoryPageProps) {
+export default async function CategoryPage({ params }: CategoryPageProps) {
   const categoryId = parseInt(params.categoryId);
+
+  if (isNaN(categoryId)) {
+    return notFound();
+  }
+
+  const videoLearning = await videoLearningService(cookies());
+  const categoryResult = await videoLearning.getCategory({ id: categoryId });
+
+  if (!categoryResult.success) {
+    if (categoryResult.error.status === 404) {
+      return notFound();
+    }
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-4 text-red-600">Error</h1>
+          <p>Error loading category: {categoryResult.error.message}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -33,7 +57,7 @@ export default function CategoryPage({ params }: CategoryPageProps) {
             </div>
           }
         >
-          <VideosByCategory categoryId={categoryId} />
+          <VideosByCategory category={categoryResult.data} />
         </Suspense>
       </Section>
     </div>

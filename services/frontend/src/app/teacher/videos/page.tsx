@@ -3,11 +3,24 @@ import { VideoUpload } from '@/components/video_learning/teacher/video-upload';
 import { MyVideos } from '@/components/video_learning/teacher/my-videos';
 import { VideoManagement } from '@/components/video_learning/teacher/video-management';
 import { VideoStats } from '@/components/video_learning/teacher/video-stats';
+import {
+  getAllCategoriesAction,
+  getAllTagsAction,
+} from '@/actions/video_learning/actions';
 import H1 from '@/ui/h1';
 import Section from '@/ui/section';
 import { Skeleton } from '@/ui/skeleton';
 
-export default function TeacherVideosPage() {
+export default async function TeacherVideosPage() {
+  // Fetch categories and tags on server side
+  const [categoriesResult, tagsResult] = await Promise.all([
+    getAllCategoriesAction(),
+    getAllTagsAction(),
+  ]);
+
+  const categories = categoriesResult.success ? categoriesResult.data : [];
+  const tags = tagsResult.success ? tagsResult.data : [];
+
   return (
     <div className="space-y-6">
       <H1>Video Management</H1>
@@ -56,7 +69,7 @@ export default function TeacherVideosPage() {
             </div>
           }
         >
-          <VideoManagement />
+          <VideoManagement categories={categories} tags={tags} />
         </Suspense>
       </Section>
     </div>

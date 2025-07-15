@@ -1,9 +1,7 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import { videoLearningService } from '@/services/video_learning/service';
-import { cookies } from 'next/headers';
-import type { OwnVideo } from '@/types/video_learning/models';
+import { useState, useMemo } from 'react';
+
 import { Skeleton } from '@/ui/skeleton';
 import { Button } from '@/ui/button';
 import { Input } from '@/ui/input';
@@ -26,61 +24,33 @@ import {
 import { Link } from '@/ui/link';
 import { toast } from 'sonner';
 import { VideoCard } from '@/components/video_learning/shared/video-card';
+import { useGetOwnVideos } from '@/hooks/video_learning/useSWR';
+import { deleteVideoAction } from '@/actions/video_learning/actions';
 import Image from 'next/image';
 
 type SortOption = 'title' | 'views' | 'likes' | 'upload_date';
 type SortDirection = 'asc' | 'desc';
 
 export function MyVideos() {
-  const [videos, setVideos] = useState<OwnVideo[]>([]);
-  const [filteredVideos, setFilteredVideos] = useState<OwnVideo[]>([]);
-  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<SortOption>('upload_date');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
+  const [page] = useState(1);
 
-  const loadVideos = useCallback(
-    async (resetPage = true) => {
-      try {
-        if (resetPage) {
-          setLoading(true);
-          setPage(1);
-        } else {
-          setLoadingMore(true);
-        }
+  const {
+    isLoading,
+    data: videos,
+    error,
+    mutate,
+  } = useGetOwnVideos({
+    page,
+    page_size: 50, // Load more videos at once for better filtering
+  });
 
-        const service = await videoLearningService(cookies());
-        const result = await service.getOwnVideos({
-          page: resetPage ? 1 : page,
-          page_size: 12,
-        });
+  const filteredVideos = useMemo(() => {
+    if (!videos) return [];
 
-        if (result.success) {
-          if (resetPage) {
-            setVideos(result.data);
-          } else {
-            setVideos((prev) => [...prev, ...result.data]);
-          }
-          setHasMore(result.data.length === 12);
-        } else {
-          toast.error('Failed to load videos');
-        }
-      } catch (error) {
-        console.error('Failed to load videos:', error);
-        toast.error('An error occurred while loading videos');
-      } finally {
-        setLoading(false);
-        setLoadingMore(false);
-      }
-    },
-    [page],
-  );
-
-  const filterAndSortVideos = useCallback(() => {
     let filtered = [...videos];
 
     // Apply search filter
@@ -124,32 +94,18 @@ export function MyVideos() {
       }
     });
 
-    setFilteredVideos(filtered);
+    return filtered;
   }, [videos, searchQuery, sortBy, sortDirection]);
-
-  useEffect(() => {
-    loadVideos();
-  }, [loadVideos]);
-
-  useEffect(() => {
-    filterAndSortVideos();
-  }, [videos, searchQuery, sortBy, sortDirection, filterAndSortVideos]);
-
-  const handleLoadMore = () => {
-    setPage((prev) => prev + 1);
-    loadVideos(false);
-  };
 
   const handleDelete = async (videoId: number) => {
     try {
-      const service = await videoLearningService(cookies());
-      const result = await service.deleteVideo({ id: videoId });
+      const result = await deleteVideoAction({ id: videoId });
 
       if (result.success) {
-        setVideos((prev) => prev.filter((video) => video.id !== videoId));
+        mutate(); // Refresh the videos list
         toast.success('Video deleted successfully');
       } else {
-        toast.error('Failed to delete video');
+        toast.error(result.error?.message || 'Failed to delete video');
       }
     } catch (error) {
       console.error('Failed to delete video:', error);
@@ -169,7 +125,7 @@ export function MyVideos() {
     setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'));
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="space-y-4">
         {/* Loading skeleton for controls */}
@@ -185,6 +141,16 @@ export function MyVideos() {
             <Skeleton key={i} className="h-64 w-full rounded-lg" />
           ))}
         </div>
+      </div>
+    );
+  }
+
+  if (error || !videos) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-muted-foreground">
+          Failed to load videos. Please try again.
+        </p>
       </div>
     );
   }
@@ -262,28 +228,32 @@ export function MyVideos() {
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="bg-card border rounded-lg p-4">
-          <div className="text-2xl font-bold">{videos.length}</div>
+          <div className="text-2xl font-bold">{videos?.length || 0}</div>
           <div className="text-sm text-muted-foreground">Total Videos</div>
         </div>
         <div className="bg-card border rounded-lg p-4">
           <div className="text-2xl font-bold">
             {videos
-              .reduce((sum, video) => sum + video.views, 0)
-              .toLocaleString()}
+              ? videos
+                  .reduce((sum, video) => sum + video.views, 0)
+                  .toLocaleString()
+              : 0}
           </div>
           <div className="text-sm text-muted-foreground">Total Views</div>
         </div>
         <div className="bg-card border rounded-lg p-4">
           <div className="text-2xl font-bold">
             {videos
-              .reduce((sum, video) => sum + video.likes, 0)
-              .toLocaleString()}
+              ? videos
+                  .reduce((sum, video) => sum + video.likes, 0)
+                  .toLocaleString()
+              : 0}
           </div>
           <div className="text-sm text-muted-foreground">Total Likes</div>
         </div>
         <div className="bg-card border rounded-lg p-4">
           <div className="text-2xl font-bold">
-            {videos.length > 0
+            {videos && videos.length > 0
               ? Math.round(
                   videos.reduce((sum, video) => sum + video.views, 0) /
                     videos.length,
@@ -398,18 +368,7 @@ export function MyVideos() {
             </div>
           )}
 
-          {/* Load More Button */}
-          {hasMore && viewMode === 'grid' && (
-            <div className="flex justify-center pt-4">
-              <Button
-                variant="outline"
-                onClick={handleLoadMore}
-                disabled={loadingMore}
-              >
-                {loadingMore ? 'Loading...' : 'Load More'}
-              </Button>
-            </div>
-          )}
+          {/* Load More Button - Removed since we're loading all videos at once now */}
         </div>
       )}
     </div>

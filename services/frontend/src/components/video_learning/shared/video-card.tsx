@@ -6,11 +6,12 @@ import { Button } from '@/ui/button';
 import { Link } from '@/ui/link';
 import type { Video } from '@/types/video_learning/models';
 import Image from 'next/image';
+import { toggleVideoLikeAction } from '@/actions/video_learning/actions';
+import { toast } from 'sonner';
 
 interface VideoCardProps {
   video: Video;
   showActions?: boolean;
-  onLike?: (videoId: number) => void;
   onDelete?: (videoId: number) => void;
   isOwner?: boolean;
 }
@@ -18,7 +19,6 @@ interface VideoCardProps {
 export function VideoCard({
   video,
   showActions = true,
-  onLike,
   onDelete,
   isOwner = false,
 }: VideoCardProps) {
@@ -27,18 +27,17 @@ export function VideoCard({
   const [isLoading, setIsLoading] = useState(false);
 
   const handleLike = async () => {
-    if (!onLike || isLoading) return;
-
     setIsLoading(true);
-    try {
-      onLike(video.id);
-      setIsLiked(!isLiked);
-      setLikeCount((prev) => (isLiked ? prev - 1 : prev + 1));
-    } catch (error) {
-      console.error('Failed to like video:', error);
-    } finally {
+    const result = await toggleVideoLikeAction({ id: video.id });
+    if (!result.success) {
       setIsLoading(false);
+      console.error('Failed to like video:', result.error);
+      toast.error('Failed to like video');
+      return;
     }
+    setIsLiked((prev) => !prev);
+    setLikeCount((prev) => (isLiked ? prev - 1 : prev + 1));
+    setIsLoading(false);
   };
 
   const handleDelete = async () => {

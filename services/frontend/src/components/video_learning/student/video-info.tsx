@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
 import {
   Heart,
   Share2,
@@ -14,80 +14,42 @@ import {
 import { Button } from '@/ui/button';
 import { Badge } from '@/ui/badge';
 import { Separator } from '@/ui/separator';
-import { videoLearningService } from '@/services/video_learning/service';
-import { cookies } from 'next/headers';
-import type {
-  VideoDetails,
-  VideoCategory,
-  VideoTag,
-} from '@/types/video_learning/models';
+import type { VideoDetails } from '@/types/video_learning/models';
 import { Skeleton } from '@/ui/skeleton';
 import { toast } from 'sonner';
+import { useSWRAll } from '@/lib/shared/swr/utils';
+import {
+  useGetCategory,
+  useGetTagsByVideo,
+} from '@/hooks/video_learning/useSWR';
+import { toggleVideoLikeAction } from '@/actions/video_learning/actions';
+import { formatViews } from '@/lib/video_learning/utils';
+import { formatDate } from '@/lib/shared/utils';
 
 interface VideoInfoProps {
-  videoId: number;
+  video: VideoDetails;
 }
 
-export function VideoInfo({ videoId }: VideoInfoProps) {
-  const [video, setVideo] = useState<VideoDetails | null>(null);
-  const [category, setCategory] = useState<VideoCategory | null>(null);
-  const [tags, setTags] = useState<VideoTag[]>([]);
-  const [loading, setLoading] = useState(true);
+export function VideoInfo({ video }: VideoInfoProps) {
+  const {
+    isLoading,
+    data: [category, tags],
+    errors,
+    // mutateAll,
+  } = useSWRAll([
+    useGetCategory({ id: video.category_id }),
+    useGetTagsByVideo({ id: video.id }),
+  ]);
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
   const [isLiking, setIsLiking] = useState(false);
-
-  const loadVideoDetails = useCallback(async () => {
-    try {
-      setLoading(true);
-      const service = await videoLearningService(cookies());
-
-      const [videoResult, categoriesResult, tagsResult] = await Promise.all([
-        service.getVideo({ id: videoId }),
-        service.getAllCategories(),
-        service.getAllTags(),
-      ]);
-
-      if (videoResult.success) {
-        setVideo(videoResult.data);
-        setLikeCount(videoResult.data.likes);
-
-        // Find the category for this video
-        if (categoriesResult.success) {
-          const videoCategory = categoriesResult.data.find(
-            (cat) => cat.id === videoResult.data.category_id,
-          );
-          setCategory(videoCategory || null);
-        }
-
-        // Find the tags for this video
-        if (tagsResult.success) {
-          const videoTags = tagsResult.data.filter((tag) =>
-            videoResult.data.tags_ids.includes(tag.id),
-          );
-          setTags(videoTags);
-        }
-      } else {
-        toast.error('Failed to load video details');
-      }
-    } catch (error) {
-      console.error('Failed to load video details:', error);
-      toast.error('An error occurred while loading video details');
-    } finally {
-      setLoading(false);
-    }
-  }, [videoId]);
-  useEffect(() => {
-    loadVideoDetails();
-  }, [loadVideoDetails, videoId]);
 
   const handleLike = async () => {
     if (!video || isLiking) return;
 
     setIsLiking(true);
     try {
-      const service = await videoLearningService(cookies());
-      const result = await service.toogleVideoLike({ id: video.id });
+      const result = await toggleVideoLikeAction({ id: video.id });
 
       if (result.success) {
         setIsLiked(!isLiked);
@@ -127,24 +89,7 @@ export function VideoInfo({ videoId }: VideoInfoProps) {
     }
   };
 
-  const formatDate = (timestamp: number) => {
-    return new Date(timestamp * 1000).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-  };
-
-  const formatViews = (views: number) => {
-    if (views >= 1000000) {
-      return `${(views / 1000000).toFixed(1)}M`;
-    } else if (views >= 1000) {
-      return `${(views / 1000).toFixed(1)}K`;
-    }
-    return views.toString();
-  };
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="space-y-4">
         <Skeleton className="h-8 w-3/4" />
@@ -162,7 +107,7 @@ export function VideoInfo({ videoId }: VideoInfoProps) {
     );
   }
 
-  if (!video) {
+  if (!video || errors.length > 0) {
     return (
       <div className="text-center py-8">
         <p className="text-muted-foreground">

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   Upload,
   Video,
@@ -20,9 +20,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/ui/select';
-import { videoLearningService } from '@/services/video_learning/service';
-import { cookies } from 'next/headers';
-import type { VideoCategory, VideoTag } from '@/types/video_learning/models';
+import {
+  initialUploadAction,
+  uploadThumbnailAction,
+  completeUploadAction,
+} from '@/actions/video_learning/actions';
+import {
+  useGetAllCategories,
+  useGetAllTags,
+} from '@/hooks/video_learning/useSWR';
+import { useSWRAll } from '@/lib/shared/swr/utils';
 import { toast } from 'sonner';
 
 interface UploadState {
@@ -43,8 +50,6 @@ export function VideoUpload() {
     categoryId: '',
     selectedTags: [],
   });
-  const [categories, setCategories] = useState<VideoCategory[]>([]);
-  const [tags, setTags] = useState<VideoTag[]>([]);
   const [loading, setLoading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [currentStep, setCurrentStep] = useState<
@@ -53,29 +58,11 @@ export function VideoUpload() {
   const [videoPreview, setVideoPreview] = useState<string | null>(null);
   const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
 
-  useEffect(() => {
-    loadCategoriesAndTags();
-  }, []);
-
-  const loadCategoriesAndTags = async () => {
-    try {
-      const service = await videoLearningService(cookies());
-      const [categoriesResult, tagsResult] = await Promise.all([
-        service.getAllCategories(),
-        service.getAllTags(),
-      ]);
-
-      if (categoriesResult.success) {
-        setCategories(categoriesResult.data);
-      }
-      if (tagsResult.success) {
-        setTags(tagsResult.data);
-      }
-    } catch (error) {
-      console.error('Failed to load categories and tags:', error);
-      toast.error('Failed to load categories and tags');
-    }
-  };
+  const {
+    isLoading: isLoadingData,
+    data: [categories, tags],
+    errors,
+  } = useSWRAll([useGetAllCategories(), useGetAllTags()]);
 
   const handleFileChange = (type: 'video' | 'thumbnail', file: File) => {
     setUploadState((prev) => ({ ...prev, [type]: file }));
@@ -130,43 +117,51 @@ export function VideoUpload() {
     setUploadProgress(0);
 
     try {
-      const service = await videoLearningService(cookies());
-
       // Step 1: Initial video upload
       setUploadProgress(20);
-      const videoUploadResult = await service.initialUpload({
+      const videoUploadResult = await initialUploadAction({
         file: uploadState.video!,
-        title: uploadState.title,
-        description: uploadState.description,
-        category_id: parseInt(uploadState.categoryId),
-        tags_ids: uploadState.selectedTags,
+        filename: uploadState.video!.name,
       });
 
       if (!videoUploadResult.success) {
-        throw new Error('Failed to upload video');
+        throw new Error(
+          videoUploadResult.error?.message || 'Failed to upload video',
+        );
       }
+
+      let thumbnailObjectName = '';
 
       // Step 2: Upload thumbnail if provided
       if (uploadState.thumbnail) {
         setUploadProgress(60);
-        const thumbnailUploadResult = await service.uploadThumbnail({
+        const thumbnailUploadResult = await uploadThumbnailAction({
           file: uploadState.thumbnail,
-          video_id: videoUploadResult.data.video_id,
+          filename: uploadState.thumbnail.name,
         });
 
         if (!thumbnailUploadResult.success) {
           console.warn('Thumbnail upload failed, continuing with video upload');
+        } else {
+          thumbnailObjectName = thumbnailUploadResult.data.object_name;
         }
       }
 
       // Step 3: Complete upload
       setUploadProgress(90);
-      const completeResult = await service.completeUpload({
-        video_id: videoUploadResult.data.video_id,
+      const completeResult = await completeUploadAction({
+        title: uploadState.title,
+        description: uploadState.description,
+        category_id: parseInt(uploadState.categoryId),
+        tags_ids: uploadState.selectedTags,
+        video_object_name: videoUploadResult.data.object_name,
+        thumbnail_object_name: thumbnailObjectName,
       });
 
       if (!completeResult.success) {
-        throw new Error('Failed to complete video upload');
+        throw new Error(
+          completeResult.error?.message || 'Failed to complete video upload',
+        );
       }
 
       setUploadProgress(100);
@@ -236,6 +231,32 @@ export function VideoUpload() {
         <h3 className="text-lg font-semibold">Upload Complete!</h3>
         <p className="text-sm text-muted-foreground">
           Your video has been uploaded successfully and is now available.
+        </p>
+      </div>
+    );
+  }
+
+  if (isLoadingData) {
+    return (
+      <div className="max-w-2xl mx-auto space-y-6">
+        <div className="text-center">
+          <h3 className="text-lg font-semibold mb-2">Loading upload form...</h3>
+          <p className="text-sm text-muted-foreground">
+            Please wait while we prepare the upload form
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (errors.length > 0 || !categories || !tags) {
+    return (
+      <div className="max-w-2xl mx-auto text-center py-12">
+        <h3 className="text-lg font-semibold mb-2">
+          Error loading upload form
+        </h3>
+        <p className="text-sm text-muted-foreground">
+          Failed to load categories and tags. Please refresh and try again.
         </p>
       </div>
     );

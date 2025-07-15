@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   Play,
   Pause,
@@ -13,19 +13,14 @@ import {
 } from 'lucide-react';
 import { Button } from '@/ui/button';
 import { Slider } from '@/ui/slider';
-import { videoLearningService } from '@/services/video_learning/service';
-import { cookies } from 'next/headers';
 import type { VideoDetails } from '@/types/video_learning/models';
-import { Skeleton } from '@/ui/skeleton';
 import { toast } from 'sonner';
 
 interface VideoPlayerProps {
-  videoId: number;
+  video: VideoDetails;
 }
 
-export function VideoPlayer({ videoId }: VideoPlayerProps) {
-  const [video, setVideo] = useState<VideoDetails | null>(null);
-  const [loading, setLoading] = useState(true);
+export function VideoPlayer({ video }: VideoPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -39,29 +34,6 @@ export function VideoPlayer({ videoId }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const playerRef = useRef<HTMLDivElement>(null);
   const controlsTimeoutRef = useRef<NodeJS.Timeout>(null);
-
-  const loadVideo = useCallback(async () => {
-    try {
-      setLoading(true);
-      const service = await videoLearningService(cookies());
-      const result = await service.getVideo({ id: videoId });
-
-      if (result.success) {
-        setVideo(result.data);
-      } else {
-        toast.error('Failed to load video');
-      }
-    } catch (error) {
-      console.error('Failed to load video:', error);
-      toast.error('An error occurred while loading the video');
-    } finally {
-      setLoading(false);
-    }
-  }, [videoId]);
-
-  useEffect(() => {
-    loadVideo();
-  }, [loadVideo, videoId]);
 
   useEffect(() => {
     const videoElement = videoRef.current;
@@ -216,18 +188,6 @@ export function VideoPlayer({ videoId }: VideoPlayerProps) {
     }
   };
 
-  if (loading) {
-    return <Skeleton className="aspect-video w-full rounded-lg" />;
-  }
-
-  if (!video) {
-    return (
-      <div className="aspect-video w-full bg-muted rounded-lg flex items-center justify-center">
-        <p className="text-muted-foreground">Failed to load video</p>
-      </div>
-    );
-  }
-
   return (
     <div
       ref={playerRef}
@@ -245,13 +205,6 @@ export function VideoPlayer({ videoId }: VideoPlayerProps) {
         onClick={togglePlayPause}
         onError={() => toast.error('Failed to load video file')}
       />
-
-      {/* Loading Overlay */}
-      {loading && (
-        <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
-        </div>
-      )}
 
       {/* Controls Overlay */}
       <div
@@ -382,7 +335,7 @@ export function VideoPlayer({ videoId }: VideoPlayerProps) {
       </div>
 
       {/* Center Play Button (when paused) */}
-      {!isPlaying && !loading && (
+      {!isPlaying && (
         <div className="absolute inset-0 flex items-center justify-center">
           <Button
             variant="ghost"

@@ -11,8 +11,10 @@ import type {
   GetRecommendationsPayloadSchema,
   GetSimilarVideosPayloadSchema,
   GetTagPayloadSchema,
+  GetTagsByVideoPayloadSchema,
   GetVideoPayloadSchema,
   GetVideosByCategoryPayloadSchema,
+  GetVideosGroupedByCategoryPayloadSchema,
   SearchVideosPayloadSchema,
   ToggleVideoLikePayloadSchema,
   UploadThumbnailPayloadSchema,
@@ -65,3 +67,9 @@ export type GetCategoryPayload = z.infer<typeof GetCategoryPayloadSchema>;
 export type CreateTagPayload = z.infer<typeof CreateTagPayloadSchema>;
 
 export type GetTagPayload = z.infer<typeof GetTagPayloadSchema>;
+
+export type GetTagsByVideoPayload = z.infer<typeof GetTagsByVideoPayloadSchema>;
+
+export type GetVideosGroupedByCategoryPayload = z.infer<
+  typeof GetVideosGroupedByCategoryPayloadSchema
+>;
