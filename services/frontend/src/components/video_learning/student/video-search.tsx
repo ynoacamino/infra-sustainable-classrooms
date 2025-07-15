@@ -21,25 +21,25 @@ import { PAGINATION_DEFAULT_SIZE } from '@/config/shared/const';
 
 export function VideoSearch() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<number | undefined>(
-    undefined,
-  );
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [page, setPage] = useState(1);
 
   const {
     isLoading,
-    data: [categories, videos],
+    data: [categories, videosResult],
     errors,
     // mutateAll,
   } = useSWRAll([
     useGetAllCategories(),
     useSearchVideos({
       query: searchQuery,
-      category_id: selectedCategory,
+      category_id: Number(selectedCategory),
       page,
       page_size: PAGINATION_DEFAULT_SIZE,
     }),
   ]);
+
+  console.log(videosResult);
 
   const loadMore = () => {
     setPage((prev) => prev + 1);
@@ -47,11 +47,11 @@ export function VideoSearch() {
 
   const clearFilters = () => {
     setSearchQuery('');
-    setSelectedCategory(undefined);
+    setSelectedCategory('');
     setPage(1);
   };
 
-  if (errors.length > 0 || !categories || !videos) {
+  if (errors.length > 0 || !categories || !videosResult) {
     return (
       <div className="text-center py-12">
         <h3 className="text-lg font-semibold mb-2">Error loading data</h3>
@@ -61,7 +61,8 @@ export function VideoSearch() {
       </div>
     );
   }
-
+  const videos = videosResult.videos || [];
+  console.log('Videos: ', videos);
   return (
     <div className="space-y-6">
       {/* Search Controls */}
@@ -77,18 +78,12 @@ export function VideoSearch() {
         </div>
 
         <div className="flex gap-2">
-          <Select
-            value={selectedCategory?.toString() ?? ''}
-            onValueChange={(v) =>
-              setSelectedCategory(v ? parseInt(v) : undefined)
-            }
-          >
+          <Select value={selectedCategory?.toString() ?? ''}>
             <SelectTrigger className="w-[180px]">
               <Filter className="h-4 w-4 mr-2" />
               <SelectValue placeholder="All Categories" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Categories</SelectItem>
               {categories.map((category) => (
                 <SelectItem key={category.id} value={category.id.toString()}>
                   {category.name}

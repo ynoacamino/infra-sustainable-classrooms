@@ -46,7 +46,7 @@ DECLARE
 BEGIN
   -- Curso
   INSERT INTO courses (title, description, image_url)
-  VALUES ('Basic Foundations', 'Learn the basics of programming from scratch.', '/replace')
+  VALUES ('Basic Foundations', 'Learn the basics of programming from scratch.', '/files/text-files/i1.webp')
   RETURNING id INTO course_id;
 
   -- Sección 1

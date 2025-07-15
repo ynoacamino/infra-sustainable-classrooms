@@ -6,6 +6,5 @@ export function mapToFile(url: string) {
   const urlObj = new URL(cleanedUrl);
 
   const safe = `${API_BASE_URL}/files${urlObj.pathname}?${urlObj.searchParams.toString()}`;
-  console.log(safe);
   return safe;
 }

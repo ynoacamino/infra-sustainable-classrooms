@@ -76,8 +76,6 @@ export function VideoCategories() {
     );
   }
 
-  console.log(groupedVideos);
-
   return (
     <div className="space-y-6">
       {/* View Mode Toggle */}
@@ -126,12 +124,14 @@ export function VideoCategories() {
                 <VideoCard key={video.id} video={video} showActions={true} />
               ))}
             </div>
-            ) : (
-            <div className="text-center py-8 bg-muted rounded-lg">
-              <p className="text-muted-foreground text-sm">
-                No videos in this category yet
-              </p>
-            </div>
+            {videos.length === 0 && viewMode === 'grid' && (
+              <div className="text-center py-8 bg-muted rounded-lg">
+                <p className="text-muted-foreground text-sm">
+                  No videos in this category yet
+                </p>
+              </div>
+              // holaaa
+            )}
           </div>
         ))}
       </div>

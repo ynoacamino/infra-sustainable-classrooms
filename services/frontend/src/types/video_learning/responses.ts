@@ -9,3 +9,15 @@ export type GetVideosGroupedByCategoryResponse = {
   category: VideoCategory;
   videos: Video[];
 }[];
+
+export type SearchVideosResponse = {
+  videos: Video[];
+};
+
+export type GetRecommendationsResponse = {
+  videos: Video[];
+};
+
+export type GetVideosByCategoryResponse = {
+  videos: Video[];
+};

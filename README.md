@@ -141,7 +141,6 @@ The platform consists of the following microservices, each with dedicated docume
 | **Language**         | TypeScript   | latest  | Type-safe JavaScript            |
 | **Styling**          | Tailwind CSS | latest  | Utility-first CSS framework     |
 | **UI Components**    | Radix UI     | latest  | Accessible component primitives |
-| **State Management** | Zustand      | 5.0.2   | Lightweight state management    |
 | **Data Fetching**    | SWR          | 2.3.3   | Data fetching and caching       |
 
 ### Infrastructure & DevOps
