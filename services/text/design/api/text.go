@@ -79,6 +79,12 @@ var _ = Service("text", func() {
 			Response("internal_error", StatusInternalServerError)
 			Response("service_unavailable", StatusServiceUnavailable)
 		})
+
+		GRPC(func() {
+			Response(CodeOK)
+			Response("unauthorized", CodePermissionDenied)
+			Response("not_found", CodeNotFound)
+		})
 	})
 
 	Method("ListCourses", func() {
@@ -95,6 +101,12 @@ var _ = Service("text", func() {
 			Response("unauthorized", StatusUnauthorized)
 			Response("internal_error", StatusInternalServerError)
 			Response("service_unavailable", StatusServiceUnavailable)
+		})
+
+		GRPC(func() {
+			Response(CodeOK)
+			Response("unauthorized", CodePermissionDenied)
+			Response("not_found", CodeNotFound)
 		})
 	})
 
@@ -214,6 +226,12 @@ var _ = Service("text", func() {
 			Response("internal_error", StatusInternalServerError)
 			Response("service_unavailable", StatusServiceUnavailable)
 		})
+
+		GRPC(func() {
+			Response(CodeOK)
+			Response("unauthorized", CodePermissionDenied)
+			Response("not_found", CodeNotFound)
+		})
 	})
 
 	Method("ListSections", func() {
@@ -232,6 +250,12 @@ var _ = Service("text", func() {
 			Response("not_found", StatusNotFound)
 			Response("internal_error", StatusInternalServerError)
 			Response("service_unavailable", StatusServiceUnavailable)
+		})
+
+		GRPC(func() {
+			Response(CodeOK)
+			Response("unauthorized", CodePermissionDenied)
+			Response("not_found", CodeNotFound)
 		})
 	})
 
@@ -340,6 +364,12 @@ var _ = Service("text", func() {
 			Response("internal_error", StatusInternalServerError)
 			Response("service_unavailable", StatusServiceUnavailable)
 		})
+
+		GRPC(func() {
+			Response(CodeOK)
+			Response("unauthorized", CodePermissionDenied)
+			Response("not_found", CodeNotFound)
+		})
 	})
 
 	Method("ListArticles", func() {
@@ -358,6 +388,12 @@ var _ = Service("text", func() {
 			Response("not_found", StatusNotFound)
 			Response("internal_error", StatusInternalServerError)
 			Response("service_unavailable", StatusServiceUnavailable)
+		})
+
+		GRPC(func() {
+			Response(CodeOK)
+			Response("unauthorized", CodePermissionDenied)
+			Response("not_found", CodeNotFound)
 		})
 	})
 
@@ -431,8 +467,11 @@ var _ = Service("text", func() {
 			Response("internal_error", StatusInternalServerError)
 			Response("service_unavailable", StatusServiceUnavailable)
 		})
+		
 		GRPC(func() {
-			// gRPC method for microservice communication
+			Response(CodeOK)
+			Response("unauthorized", CodePermissionDenied)
+			Response("not_found", CodeNotFound)
 		})
 	})
 
@@ -454,8 +493,11 @@ var _ = Service("text", func() {
 			Response("internal_error", StatusInternalServerError)
 			Response("service_unavailable", StatusServiceUnavailable)
 		})
+		
 		GRPC(func() {
-			// gRPC method for microservice communication
+			Response(CodeOK)
+			Response("unauthorized", CodePermissionDenied)
+			Response("not_found", CodeNotFound)
 		})
 	})
 
@@ -466,10 +508,7 @@ var _ = Service("text", func() {
 			Field(2, "article_id", Int64, "Article unique identifier")
 			Required("session_token", "article_id")
 		})
-		Result(func() {
-			Field(1, "completed", Boolean, "Whether the article is completed")
-			Required("completed")
-		})
+		Result(CheckArticleCompletedResult)
 		HTTP(func() {
 			GET("/articles/{article_id}/completed")
 			Cookie("session_token:session")
@@ -480,8 +519,11 @@ var _ = Service("text", func() {
 			Response("internal_error", StatusInternalServerError)
 			Response("service_unavailable", StatusServiceUnavailable)
 		})
+		
 		GRPC(func() {
-			// gRPC method for microservice communication
+			Response(CodeOK)
+			Response("unauthorized", CodePermissionDenied)
+			Response("not_found", CodeNotFound)
 		})
 	})
 
@@ -504,8 +546,11 @@ var _ = Service("text", func() {
 			Response("internal_error", StatusInternalServerError)
 			Response("service_unavailable", StatusServiceUnavailable)
 		})
+		
 		GRPC(func() {
-			// gRPC method for microservice communication
+			Response(CodeOK)
+			Response("unauthorized", CodePermissionDenied)
+			Response("not_found", CodeNotFound)
 		})
 	})
 
@@ -531,6 +576,7 @@ var _ = Service("text", func() {
 			Response("internal_error", StatusInternalServerError)
 			Response("service_unavailable", StatusServiceUnavailable)
 		})
+		
 		GRPC(func() {
 			Response(CodeOK)
 			Response("unauthorized", CodePermissionDenied)
@@ -551,6 +597,40 @@ var _ = Service("text", func() {
 		HTTP(func() {
 			GET("/courses/{course_id}/completion")
 			Cookie("session_token:session")
+			Response(StatusOK)
+			Response("invalid_input", StatusBadRequest)
+			Response("unauthorized", StatusUnauthorized)
+			Response("not_found", StatusNotFound)
+			Response("internal_error", StatusInternalServerError)
+			Response("service_unavailable", StatusServiceUnavailable)
+		})
+
+		GRPC(func() {
+			Response(CodeOK)
+			Response("unauthorized", CodePermissionDenied)
+			Response("not_found", CodeNotFound)
+		})
+	})
+
+	Method("GetCourseLeaderboard", func() {
+		Description("Get course leaderboard with users who completed the most articles")
+		Payload(func() {
+			Field(1, "session_token", String, "Authentication session token")
+			Field(2, "course_id", Int64, "Course unique identifier")
+			Field(3, "limit", Int64, "Maximum number of results (optional, default 10)", func() {
+				Default(10)
+				Minimum(1)
+				Maximum(100)
+			})
+			Required("session_token", "course_id")
+		})
+
+		Result(CourseLeaderboard)
+
+		HTTP(func() {
+			GET("/courses/{course_id}/leaderboard")
+			Cookie("session_token:session")
+			Param("limit")
 			Response(StatusOK)
 			Response("invalid_input", StatusBadRequest)
 			Response("unauthorized", StatusUnauthorized)

@@ -18,4 +18,8 @@ type ProgressRepository interface {
 	GetUserProgressForCourse(ctx context.Context, arg textdb.GetUserProgressForCourseParams) ([]textdb.GetUserProgressForCourseRow, error)
 	
 	GetCourseCompletionStats(ctx context.Context, arg textdb.GetCourseCompletionStatsParams) (textdb.GetCourseCompletionStatsRow, error)
+	
+	GetCourseLeaderboard(ctx context.Context, arg textdb.GetCourseLeaderboardParams) ([]textdb.GetCourseLeaderboardRow, error)
+	
+	GetCourseParticipantCount(ctx context.Context, courseID int64) (int64, error)
 }

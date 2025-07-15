@@ -47,3 +47,22 @@ FROM articles a
 JOIN sections s ON a.section_id = s.id
 LEFT JOIN article_progress ap ON a.id = ap.article_id AND ap.user_id = $1
 WHERE s.course_id = $2;
+
+-- name: GetCourseLeaderboard :many
+SELECT 
+    ap.user_id,
+    COUNT(ap.article_id) as completed_count
+FROM article_progress ap
+JOIN articles a ON ap.article_id = a.id
+JOIN sections s ON a.section_id = s.id
+WHERE s.course_id = $1
+GROUP BY ap.user_id
+ORDER BY completed_count DESC
+LIMIT $2;
+
+-- name: GetCourseParticipantCount :one
+SELECT COUNT(DISTINCT ap.user_id) as participant_count
+FROM article_progress ap
+JOIN articles a ON ap.article_id = a.id
+JOIN sections s ON a.section_id = s.id
+WHERE s.course_id = $1;

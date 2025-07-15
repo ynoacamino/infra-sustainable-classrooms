@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"context"
+	"time"
 
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/ynoacamino/infra-sustainable-classrooms/services/profiles/gen/profiles"
@@ -722,4 +723,92 @@ func (s *textsrvc) GetCourseCompletionStats(ctx context.Context, payload *text.G
 	}
 
 	return courseStats, nil
+}
+
+func (s *textsrvc) GetCourseLeaderboard(ctx context.Context, payload *text.GetCourseLeaderboardPayload) (res *text.CourseLeaderboard, err error) {
+	// Validate user session
+	_, err = s.profilesServiceRepo.GetCompleteProfile(ctx, &profiles.GetCompleteProfilePayload{
+		SessionToken: payload.SessionToken,
+	})
+	if err != nil {
+		return nil, text.Unauthorized("Unauthorized: " + err.Error())
+	}
+
+	// Verificar que el curso existe
+	course, err := s.courseRepo.GetCourse(ctx, payload.CourseID)
+	if err != nil {
+		return nil, text.NotFound("Course not found: " + err.Error())
+	}
+
+	// Obtener el leaderboard del curso
+	leaderboardData, err := s.progressRepo.GetCourseLeaderboard(ctx, textdb.GetCourseLeaderboardParams{
+		CourseID: payload.CourseID,
+		Limit:    int32(payload.Limit),
+	})
+	if err != nil {
+		return nil, text.InternalError("Failed to get course leaderboard: " + err.Error())
+	}
+
+	// Obtener el total de artículos del curso para calcular porcentajes
+	courseStats, err := s.progressRepo.GetCourseCompletionStats(ctx, textdb.GetCourseCompletionStatsParams{
+		UserID:   0, // Usar 0 para obtener el total de artículos del curso
+		CourseID: payload.CourseID,
+	})
+	if err != nil {
+		return nil, text.InternalError("Failed to get course stats: " + err.Error())
+	}
+
+	// Convertir los datos a formato de respuesta
+	var entries []*text.LeaderboardEntry
+	for i, entry := range leaderboardData {
+		// Obtener información del usuario desde el servicio de profiles
+		userProfile, err := s.profilesServiceRepo.GetPublicProfileByID(ctx, &profiles.GetPublicProfileByIDPayload{
+			UserID: entry.UserID,
+		})
+		
+		var username string
+		if err != nil {
+			// Si no se puede obtener el perfil, usar un nombre por defecto
+			username = "Unknown User"
+		} else {
+			username = userProfile.FirstName + " " + userProfile.LastName
+		}
+
+		// Calcular porcentaje de completación
+		var completionPercentage float64 = 0
+		if courseStats.TotalArticles > 0 {
+			completionPercentage = float64(entry.CompletedCount) / float64(courseStats.TotalArticles) * 100
+		}
+
+		leaderboardEntry := &text.LeaderboardEntry{
+			UserID:               entry.UserID,
+			Username:            username,
+			CompletionPercentage: completionPercentage,
+			CompletedArticles:   entry.CompletedCount,
+			TotalArticles:       courseStats.TotalArticles,
+			Rank:                int64(i + 1), // Rank basado en posición (1-indexed)
+			LastActivity:        nil, // Por ahora no tenemos esta información
+		}
+		entries = append(entries, leaderboardEntry)
+	}
+
+	// Obtener total de participantes en el curso
+	totalParticipants, err := s.progressRepo.GetCourseParticipantCount(ctx, payload.CourseID)
+	if err != nil {
+		// Si falla, usar el número de entradas como fallback
+		totalParticipants = int64(len(entries))
+	}
+
+	leaderboard := &text.CourseLeaderboard{
+		CourseID:         course.ID,
+		CourseTitle:      course.Title,
+		Entries:          entries,
+		TotalParticipants: totalParticipants,
+		GeneratedAt:      mappers.TimestampToMillis(pgtype.Timestamptz{
+			Time:  time.Now(),
+			Valid: true,
+		}),
+	}
+
+	return leaderboard, nil
 }

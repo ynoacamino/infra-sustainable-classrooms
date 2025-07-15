@@ -6,6 +6,22 @@ import (
 	"github.com/ynoacamino/infra-sustainable-classrooms/services/text/gen/text"
 )
 
+// Helper function to convert int64 to *int64
+func Int64Ptr(val int64) *int64 {
+	if val == 0 {
+		return nil
+	}
+	return &val
+}
+
+// Helper function to convert timestamp to milliseconds (exported version)
+func TimestampToMillis(timestamp pgtype.Timestamptz) int64 {
+	if timestamp.Valid {
+		return timestamp.Time.UnixMilli()
+	}
+	return 0
+}
+
 func timestampToMillis(timestamp pgtype.Timestamptz) int64 {
 	if timestamp.Valid {
 		return timestamp.Time.UnixMilli()
