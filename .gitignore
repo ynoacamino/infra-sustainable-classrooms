@@ -70,6 +70,7 @@ web_modules/
 .env.*
 !.env.example
 !.env.dev
+!.env.prod
 # parcel-bundler cache (https://parceljs.org/)
 .cache
 .parcel-cache
@@ -139,3 +140,8 @@ vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
 services/**/gen/**/*
+.direnv
+.envrc
+
+# Coverage files
+*/**/coverage.*

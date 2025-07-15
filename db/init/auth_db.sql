@@ -1,5 +1,3 @@
-
-
 -- Tabla de usuarios
 CREATE TABLE IF NOT EXISTS users (
     id BIGSERIAL PRIMARY KEY,
@@ -52,8 +50,8 @@ CREATE INDEX IF NOT EXISTS idx_sessions_is_active ON sessions(is_active);
 CREATE OR REPLACE FUNCTION cleanup_expired_sessions()
 RETURNS void AS $$
 BEGIN
-    UPDATE sessions 
-    SET is_active = FALSE 
+    UPDATE sessions
+    SET is_active = FALSE
     WHERE expires_at < NOW() AND is_active = TRUE;
 END;
 $$ language 'plpgsql';

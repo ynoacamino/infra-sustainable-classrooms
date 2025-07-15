@@ -4,11 +4,71 @@
     {
       "engine": "postgresql",
       "queries": "services/auth/design/queries",
-      "schema": "db/schemas",
+      "schema": "db/init/auth_db.sql",
       "gen": {
         "go": {
           "package": "authdb",
           "out": "services/auth/gen/database",
+          "sql_package": "pgx/v5"
+        }
+      }
+    },
+    {
+      "engine": "postgresql",
+      "queries": "services/profiles/design/queries",
+      "schema": "db/init/profiles_db.sql",
+      "gen": {
+        "go": {
+          "package": "profilesdb",
+          "out": "services/profiles/gen/database",
+          "sql_package": "pgx/v5"
+        }
+      }
+    },
+    {
+      "engine": "postgresql",
+      "queries": "services/knowledge/design/queries",
+      "schema": "db/init/knowledge_db.sql",
+      "gen": {
+        "go": {
+          "package": "knowledgedb",
+          "out": "services/knowledge/gen/database",
+          "sql_package": "pgx/v5"
+        }
+      }
+    },
+    {
+      "engine": "postgresql",
+      "queries": "services/text/design/queries",
+      "schema": "db/init/text_db.sql",
+      "gen": {
+        "go": {
+          "package": "textdb",
+          "out": "services/text/gen/database",
+          "sql_package": "pgx/v5"
+        }
+      }
+    },
+    {
+      "engine": "postgresql",
+      "queries": "services/video_learning/design/queries",
+      "schema": "db/init/video_learning_db.sql",
+      "gen": {
+        "go": {
+          "package": "video_learningdb",
+          "out": "services/video_learning/gen/database",
+          "sql_package": "pgx/v5"
+        }
+      }
+    },
+    {
+      "engine": "postgresql",
+      "queries": "services/codelab/design/queries",
+      "schema": "db/init/codelab_db.sql",
+      "gen": {
+        "go": {
+          "package": "codelabdb",
+          "out": "services/codelab/gen/database",
           "sql_package": "pgx/v5"
         }
       }
