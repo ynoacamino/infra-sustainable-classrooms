@@ -3,6 +3,7 @@ package repositories
 import (
 	"context"
 	"io"
+	"mime/multipart"
 	"net/url"
 	"time"
 
@@ -20,12 +21,12 @@ func NewStorageRepository(client *minio.Client) ports.StorageRepository {
 	}
 }
 
-func (s *storageRepository) UploadFile(ctx context.Context, bucket string, objectName string, reader io.Reader, objectSize int64, contentType string) error {
+func (s *storageRepository) UploadFile(ctx context.Context, bucket string, objectName string, part *multipart.Part, contentType string) error {
 	opts := minio.PutObjectOptions{
 		ContentType: contentType,
 	}
 
-	_, err := s.client.PutObject(ctx, bucket, objectName, reader, objectSize, opts)
+	_, err := s.client.PutObject(ctx, bucket, objectName, part, -1, opts)
 	return err
 }
 

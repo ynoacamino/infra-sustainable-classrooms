@@ -26,6 +26,7 @@ var _ = Service("video_learning", func() {
 	Error("profile_not_found", String, "User profile not found")
 	Error("category_not_found", String, "Video category not found")
 	Error("tag_not_found", String, "Video tag not found")
+	Error("invalid_content_type", String, "Invalid content type for upload")
 
 	//  Search videos by query
 	// DONE in frontend
@@ -256,18 +257,19 @@ var _ = Service("video_learning", func() {
 
 		Payload(func() {
 			Field(1, "session_token", String, "User session token")
-			Field(2, "file", Bytes, "Video file data")
+			Field(2, "content_type", String, "Content type of the video file")
 			Field(3, "filename", String, "Original filename")
 
-			Required("session_token", "file", "filename")
+			Required("session_token", "content_type", "filename")
 		})
 
 		Result(UploadResponse)
 
 		HTTP(func() {
-			POST("/upload/video")
+			POST("/upload/video/{*filename}")
 			Cookie("session_token:session")
-			MultipartRequest()
+			Header("content_type:Content-Type")
+			SkipRequestBodyEncodeDecode()
 			Response(StatusOK)
 			Response("unauthorized", StatusUnauthorized)
 			Response("invalid_session", StatusUnauthorized)
@@ -322,18 +324,19 @@ var _ = Service("video_learning", func() {
 
 		Payload(func() {
 			Field(1, "session_token", String, "User session token")
-			Field(2, "file", Bytes, "Thumbnail image file")
+			Field(2, "content_type", String, "Content type of the thumbnail file")
 			Field(3, "filename", String, "Original filename")
 
-			Required("session_token", "file", "filename")
+			Required("session_token", "content_type", "filename")
 		})
 
 		Result(UploadResponse)
 
 		HTTP(func() {
-			POST("/upload/thumbnail")
+			POST("/upload/thumbnail/{*filename}")
 			Cookie("session_token:session")
-			MultipartRequest()
+			Header("content_type:Content-Type")
+			SkipRequestBodyEncodeDecode()
 			Response(StatusOK)
 			Response("unauthorized", StatusUnauthorized)
 			Response("invalid_session", StatusUnauthorized)
