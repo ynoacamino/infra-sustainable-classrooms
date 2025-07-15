@@ -3,7 +3,6 @@ import type { SimpleResponse } from '@/services/shared/response';
 import { Service } from '@/services/shared/service';
 import type { AsyncResult } from '@/types/shared/services/result';
 import type {
-  Comment,
   OwnVideo,
   Video,
   VideoCategory,
@@ -32,12 +31,13 @@ import type {
   UploadThumbnailPayload,
   UploadVideoPayload,
 } from '@/types/video_learning/payload';
-import type {
-  GetRecommendationsResponse,
-  GetVideosByCategoryResponse,
-  GetVideosGroupedByCategoryResponse,
-  SearchVideosResponse,
-  UploadResponse,
+import {
+  type GetCommentsResponse,
+  type GetRecommendationsResponse,
+  type GetVideosByCategoryResponse,
+  type GetVideosGroupedByCategoryResponse,
+  type SearchVideosResponse,
+  type UploadResponse,
 } from '@/types/video_learning/responses';
 import {
   CompleteUploadPayloadSchema,
@@ -106,8 +106,10 @@ class VideoLearningService extends Service {
   }
 
   // Doubt in backend, it must be the video id in the url as a parameter
-  async getComments(payload: GetCommentsPayload): AsyncResult<Comment[]> {
-    return this.get<Comment[], typeof GetCommentsPayloadSchema>({
+  async getComments(
+    payload: GetCommentsPayload,
+  ): AsyncResult<GetCommentsResponse> {
+    return this.get<GetCommentsResponse, typeof GetCommentsPayloadSchema>({
       endpoint: ['comments', payload.video_id],
       payload: {
         schema: GetCommentsPayloadSchema,
@@ -308,7 +310,7 @@ class VideoLearningService extends Service {
       return resVideo;
     }
     const videoTags = resTags.data.filter((tag) =>
-      resVideo.data.tags_ids.includes(tag.id),
+      resVideo.data.tags_ids?.includes(tag.id),
     );
     return this.result(videoTags);
   }

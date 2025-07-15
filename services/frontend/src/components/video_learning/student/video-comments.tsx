@@ -28,7 +28,7 @@ export function VideoComments({ video }: VideoCommentsProps) {
   const {
     isLoading,
     errors,
-    data: [comments],
+    data: [commentsResult],
     mutateAll: mutateComments,
   } = useSWRAll([
     useGetComments({
@@ -82,7 +82,7 @@ export function VideoComments({ video }: VideoCommentsProps) {
     );
   }
 
-  if (errors.length > 0 || !comments) {
+  if (errors.length > 0 || !commentsResult) {
     return (
       <div className="text-center py-12">
         <MessageCircle className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
@@ -93,6 +93,8 @@ export function VideoComments({ video }: VideoCommentsProps) {
       </div>
     );
   }
+
+  const comments = commentsResult.comments || [];
   return (
     <div className="space-y-6">
       {/* Comments Header */}

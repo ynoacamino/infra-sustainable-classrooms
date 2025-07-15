@@ -1,4 +1,8 @@
-import type { Video, VideoCategory } from '@/types/video_learning/models';
+import type {
+  Comment,
+  Video,
+  VideoCategory,
+} from '@/types/video_learning/models';
 
 export type UploadResponse = {
   object_name: string;
@@ -18,6 +22,9 @@ export type GetRecommendationsResponse = {
   videos: Video[];
 };
 
+export type GetCommentsResponse = {
+  comments: Comment[];
+};
 export type GetVideosByCategoryResponse = {
   videos: Video[];
 };
