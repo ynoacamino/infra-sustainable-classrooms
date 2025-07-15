@@ -11,7 +11,7 @@ BUCKETS=(
 )
 for bucket in "${BUCKETS[@]}"; do
     mc mb dockerminio/$bucket
-    mc mc anonymous set download dockerminio/$bucket
+    mc anonymous set download dockerminio/$bucket
 done
 
 echo "subiendo imágenes al bucket files-text..."
