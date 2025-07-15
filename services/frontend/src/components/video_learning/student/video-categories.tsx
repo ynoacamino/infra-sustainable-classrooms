@@ -76,6 +76,8 @@ export function VideoCategories() {
     );
   }
 
+  console.log(groupedVideos);
+
   return (
     <div className="space-y-6">
       {/* View Mode Toggle */}

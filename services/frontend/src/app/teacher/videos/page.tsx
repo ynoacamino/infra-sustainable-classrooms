@@ -1,25 +1,37 @@
+'use client';
+
 import { Suspense } from 'react';
 import { VideoUpload } from '@/components/video_learning/teacher/video-upload';
 import { MyVideos } from '@/components/video_learning/teacher/my-videos';
 import { VideoManagement } from '@/components/video_learning/teacher/video-management';
 import { VideoStats } from '@/components/video_learning/teacher/video-stats';
-import {
-  getAllCategoriesAction,
-  getAllTagsAction,
-} from '@/actions/video_learning/actions';
 import H1 from '@/ui/h1';
 import Section from '@/ui/section';
 import { Skeleton } from '@/ui/skeleton';
+import { useSWRAll } from '@/lib/shared/swr/utils';
+import {
+  useGetAllCategories,
+  useGetAllTags,
+} from '@/hooks/video_learning/useSWR';
 
-export default async function TeacherVideosPage() {
+export default function TeacherVideosPage() {
+  const {
+    // isLoading,
+    data: [categories, tags],
+    // errors,
+    // mutateAll,
+  } = useSWRAll([useGetAllCategories(), useGetAllTags()]);
   // Fetch categories and tags on server side
-  const [categoriesResult, tagsResult] = await Promise.all([
-    getAllCategoriesAction(),
-    getAllTagsAction(),
-  ]);
-
-  const categories = categoriesResult.success ? categoriesResult.data : [];
-  const tags = tagsResult.success ? tagsResult.data : [];
+  if (!categories || !tags) {
+    return (
+      <div className="space-y-6">
+        <H1>Video Management</H1>
+        <Section title="Loading...">
+          <Skeleton className="h-96 w-full" />
+        </Section>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
