@@ -1,0 +1,20 @@
+// Code generated with goa v3.21.1, DO NOT EDIT.
+//
+// text protocol buffer definition
+//
+// Command:
+// $ goa gen
+// github.com/ynoacamino/infra-sustainable-classrooms/services/text/design/api
+// -o ./services/text/
+
+syntax = "proto3";
+
+package text;
+
+option go_package = "/textpb";
+
+// Course management service for text-based learning, with sections and
+// articles. Only teachers can create, update, or delete content. All endpoints
+// require session_token via cookie.
+service Text {
+}

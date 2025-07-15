@@ -1,0 +1,49 @@
+// Code generated with goa v3.21.1, DO NOT EDIT.
+//
+// mailing protocol buffer definition
+//
+// Command:
+// $ goa gen
+// github.com/ynoacamino/infra-sustainable-classrooms/services/mailing/design/api
+// -o ./services/mailing/
+
+syntax = "proto3";
+
+package mailing;
+
+option go_package = "/mailingpb";
+
+// Mailing microservice for sending emails
+service Mailing {
+	// Send an email message via SMTP
+	rpc SendEmail (SendEmailRequest) returns (SendEmailResponse);
+}
+
+message SendEmailRequest {
+	// Email message to send
+	EmailMessage email = 1;
+}
+// Email message structure
+message EmailMessage {
+	// Recipient email addresses
+	repeated string to = 1;
+	// Carbon copy email addresses
+	repeated string cc = 2;
+	// Blind carbon copy email addresses
+	repeated string bcc = 3;
+	// Email subject
+	string subject = 4;
+	// Email body content
+	string body = 5;
+	// Whether the body content is HTML
+	optional bool is_html = 6;
+}
+
+message SendEmailResponse {
+	// Whether the email was sent successfully
+	bool success = 1;
+	// Response message
+	string message_ = 2;
+	// Message ID from the SMTP server
+	optional string message_id = 3;
+}

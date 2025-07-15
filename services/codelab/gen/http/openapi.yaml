@@ -1,0 +1,1375 @@
+swagger: "2.0"
+info:
+    title: Codelab Microservice
+    description: Microservice for coding exercises, tests, answers and attempts with HTTP and gRPC support
+    version: "1.0"
+host: localhost:8080
+consumes:
+    - application/json
+    - application/xml
+    - application/gob
+produces:
+    - application/json
+    - application/xml
+    - application/gob
+paths:
+    /api/codelab/answers/user/{user_id}/exercise/{exercise_id}:
+        get:
+            tags:
+                - codelab
+            summary: GetAnswerByUserAndExercise codelab
+            description: Get user's answer for a specific exercise
+            operationId: codelab#GetAnswerByUserAndExercise
+            parameters:
+                - name: user_id
+                  in: path
+                  description: User ID
+                  required: true
+                  type: integer
+                  format: int64
+                - name: exercise_id
+                  in: path
+                  description: Exercise ID
+                  required: true
+                  type: integer
+                  format: int64
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        $ref: '#/definitions/Answer'
+                        required:
+                            - id
+                            - exercise_id
+                            - user_id
+                            - completed
+                            - created_at
+                            - updated_at
+                "400":
+                    description: Bad Request response.
+                    schema:
+                        type: string
+                "401":
+                    description: Unauthorized response.
+                    schema:
+                        type: string
+                "403":
+                    description: Forbidden response.
+                    schema:
+                        type: string
+                "404":
+                    description: Not Found response.
+                    schema:
+                        type: string
+                "503":
+                    description: Service Unavailable response.
+                    schema:
+                        type: string
+            schemes:
+                - http
+    /api/codelab/attempts:
+        post:
+            tags:
+                - codelab
+            summary: CreateAttempt codelab
+            description: Submit a code attempt for an exercise (students)
+            operationId: codelab#CreateAttempt
+            parameters:
+                - name: CreateAttemptRequestBody
+                  in: body
+                  required: true
+                  schema:
+                    $ref: '#/definitions/CreateAttemptPayload'
+                    required:
+                        - exercise_id
+                        - code
+                        - success
+            responses:
+                "201":
+                    description: Created response.
+                    schema:
+                        $ref: '#/definitions/SimpleResponse'
+                        required:
+                            - success
+                            - message
+                "400":
+                    description: Bad Request response.
+                    schema:
+                        type: string
+                "401":
+                    description: Unauthorized response.
+                    schema:
+                        type: string
+                "403":
+                    description: Forbidden response.
+                    schema:
+                        type: string
+                "404":
+                    description: Not Found response.
+                    schema:
+                        type: string
+                "503":
+                    description: Service Unavailable response.
+                    schema:
+                        type: string
+            schemes:
+                - http
+    /api/codelab/exercises:
+        get:
+            tags:
+                - codelab
+            summary: ListExercises codelab
+            description: List all exercises with solutions (professors only)
+            operationId: codelab#ListExercises
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        type: array
+                        items:
+                            $ref: '#/definitions/Exercise'
+                "401":
+                    description: Unauthorized response.
+                    schema:
+                        type: string
+                "403":
+                    description: Forbidden response.
+                    schema:
+                        type: string
+                "404":
+                    description: Not Found response.
+                    schema:
+                        type: string
+                "503":
+                    description: Service Unavailable response.
+                    schema:
+                        type: string
+            schemes:
+                - http
+        post:
+            tags:
+                - codelab
+            summary: CreateExercise codelab
+            description: Create a new coding exercise (professors only)
+            operationId: codelab#CreateExercise
+            parameters:
+                - name: CreateExerciseRequestBody
+                  in: body
+                  required: true
+                  schema:
+                    $ref: '#/definitions/CreateExercisePayload'
+                    required:
+                        - title
+                        - description
+                        - initial_code
+                        - solution
+                        - difficulty
+                        - created_by
+            responses:
+                "201":
+                    description: Created response.
+                    schema:
+                        $ref: '#/definitions/SimpleResponse'
+                        required:
+                            - success
+                            - message
+                "400":
+                    description: Bad Request response.
+                    schema:
+                        type: string
+                "401":
+                    description: Unauthorized response.
+                    schema:
+                        type: string
+                "503":
+                    description: Service Unavailable response.
+                    schema:
+                        type: string
+            schemes:
+                - http
+    /api/codelab/exercises/{exercise_id}/tests:
+        get:
+            tags:
+                - codelab
+            summary: GetTestsByExercise codelab
+            description: Get all test cases for an exercise (professors only)
+            operationId: codelab#GetTestsByExercise
+            parameters:
+                - name: exercise_id
+                  in: path
+                  description: Exercise ID
+                  required: true
+                  type: integer
+                  format: int64
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        type: array
+                        items:
+                            $ref: '#/definitions/Test'
+                "400":
+                    description: Bad Request response.
+                    schema:
+                        type: string
+                "401":
+                    description: Unauthorized response.
+                    schema:
+                        type: string
+                "403":
+                    description: Forbidden response.
+                    schema:
+                        type: string
+                "404":
+                    description: Not Found response.
+                    schema:
+                        type: string
+                "503":
+                    description: Service Unavailable response.
+                    schema:
+                        type: string
+            schemes:
+                - http
+    /api/codelab/exercises/{id}:
+        get:
+            tags:
+                - codelab
+            summary: GetExercise codelab
+            description: Get exercise by ID with solution (professors only)
+            operationId: codelab#GetExercise
+            parameters:
+                - name: id
+                  in: path
+                  description: Exercise ID
+                  required: true
+                  type: integer
+                  format: int64
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        $ref: '#/definitions/Exercise'
+                        required:
+                            - id
+                            - title
+                            - description
+                            - initial_code
+                            - solution
+                            - difficulty
+                            - created_by
+                            - created_at
+                            - updated_at
+                "401":
+                    description: Unauthorized response.
+                    schema:
+                        type: string
+                "403":
+                    description: Forbidden response.
+                    schema:
+                        type: string
+                "404":
+                    description: Not Found response.
+                    schema:
+                        type: string
+                "503":
+                    description: Service Unavailable response.
+                    schema:
+                        type: string
+            schemes:
+                - http
+        put:
+            tags:
+                - codelab
+            summary: UpdateExercise codelab
+            description: Update an exercise (professors only)
+            operationId: codelab#UpdateExercise
+            parameters:
+                - name: id
+                  in: path
+                  description: Exercise ID
+                  required: true
+                  type: integer
+                  format: int64
+                - name: UpdateExerciseRequestBody
+                  in: body
+                  required: true
+                  schema:
+                    $ref: '#/definitions/CodelabUpdateExerciseRequestBody'
+                    required:
+                        - exercise
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        $ref: '#/definitions/SimpleResponse'
+                        required:
+                            - success
+                            - message
+                "400":
+                    description: Bad Request response.
+                    schema:
+                        type: string
+                "401":
+                    description: Unauthorized response.
+                    schema:
+                        type: string
+                "403":
+                    description: Forbidden response.
+                    schema:
+                        type: string
+                "404":
+                    description: Not Found response.
+                    schema:
+                        type: string
+                "503":
+                    description: Service Unavailable response.
+                    schema:
+                        type: string
+            schemes:
+                - http
+        delete:
+            tags:
+                - codelab
+            summary: DeleteExercise codelab
+            description: Delete an exercise (professors only)
+            operationId: codelab#DeleteExercise
+            parameters:
+                - name: id
+                  in: path
+                  description: Exercise ID
+                  required: true
+                  type: integer
+                  format: int64
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        $ref: '#/definitions/SimpleResponse'
+                        required:
+                            - success
+                            - message
+                "400":
+                    description: Bad Request response.
+                    schema:
+                        type: string
+                "401":
+                    description: Unauthorized response.
+                    schema:
+                        type: string
+                "403":
+                    description: Forbidden response.
+                    schema:
+                        type: string
+                "404":
+                    description: Not Found response.
+                    schema:
+                        type: string
+                "503":
+                    description: Service Unavailable response.
+                    schema:
+                        type: string
+            schemes:
+                - http
+    /api/codelab/student/exercises:
+        get:
+            tags:
+                - codelab
+            summary: ListExercisesForStudents codelab
+            description: List all exercises without solutions (students)
+            operationId: codelab#ListExercisesForStudents
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        type: array
+                        items:
+                            $ref: '#/definitions/ExerciseForStudentsListView'
+                "400":
+                    description: Bad Request response.
+                    schema:
+                        type: string
+                "401":
+                    description: Unauthorized response.
+                    schema:
+                        type: string
+                "403":
+                    description: Forbidden response.
+                    schema:
+                        type: string
+                "404":
+                    description: Not Found response.
+                    schema:
+                        type: string
+                "503":
+                    description: Service Unavailable response.
+                    schema:
+                        type: string
+            schemes:
+                - http
+    /api/codelab/student/exercises/{id}:
+        get:
+            tags:
+                - codelab
+            summary: GetExerciseForStudent codelab
+            description: Get exercise by ID without solution (students)
+            operationId: codelab#GetExerciseForStudent
+            parameters:
+                - name: id
+                  in: path
+                  description: Exercise ID
+                  required: true
+                  type: integer
+                  format: int64
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        $ref: '#/definitions/ExerciseForStudents'
+                        required:
+                            - id
+                            - title
+                            - description
+                            - initial_code
+                            - difficulty
+                            - tests
+                            - attempts
+                            - answer
+                            - created_by
+                            - created_at
+                            - updated_at
+                "400":
+                    description: Bad Request response.
+                    schema:
+                        type: string
+                "401":
+                    description: Unauthorized response.
+                    schema:
+                        type: string
+                "403":
+                    description: Forbidden response.
+                    schema:
+                        type: string
+                "404":
+                    description: Not Found response.
+                    schema:
+                        type: string
+                "503":
+                    description: Service Unavailable response.
+                    schema:
+                        type: string
+            schemes:
+                - http
+    /api/codelab/student/users/{user_id}/exercises/{exercise_id}/attempts:
+        get:
+            tags:
+                - codelab
+            summary: GetAttemptsByUserAndExercise codelab
+            description: Get user's attempts for a specific exercise (students)
+            operationId: codelab#GetAttemptsByUserAndExercise
+            parameters:
+                - name: user_id
+                  in: path
+                  description: User ID
+                  required: true
+                  type: integer
+                  format: int64
+                - name: exercise_id
+                  in: path
+                  description: Exercise ID
+                  required: true
+                  type: integer
+                  format: int64
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        type: array
+                        items:
+                            $ref: '#/definitions/Attempt'
+                "400":
+                    description: Bad Request response.
+                    schema:
+                        type: string
+                "401":
+                    description: Unauthorized response.
+                    schema:
+                        type: string
+                "403":
+                    description: Forbidden response.
+                    schema:
+                        type: string
+                "404":
+                    description: Not Found response.
+                    schema:
+                        type: string
+                "503":
+                    description: Service Unavailable response.
+                    schema:
+                        type: string
+            schemes:
+                - http
+    /api/codelab/tests:
+        post:
+            tags:
+                - codelab
+            summary: CreateTest codelab
+            description: Create a new test case for an exercise (professors only)
+            operationId: codelab#CreateTest
+            parameters:
+                - name: CreateTestRequestBody
+                  in: body
+                  required: true
+                  schema:
+                    $ref: '#/definitions/CreateTestPayload'
+                    required:
+                        - input
+                        - output
+                        - public
+                        - exercise_id
+            responses:
+                "201":
+                    description: Created response.
+                    schema:
+                        $ref: '#/definitions/SimpleResponse'
+                        required:
+                            - success
+                            - message
+                "400":
+                    description: Bad Request response.
+                    schema:
+                        type: string
+                "401":
+                    description: Unauthorized response.
+                    schema:
+                        type: string
+                "403":
+                    description: Forbidden response.
+                    schema:
+                        type: string
+                "503":
+                    description: Service Unavailable response.
+                    schema:
+                        type: string
+            schemes:
+                - http
+    /api/codelab/tests/{id}:
+        put:
+            tags:
+                - codelab
+            summary: UpdateTest codelab
+            description: Update a test case (professors only)
+            operationId: codelab#UpdateTest
+            parameters:
+                - name: id
+                  in: path
+                  description: Test ID
+                  required: true
+                  type: integer
+                  format: int64
+                - name: UpdateTestRequestBody
+                  in: body
+                  required: true
+                  schema:
+                    $ref: '#/definitions/CodelabUpdateTestRequestBody'
+                    required:
+                        - test
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        $ref: '#/definitions/SimpleResponse'
+                        required:
+                            - success
+                            - message
+                "400":
+                    description: Bad Request response.
+                    schema:
+                        type: string
+                "401":
+                    description: Unauthorized response.
+                    schema:
+                        type: string
+                "403":
+                    description: Forbidden response.
+                    schema:
+                        type: string
+                "404":
+                    description: Not Found response.
+                    schema:
+                        type: string
+                "503":
+                    description: Service Unavailable response.
+                    schema:
+                        type: string
+            schemes:
+                - http
+        delete:
+            tags:
+                - codelab
+            summary: DeleteTest codelab
+            description: Delete a test case (professors only)
+            operationId: codelab#DeleteTest
+            parameters:
+                - name: id
+                  in: path
+                  description: Test ID
+                  required: true
+                  type: integer
+                  format: int64
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        $ref: '#/definitions/SimpleResponse'
+                        required:
+                            - success
+                            - message
+                "400":
+                    description: Bad Request response.
+                    schema:
+                        type: string
+                "401":
+                    description: Unauthorized response.
+                    schema:
+                        type: string
+                "403":
+                    description: Forbidden response.
+                    schema:
+                        type: string
+                "404":
+                    description: Not Found response.
+                    schema:
+                        type: string
+                "503":
+                    description: Service Unavailable response.
+                    schema:
+                        type: string
+            schemes:
+                - http
+definitions:
+    Answer:
+        title: Answer
+        type: object
+        properties:
+            completed:
+                type: boolean
+                description: Whether the exercise is completed
+                example: false
+            created_at:
+                type: integer
+                description: Creation timestamp
+                example: 1672531200000
+                format: int64
+            exercise_id:
+                type: integer
+                description: Associated exercise ID
+                example: 1
+                format: int64
+            id:
+                type: integer
+                description: Answer ID
+                example: 1
+                format: int64
+            updated_at:
+                type: integer
+                description: Last update timestamp
+                example: 1672531200000
+                format: int64
+            user_id:
+                type: integer
+                description: Student user ID
+                example: 123
+                format: int64
+        description: A student's answer/participation in an exercise
+        example:
+            completed: false
+            created_at: 1672531200000
+            exercise_id: 1
+            id: 1
+            updated_at: 1672531200000
+            user_id: 123
+        required:
+            - id
+            - exercise_id
+            - user_id
+            - completed
+            - created_at
+            - updated_at
+    Attempt:
+        title: Attempt
+        type: object
+        properties:
+            answer_id:
+                type: integer
+                description: Associated answer ID
+                example: 1
+                format: int64
+            code:
+                type: string
+                description: Submitted code
+                example: |-
+                    def sum_two_numbers(a, b):
+                        return a + b
+            created_at:
+                type: integer
+                description: Creation timestamp
+                example: 1672531200000
+                format: int64
+            id:
+                type: integer
+                description: Attempt ID
+                example: 1
+                format: int64
+            success:
+                type: boolean
+                description: Whether the attempt was successful
+                example: true
+        description: A code submission attempt for an answer
+        example:
+            answer_id: 1
+            code: |-
+                def sum_two_numbers(a, b):
+                    return a + b
+            created_at: 1672531200000
+            id: 1
+            success: true
+        required:
+            - id
+            - answer_id
+            - code
+            - success
+            - created_at
+    CodelabUpdateExerciseRequestBody:
+        title: CodelabUpdateExerciseRequestBody
+        type: object
+        properties:
+            exercise:
+                $ref: '#/definitions/UpdateExercisePayload'
+        example:
+            exercise:
+                description: Write a function that returns the sum of two numbers
+                difficulty: easy
+                initial_code: |-
+                    def sum_two_numbers(a, b):
+                        # Write your code here
+                        pass
+                solution: |-
+                    def sum_two_numbers(a, b):
+                        return a + b
+                title: Sum Two Numbers
+        required:
+            - exercise
+    CodelabUpdateTestRequestBody:
+        title: CodelabUpdateTestRequestBody
+        type: object
+        properties:
+            test:
+                $ref: '#/definitions/UpdateTestPayload'
+        example:
+            test:
+                input: 5, 3
+                output: "8"
+                public: true
+        required:
+            - test
+    CreateAttemptPayload:
+        title: CreateAttemptPayload
+        type: object
+        properties:
+            code:
+                type: string
+                description: Submitted code
+                example: |-
+                    def sum_two_numbers(a, b):
+                        return a + b
+            exercise_id:
+                type: integer
+                description: Associated exercise ID
+                example: 1
+                format: int64
+            success:
+                type: boolean
+                description: Whether the attempt was successful
+                example: true
+        example:
+            code: |-
+                def sum_two_numbers(a, b):
+                    return a + b
+            exercise_id: 1
+            success: true
+        required:
+            - exercise_id
+            - code
+            - success
+    CreateExercisePayload:
+        title: CreateExercisePayload
+        type: object
+        properties:
+            created_by:
+                type: integer
+                description: ID of user creating the exercise
+                example: 123
+                format: int64
+            description:
+                type: string
+                description: Exercise description
+                example: Write a function that returns the sum of two numbers
+            difficulty:
+                type: string
+                description: Exercise difficulty level
+                example: easy
+                enum:
+                    - easy
+                    - medium
+                    - hard
+            initial_code:
+                type: string
+                description: Initial code template
+                example: |-
+                    def sum_two_numbers(a, b):
+                        # Write your code here
+                        pass
+            solution:
+                type: string
+                description: Exercise solution
+                example: |-
+                    def sum_two_numbers(a, b):
+                        return a + b
+            title:
+                type: string
+                description: Exercise title
+                example: Sum Two Numbers
+                maxLength: 200
+        example:
+            created_by: 123
+            description: Write a function that returns the sum of two numbers
+            difficulty: easy
+            initial_code: |-
+                def sum_two_numbers(a, b):
+                    # Write your code here
+                    pass
+            solution: |-
+                def sum_two_numbers(a, b):
+                    return a + b
+            title: Sum Two Numbers
+        required:
+            - title
+            - description
+            - initial_code
+            - solution
+            - difficulty
+            - created_by
+    CreateTestPayload:
+        title: CreateTestPayload
+        type: object
+        properties:
+            exercise_id:
+                type: integer
+                description: Associated exercise ID
+                example: 1
+                format: int64
+            input:
+                type: string
+                description: Test input
+                example: 5, 3
+            output:
+                type: string
+                description: Expected output
+                example: "8"
+            public:
+                type: boolean
+                description: Whether test is visible to students
+                example: true
+        example:
+            exercise_id: 1
+            input: 5, 3
+            output: "8"
+            public: true
+        required:
+            - input
+            - output
+            - public
+            - exercise_id
+    Exercise:
+        title: Exercise
+        type: object
+        properties:
+            created_at:
+                type: integer
+                description: Creation timestamp in miliseconds
+                example: 1672531200000
+                format: int64
+            created_by:
+                type: integer
+                description: ID of user who created the exercise
+                example: 123
+                format: int64
+            description:
+                type: string
+                description: Exercise description
+                example: Write a function that returns the sum of two numbers
+            difficulty:
+                type: string
+                description: Exercise difficulty level
+                example: easy
+                enum:
+                    - easy
+                    - medium
+                    - hard
+            id:
+                type: integer
+                description: Exercise ID
+                example: 1
+                format: int64
+            initial_code:
+                type: string
+                description: Initial code template
+                example: |-
+                    def sum_two_numbers(a, b):
+                        # Write your code here
+                        pass
+            solution:
+                type: string
+                description: Exercise solution
+                example: |-
+                    def sum_two_numbers(a, b):
+                        return a + b
+            title:
+                type: string
+                description: Exercise title
+                example: Sum Two Numbers
+                maxLength: 200
+            updated_at:
+                type: integer
+                description: Last update timestamp
+                example: 1672531200000
+                format: int64
+        example:
+            created_at: 1672531200000
+            created_by: 123
+            description: Write a function that returns the sum of two numbers
+            difficulty: easy
+            id: 1
+            initial_code: |-
+                def sum_two_numbers(a, b):
+                    # Write your code here
+                    pass
+            solution: |-
+                def sum_two_numbers(a, b):
+                    return a + b
+            title: Sum Two Numbers
+            updated_at: 1672531200000
+        required:
+            - id
+            - title
+            - description
+            - initial_code
+            - solution
+            - difficulty
+            - created_by
+            - created_at
+            - updated_at
+    ExerciseForStudents:
+        title: ExerciseForStudents
+        type: object
+        properties:
+            answer:
+                $ref: '#/definitions/Answer'
+            attempts:
+                type: array
+                items:
+                    $ref: '#/definitions/Attempt'
+                description: List of attempts made by students for this exercise
+                example:
+                    - answer_id: 1
+                      code: |-
+                        def sum_two_numbers(a, b):
+                            return a + b
+                      created_at: 1672531200000
+                      id: 1
+                      success: true
+                    - answer_id: 1
+                      code: |-
+                        def sum_two_numbers(a, b):
+                            return a + b
+                      created_at: 1672531200000
+                      id: 1
+                      success: true
+                    - answer_id: 1
+                      code: |-
+                        def sum_two_numbers(a, b):
+                            return a + b
+                      created_at: 1672531200000
+                      id: 1
+                      success: true
+                    - answer_id: 1
+                      code: |-
+                        def sum_two_numbers(a, b):
+                            return a + b
+                      created_at: 1672531200000
+                      id: 1
+                      success: true
+            created_at:
+                type: integer
+                description: Creation timestamp
+                example: 1672531200000
+                format: int64
+            created_by:
+                type: integer
+                description: ID of user who created the exercise
+                example: 123
+                format: int64
+            description:
+                type: string
+                description: Exercise description
+                example: Write a function that returns the sum of two numbers
+            difficulty:
+                type: string
+                description: Exercise difficulty level
+                example: easy
+                enum:
+                    - easy
+                    - medium
+                    - hard
+            id:
+                type: integer
+                description: Exercise ID
+                example: 1
+                format: int64
+            initial_code:
+                type: string
+                description: Initial code template
+                example: |-
+                    def sum_two_numbers(a, b):
+                        # Write your code here
+                        pass
+            tests:
+                type: array
+                items:
+                    $ref: '#/definitions/Test'
+                description: List of public tests for the exercise
+                example:
+                    - created_at: 1672531200000
+                      exercise_id: 1
+                      id: 1
+                      input: 5, 3
+                      output: "8"
+                      public: true
+                      updated_at: 1672531200000
+                    - created_at: 1672531200000
+                      exercise_id: 1
+                      id: 1
+                      input: 5, 3
+                      output: "8"
+                      public: true
+                      updated_at: 1672531200000
+                    - created_at: 1672531200000
+                      exercise_id: 1
+                      id: 1
+                      input: 5, 3
+                      output: "8"
+                      public: true
+                      updated_at: 1672531200000
+            title:
+                type: string
+                description: Exercise title
+                example: Sum Two Numbers
+                maxLength: 200
+            updated_at:
+                type: integer
+                description: Last update timestamp
+                example: 1672531200000
+                format: int64
+        example:
+            answer:
+                completed: false
+                created_at: 1672531200000
+                exercise_id: 1
+                id: 1
+                updated_at: 1672531200000
+                user_id: 123
+            attempts:
+                - answer_id: 1
+                  code: |-
+                    def sum_two_numbers(a, b):
+                        return a + b
+                  created_at: 1672531200000
+                  id: 1
+                  success: true
+                - answer_id: 1
+                  code: |-
+                    def sum_two_numbers(a, b):
+                        return a + b
+                  created_at: 1672531200000
+                  id: 1
+                  success: true
+                - answer_id: 1
+                  code: |-
+                    def sum_two_numbers(a, b):
+                        return a + b
+                  created_at: 1672531200000
+                  id: 1
+                  success: true
+                - answer_id: 1
+                  code: |-
+                    def sum_two_numbers(a, b):
+                        return a + b
+                  created_at: 1672531200000
+                  id: 1
+                  success: true
+            created_at: 1672531200000
+            created_by: 123
+            description: Write a function that returns the sum of two numbers
+            difficulty: easy
+            id: 1
+            initial_code: |-
+                def sum_two_numbers(a, b):
+                    # Write your code here
+                    pass
+            tests:
+                - created_at: 1672531200000
+                  exercise_id: 1
+                  id: 1
+                  input: 5, 3
+                  output: "8"
+                  public: true
+                  updated_at: 1672531200000
+                - created_at: 1672531200000
+                  exercise_id: 1
+                  id: 1
+                  input: 5, 3
+                  output: "8"
+                  public: true
+                  updated_at: 1672531200000
+                - created_at: 1672531200000
+                  exercise_id: 1
+                  id: 1
+                  input: 5, 3
+                  output: "8"
+                  public: true
+                  updated_at: 1672531200000
+            title: Sum Two Numbers
+            updated_at: 1672531200000
+        required:
+            - id
+            - title
+            - description
+            - initial_code
+            - difficulty
+            - tests
+            - attempts
+            - answer
+            - created_by
+            - created_at
+            - updated_at
+    ExerciseForStudentsListView:
+        title: ExerciseForStudentsListView
+        type: object
+        properties:
+            completed:
+                type: boolean
+                description: Whether the exercise is completed by the student
+                example: false
+            created_at:
+                type: integer
+                description: Creation timestamp
+                example: 1672531200000
+                format: int64
+            created_by:
+                type: integer
+                description: ID of user who created the exercise
+                example: 123
+                format: int64
+            description:
+                type: string
+                description: Exercise description
+                example: Write a function that returns the sum of two numbers
+            difficulty:
+                type: string
+                description: Exercise difficulty level
+                example: easy
+                enum:
+                    - easy
+                    - medium
+                    - hard
+            id:
+                type: integer
+                description: Exercise ID
+                example: 1
+                format: int64
+            title:
+                type: string
+                description: Exercise title
+                example: Sum Two Numbers
+                maxLength: 200
+            updated_at:
+                type: integer
+                description: Last update timestamp
+                example: 1672531200000
+                format: int64
+        description: View for listing exercises available to students
+        example:
+            completed: false
+            created_at: 1672531200000
+            created_by: 123
+            description: Write a function that returns the sum of two numbers
+            difficulty: easy
+            id: 1
+            title: Sum Two Numbers
+            updated_at: 1672531200000
+        required:
+            - id
+            - title
+            - description
+            - difficulty
+            - created_by
+            - created_at
+            - updated_at
+    SimpleResponse:
+        title: SimpleResponse
+        type: object
+        properties:
+            message:
+                type: string
+                description: Response message
+                example: Magnam laborum labore eos est.
+            success:
+                type: boolean
+                description: Operation success status
+                example: true
+        example:
+            message: Et et odit.
+            success: false
+        required:
+            - success
+            - message
+    Test:
+        title: Test
+        type: object
+        properties:
+            created_at:
+                type: integer
+                description: Creation timestamp
+                example: 1672531200000
+                format: int64
+            exercise_id:
+                type: integer
+                description: Associated exercise ID
+                example: 1
+                format: int64
+            id:
+                type: integer
+                description: Test ID
+                example: 1
+                format: int64
+            input:
+                type: string
+                description: Test input
+                example: 5, 3
+            output:
+                type: string
+                description: Expected output
+                example: "8"
+            public:
+                type: boolean
+                description: Whether test is visible to students
+                example: true
+            updated_at:
+                type: integer
+                description: Last update timestamp
+                example: 1672531200000
+                format: int64
+        description: A test case with input and expected output
+        example:
+            created_at: 1672531200000
+            exercise_id: 1
+            id: 1
+            input: 5, 3
+            output: "8"
+            public: true
+            updated_at: 1672531200000
+        required:
+            - id
+            - input
+            - output
+            - public
+            - exercise_id
+            - created_at
+            - updated_at
+    UpdateExercisePayload:
+        title: UpdateExercisePayload
+        type: object
+        properties:
+            description:
+                type: string
+                description: Exercise description
+                example: Write a function that returns the sum of two numbers
+            difficulty:
+                type: string
+                description: Exercise difficulty level
+                example: easy
+                enum:
+                    - easy
+                    - medium
+                    - hard
+            initial_code:
+                type: string
+                description: Initial code template
+                example: |-
+                    def sum_two_numbers(a, b):
+                        # Write your code here
+                        pass
+            solution:
+                type: string
+                description: Exercise solution
+                example: |-
+                    def sum_two_numbers(a, b):
+                        return a + b
+            title:
+                type: string
+                description: Exercise title
+                example: Sum Two Numbers
+                maxLength: 200
+        description: Payload for updating an exercise
+        example:
+            description: Write a function that returns the sum of two numbers
+            difficulty: easy
+            initial_code: |-
+                def sum_two_numbers(a, b):
+                    # Write your code here
+                    pass
+            solution: |-
+                def sum_two_numbers(a, b):
+                    return a + b
+            title: Sum Two Numbers
+        required:
+            - title
+            - description
+            - initial_code
+            - solution
+            - difficulty
+    UpdateTestPayload:
+        title: UpdateTestPayload
+        type: object
+        properties:
+            input:
+                type: string
+                description: Test input
+                example: 5, 3
+            output:
+                type: string
+                description: Expected output
+                example: "8"
+            public:
+                type: boolean
+                description: Whether test is visible to students
+                example: true
+        description: Payload for updating a test
+        example:
+            input: 5, 3
+            output: "8"
+            public: true
+        required:
+            - input
+            - output
+            - public

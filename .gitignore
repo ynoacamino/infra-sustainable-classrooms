@@ -139,7 +139,7 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
-services/**/gen/**/*
+#services/**/gen/**/*
 .direnv
 .envrc
 

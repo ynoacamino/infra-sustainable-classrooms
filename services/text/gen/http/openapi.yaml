@@ -1,0 +1,1034 @@
+swagger: "2.0"
+info:
+    title: Text Management API
+    description: Microservice for managing text based content in sustainable classrooms
+    version: "1.0"
+host: localhost:8080
+consumes:
+    - application/json
+    - application/xml
+    - application/gob
+produces:
+    - application/json
+    - application/xml
+    - application/gob
+paths:
+    /api/text/articles/{article_id}:
+        get:
+            tags:
+                - text
+            summary: GetArticle text
+            description: Get article details by ID
+            operationId: text#GetArticle
+            parameters:
+                - name: article_id
+                  in: path
+                  description: Article unique identifier
+                  required: true
+                  type: integer
+                  format: int64
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        $ref: '#/definitions/Article'
+                        required:
+                            - id
+                            - section_id
+                            - title
+                            - content
+                            - created_at
+                            - updated_at
+                "400":
+                    description: Bad Request response.
+                    schema:
+                        type: string
+                "401":
+                    description: Unauthorized response.
+                    schema:
+                        type: string
+                "404":
+                    description: Not Found response.
+                    schema:
+                        type: string
+                "500":
+                    description: Internal Server Error response.
+                    schema:
+                        type: string
+                "503":
+                    description: Service Unavailable response.
+                    schema:
+                        type: string
+            schemes:
+                - http
+        delete:
+            tags:
+                - text
+            summary: DeleteArticle text
+            description: Delete an article (teachers only)
+            operationId: text#DeleteArticle
+            parameters:
+                - name: article_id
+                  in: path
+                  description: Article unique identifier
+                  required: true
+                  type: integer
+                  format: int64
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        $ref: '#/definitions/SimpleResponse'
+                        required:
+                            - success
+                            - message
+                "400":
+                    description: Bad Request response.
+                    schema:
+                        type: string
+                "401":
+                    description: Unauthorized response.
+                    schema:
+                        type: string
+                "403":
+                    description: Forbidden response.
+                    schema:
+                        type: string
+                "404":
+                    description: Not Found response.
+                    schema:
+                        type: string
+                "500":
+                    description: Internal Server Error response.
+                    schema:
+                        type: string
+                "503":
+                    description: Service Unavailable response.
+                    schema:
+                        type: string
+            schemes:
+                - http
+        patch:
+            tags:
+                - text
+            summary: UpdateArticle text
+            description: Update article details (teachers only)
+            operationId: text#UpdateArticle
+            parameters:
+                - name: article_id
+                  in: path
+                  description: Article unique identifier
+                  required: true
+                  type: integer
+                  format: int64
+                - name: UpdateArticleRequestBody
+                  in: body
+                  required: true
+                  schema:
+                    $ref: '#/definitions/TextUpdateArticleRequestBody'
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        $ref: '#/definitions/SimpleResponse'
+                        required:
+                            - success
+                            - message
+                "400":
+                    description: Bad Request response.
+                    schema:
+                        type: string
+                "401":
+                    description: Unauthorized response.
+                    schema:
+                        type: string
+                "403":
+                    description: Forbidden response.
+                    schema:
+                        type: string
+                "404":
+                    description: Not Found response.
+                    schema:
+                        type: string
+                "500":
+                    description: Internal Server Error response.
+                    schema:
+                        type: string
+                "503":
+                    description: Service Unavailable response.
+                    schema:
+                        type: string
+            schemes:
+                - http
+    /api/text/courses:
+        get:
+            tags:
+                - text
+            summary: ListCourses text
+            description: List all available courses
+            operationId: text#ListCourses
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        type: array
+                        items:
+                            $ref: '#/definitions/Course'
+                "401":
+                    description: Unauthorized response.
+                    schema:
+                        type: string
+                "500":
+                    description: Internal Server Error response.
+                    schema:
+                        type: string
+                "503":
+                    description: Service Unavailable response.
+                    schema:
+                        type: string
+            schemes:
+                - http
+        post:
+            tags:
+                - text
+            summary: CreateCourse text
+            description: Create a new text-based course (teachers only)
+            operationId: text#CreateCourse
+            parameters:
+                - name: CreateCourseRequestBody
+                  in: body
+                  required: true
+                  schema:
+                    $ref: '#/definitions/TextCreateCourseRequestBody'
+                    required:
+                        - title
+                        - description
+            responses:
+                "201":
+                    description: Created response.
+                    schema:
+                        $ref: '#/definitions/SimpleResponse'
+                        required:
+                            - success
+                            - message
+                "400":
+                    description: Bad Request response.
+                    schema:
+                        type: string
+                "401":
+                    description: Unauthorized response.
+                    schema:
+                        type: string
+                "403":
+                    description: Forbidden response.
+                    schema:
+                        type: string
+                "500":
+                    description: Internal Server Error response.
+                    schema:
+                        type: string
+                "503":
+                    description: Service Unavailable response.
+                    schema:
+                        type: string
+            schemes:
+                - http
+    /api/text/courses/{course_id}:
+        get:
+            tags:
+                - text
+            summary: GetCourse text
+            description: Retrieve course details by ID
+            operationId: text#GetCourse
+            parameters:
+                - name: course_id
+                  in: path
+                  description: Course unique identifier
+                  required: true
+                  type: integer
+                  format: int64
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        $ref: '#/definitions/Course'
+                        required:
+                            - id
+                            - title
+                            - description
+                            - created_at
+                            - updated_at
+                "400":
+                    description: Bad Request response.
+                    schema:
+                        type: string
+                "401":
+                    description: Unauthorized response.
+                    schema:
+                        type: string
+                "404":
+                    description: Not Found response.
+                    schema:
+                        type: string
+                "500":
+                    description: Internal Server Error response.
+                    schema:
+                        type: string
+                "503":
+                    description: Service Unavailable response.
+                    schema:
+                        type: string
+            schemes:
+                - http
+        delete:
+            tags:
+                - text
+            summary: DeleteCourse text
+            description: Delete a course by ID (teachers only)
+            operationId: text#DeleteCourse
+            parameters:
+                - name: course_id
+                  in: path
+                  description: Course unique identifier
+                  required: true
+                  type: integer
+                  format: int64
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        $ref: '#/definitions/SimpleResponse'
+                        required:
+                            - success
+                            - message
+                "400":
+                    description: Bad Request response.
+                    schema:
+                        type: string
+                "401":
+                    description: Unauthorized response.
+                    schema:
+                        type: string
+                "403":
+                    description: Forbidden response.
+                    schema:
+                        type: string
+                "404":
+                    description: Not Found response.
+                    schema:
+                        type: string
+                "500":
+                    description: Internal Server Error response.
+                    schema:
+                        type: string
+                "503":
+                    description: Service Unavailable response.
+                    schema:
+                        type: string
+            schemes:
+                - http
+        patch:
+            tags:
+                - text
+            summary: UpdateCourse text
+            description: Update course details by ID (teachers only)
+            operationId: text#UpdateCourse
+            parameters:
+                - name: course_id
+                  in: path
+                  description: Course unique identifier
+                  required: true
+                  type: integer
+                  format: int64
+                - name: UpdateCourseRequestBody
+                  in: body
+                  required: true
+                  schema:
+                    $ref: '#/definitions/TextUpdateCourseRequestBody'
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        $ref: '#/definitions/SimpleResponse'
+                        required:
+                            - success
+                            - message
+                "400":
+                    description: Bad Request response.
+                    schema:
+                        type: string
+                "401":
+                    description: Unauthorized response.
+                    schema:
+                        type: string
+                "403":
+                    description: Forbidden response.
+                    schema:
+                        type: string
+                "404":
+                    description: Not Found response.
+                    schema:
+                        type: string
+                "500":
+                    description: Internal Server Error response.
+                    schema:
+                        type: string
+                "503":
+                    description: Service Unavailable response.
+                    schema:
+                        type: string
+            schemes:
+                - http
+    /api/text/courses/{course_id}/sections:
+        get:
+            tags:
+                - text
+            summary: ListSections text
+            description: List all sections for a course
+            operationId: text#ListSections
+            parameters:
+                - name: course_id
+                  in: path
+                  description: Course unique identifier
+                  required: true
+                  type: integer
+                  format: int64
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        type: array
+                        items:
+                            $ref: '#/definitions/Section'
+                "401":
+                    description: Unauthorized response.
+                    schema:
+                        type: string
+                "404":
+                    description: Not Found response.
+                    schema:
+                        type: string
+                "500":
+                    description: Internal Server Error response.
+                    schema:
+                        type: string
+                "503":
+                    description: Service Unavailable response.
+                    schema:
+                        type: string
+            schemes:
+                - http
+        post:
+            tags:
+                - text
+            summary: CreateSection text
+            description: Create a new section in a course (teachers only)
+            operationId: text#CreateSection
+            parameters:
+                - name: course_id
+                  in: path
+                  description: Course unique identifier
+                  required: true
+                  type: integer
+                  format: int64
+                - name: CreateSectionRequestBody
+                  in: body
+                  required: true
+                  schema:
+                    $ref: '#/definitions/TextCreateSectionRequestBody'
+                    required:
+                        - description
+                        - title
+            responses:
+                "201":
+                    description: Created response.
+                    schema:
+                        $ref: '#/definitions/SimpleResponse'
+                        required:
+                            - success
+                            - message
+                "400":
+                    description: Bad Request response.
+                    schema:
+                        type: string
+                "401":
+                    description: Unauthorized response.
+                    schema:
+                        type: string
+                "403":
+                    description: Forbidden response.
+                    schema:
+                        type: string
+                "404":
+                    description: Not Found response.
+                    schema:
+                        type: string
+                "500":
+                    description: Internal Server Error response.
+                    schema:
+                        type: string
+                "503":
+                    description: Service Unavailable response.
+                    schema:
+                        type: string
+            schemes:
+                - http
+    /api/text/sections/{section_id}:
+        get:
+            tags:
+                - text
+            summary: GetSection text
+            description: Get section details by ID
+            operationId: text#GetSection
+            parameters:
+                - name: section_id
+                  in: path
+                  description: Section unique identifier
+                  required: true
+                  type: integer
+                  format: int64
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        $ref: '#/definitions/Section'
+                        required:
+                            - id
+                            - course_id
+                            - description
+                            - title
+                            - order
+                            - created_at
+                            - updated_at
+                "400":
+                    description: Bad Request response.
+                    schema:
+                        type: string
+                "401":
+                    description: Unauthorized response.
+                    schema:
+                        type: string
+                "404":
+                    description: Not Found response.
+                    schema:
+                        type: string
+                "500":
+                    description: Internal Server Error response.
+                    schema:
+                        type: string
+                "503":
+                    description: Service Unavailable response.
+                    schema:
+                        type: string
+            schemes:
+                - http
+        delete:
+            tags:
+                - text
+            summary: DeleteSection text
+            description: Delete a section (teachers only)
+            operationId: text#DeleteSection
+            parameters:
+                - name: section_id
+                  in: path
+                  description: Section unique identifier
+                  required: true
+                  type: integer
+                  format: int64
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        $ref: '#/definitions/SimpleResponse'
+                        required:
+                            - success
+                            - message
+                "400":
+                    description: Bad Request response.
+                    schema:
+                        type: string
+                "401":
+                    description: Unauthorized response.
+                    schema:
+                        type: string
+                "403":
+                    description: Forbidden response.
+                    schema:
+                        type: string
+                "404":
+                    description: Not Found response.
+                    schema:
+                        type: string
+                "500":
+                    description: Internal Server Error response.
+                    schema:
+                        type: string
+                "503":
+                    description: Service Unavailable response.
+                    schema:
+                        type: string
+            schemes:
+                - http
+        patch:
+            tags:
+                - text
+            summary: UpdateSection text
+            description: Update section details (teachers only)
+            operationId: text#UpdateSection
+            parameters:
+                - name: section_id
+                  in: path
+                  description: Section unique identifier
+                  required: true
+                  type: integer
+                  format: int64
+                - name: UpdateSectionRequestBody
+                  in: body
+                  required: true
+                  schema:
+                    $ref: '#/definitions/TextUpdateSectionRequestBody'
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        $ref: '#/definitions/SimpleResponse'
+                        required:
+                            - success
+                            - message
+                "400":
+                    description: Bad Request response.
+                    schema:
+                        type: string
+                "401":
+                    description: Unauthorized response.
+                    schema:
+                        type: string
+                "403":
+                    description: Forbidden response.
+                    schema:
+                        type: string
+                "404":
+                    description: Not Found response.
+                    schema:
+                        type: string
+                "500":
+                    description: Internal Server Error response.
+                    schema:
+                        type: string
+                "503":
+                    description: Service Unavailable response.
+                    schema:
+                        type: string
+            schemes:
+                - http
+    /api/text/sections/{section_id}/articles:
+        get:
+            tags:
+                - text
+            summary: ListArticles text
+            description: List all articles for a section
+            operationId: text#ListArticles
+            parameters:
+                - name: section_id
+                  in: path
+                  description: Section unique identifier
+                  required: true
+                  type: integer
+                  format: int64
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        type: array
+                        items:
+                            $ref: '#/definitions/Article'
+                "401":
+                    description: Unauthorized response.
+                    schema:
+                        type: string
+                "404":
+                    description: Not Found response.
+                    schema:
+                        type: string
+                "500":
+                    description: Internal Server Error response.
+                    schema:
+                        type: string
+                "503":
+                    description: Service Unavailable response.
+                    schema:
+                        type: string
+            schemes:
+                - http
+        post:
+            tags:
+                - text
+            summary: CreateArticle text
+            description: Create a new article in a section (teachers only)
+            operationId: text#CreateArticle
+            parameters:
+                - name: section_id
+                  in: path
+                  description: Section unique identifier
+                  required: true
+                  type: integer
+                  format: int64
+                - name: CreateArticleRequestBody
+                  in: body
+                  required: true
+                  schema:
+                    $ref: '#/definitions/TextCreateArticleRequestBody'
+                    required:
+                        - title
+                        - content
+            responses:
+                "201":
+                    description: Created response.
+                    schema:
+                        $ref: '#/definitions/SimpleResponse'
+                        required:
+                            - success
+                            - message
+                "400":
+                    description: Bad Request response.
+                    schema:
+                        type: string
+                "401":
+                    description: Unauthorized response.
+                    schema:
+                        type: string
+                "403":
+                    description: Forbidden response.
+                    schema:
+                        type: string
+                "404":
+                    description: Not Found response.
+                    schema:
+                        type: string
+                "500":
+                    description: Internal Server Error response.
+                    schema:
+                        type: string
+                "503":
+                    description: Service Unavailable response.
+                    schema:
+                        type: string
+            schemes:
+                - http
+definitions:
+    Article:
+        title: Article
+        type: object
+        properties:
+            content:
+                type: string
+                description: Content of the article
+                example: Go is an open source programming language...
+            created_at:
+                type: integer
+                description: Timestamp when the article was created (milliseconds since epoch)
+                example: 4119015111967202909
+                format: int64
+            id:
+                type: integer
+                description: Unique identifier for the article
+                example: 1001
+                format: int64
+            section_id:
+                type: integer
+                description: ID of the parent section
+                example: 101
+                format: int64
+            title:
+                type: string
+                description: Title of the article
+                example: What is Go?
+            updated_at:
+                type: integer
+                description: Timestamp when the article was last updated (milliseconds since epoch)
+                example: 2649568603961575835
+                format: int64
+        example:
+            content: Go is an open source programming language...
+            created_at: 5666920549901443599
+            id: 1001
+            section_id: 101
+            title: What is Go?
+            updated_at: 2080626843078800593
+        required:
+            - id
+            - section_id
+            - title
+            - content
+            - created_at
+            - updated_at
+    Course:
+        title: Course
+        type: object
+        properties:
+            created_at:
+                type: integer
+                description: Timestamp when the course was created (milliseconds since epoch)
+                example: 1697566392093589489
+                format: int64
+            description:
+                type: string
+                description: Description of the course
+                example: Learn the basics of Go programming language.
+            id:
+                type: integer
+                description: Unique identifier for the course
+                example: 12345
+                format: int64
+            imageUrl:
+                type: string
+                description: URL of the course image
+                example: https://example.com/course-image.jpg
+            title:
+                type: string
+                description: Title of the course
+                example: Introduction to Go
+            updated_at:
+                type: integer
+                description: Timestamp when the course was last updated (milliseconds since epoch)
+                example: 1000956938675392266
+                format: int64
+        example:
+            created_at: 7294196461500291810
+            description: Learn the basics of Go programming language.
+            id: 12345
+            imageUrl: https://example.com/course-image.jpg
+            title: Introduction to Go
+            updated_at: 360799835176446387
+        required:
+            - id
+            - title
+            - description
+            - created_at
+            - updated_at
+    Section:
+        title: Section
+        type: object
+        properties:
+            course_id:
+                type: integer
+                description: ID of the parent course
+                example: 12345
+                format: int64
+            created_at:
+                type: integer
+                description: Timestamp when the section was created (milliseconds since epoch)
+                example: 6171059312159167183
+                format: int64
+            description:
+                type: string
+                description: Description of the section
+                example: Introduction to the course structure.
+            id:
+                type: integer
+                description: Unique identifier for the section
+                example: 101
+                format: int64
+            order:
+                type: integer
+                description: Order of the section in the course (autonumbered for frontend rendering)
+                example: 1
+                format: int64
+                minimum: 1
+            title:
+                type: string
+                description: Title of the section
+                example: Getting Started
+            updated_at:
+                type: integer
+                description: Timestamp when the section was last updated (milliseconds since epoch)
+                example: 3855518468007311068
+                format: int64
+        example:
+            course_id: 12345
+            created_at: 2107648333857016808
+            description: Introduction to the course structure.
+            id: 101
+            order: 1
+            title: Getting Started
+            updated_at: 5057547159340587379
+        required:
+            - id
+            - course_id
+            - description
+            - title
+            - order
+            - created_at
+            - updated_at
+    SimpleResponse:
+        title: SimpleResponse
+        type: object
+        properties:
+            message:
+                type: string
+                description: Response message
+                example: Incidunt nisi.
+            success:
+                type: boolean
+                description: Operation success status
+                example: true
+        example:
+            message: Dolor praesentium impedit.
+            success: true
+        required:
+            - success
+            - message
+    TextCreateArticleRequestBody:
+        title: TextCreateArticleRequestBody
+        type: object
+        properties:
+            content:
+                type: string
+                description: Article content
+                example: Go is an open source programming language...
+                minLength: 10
+            title:
+                type: string
+                description: Article title
+                example: What is Go?
+                minLength: 3
+                maxLength: 100
+        example:
+            content: Go is an open source programming language...
+            title: What is Go?
+        required:
+            - title
+            - content
+    TextCreateCourseRequestBody:
+        title: TextCreateCourseRequestBody
+        type: object
+        properties:
+            description:
+                type: string
+                description: Course description
+                example: Learn the basics of Go programming language.
+                minLength: 10
+                maxLength: 300
+            imageUrl:
+                type: string
+                description: Course image URL
+                example: https://example.com/course-image.jpg
+                format: uri
+                minLength: 5
+                maxLength: 500
+            title:
+                type: string
+                description: Course title
+                example: Introduction to Go
+                minLength: 3
+                maxLength: 150
+        example:
+            description: Learn the basics of Go programming language.
+            imageUrl: https://example.com/course-image.jpg
+            title: Introduction to Go
+        required:
+            - title
+            - description
+    TextCreateSectionRequestBody:
+        title: TextCreateSectionRequestBody
+        type: object
+        properties:
+            description:
+                type: string
+                description: Section description
+                example: Introduction to the course structure.
+                minLength: 5
+                maxLength: 200
+            order:
+                type: integer
+                description: Order of the section in the course (optional, if not set it will be auto-numbered)
+                example: 1
+                format: int64
+                minimum: 1
+            title:
+                type: string
+                description: Section title
+                example: Getting Started
+                minLength: 3
+                maxLength: 100
+        example:
+            description: Introduction to the course structure.
+            order: 1
+            title: Getting Started
+        required:
+            - description
+            - title
+    TextUpdateArticleRequestBody:
+        title: TextUpdateArticleRequestBody
+        type: object
+        properties:
+            content:
+                type: string
+                description: Article content
+                example: Updated article content...
+                minLength: 10
+            title:
+                type: string
+                description: Article title
+                example: Updated Article Title
+                minLength: 3
+                maxLength: 100
+        example:
+            content: Updated article content...
+            title: Updated Article Title
+    TextUpdateCourseRequestBody:
+        title: TextUpdateCourseRequestBody
+        type: object
+        properties:
+            description:
+                type: string
+                description: Course description
+                example: Deep dive into Go programming language features.
+                minLength: 10
+                maxLength: 300
+            imageUrl:
+                type: string
+                description: Course image URL
+                example: https://example.com/updated-course-image.jpg
+                format: uri
+                minLength: 5
+                maxLength: 500
+            title:
+                type: string
+                description: Course title
+                example: Advanced Go Programming
+                minLength: 3
+                maxLength: 150
+        example:
+            description: Deep dive into Go programming language features.
+            imageUrl: https://example.com/updated-course-image.jpg
+            title: Advanced Go Programming
+    TextUpdateSectionRequestBody:
+        title: TextUpdateSectionRequestBody
+        type: object
+        properties:
+            description:
+                type: string
+                description: Section description
+                example: Updated section description.
+                minLength: 5
+                maxLength: 200
+            order:
+                type: integer
+                description: Order of the section in the course (optional, if set will update the order)
+                example: 2
+                format: int64
+                minimum: 1
+            title:
+                type: string
+                description: Section title
+                example: Updated Section Title.
+                minLength: 3
+                maxLength: 100
+        example:
+            description: Updated section description.
+            order: 2
+            title: Updated Section Title.
+externalDocs:
+    description: Text API Documentation
+    url: https://github.com/your-org/profiles-service

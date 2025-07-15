@@ -1,0 +1,2256 @@
+openapi: 3.0.3
+info:
+    title: Codelab Microservice
+    description: Microservice for coding exercises, tests, answers and attempts with HTTP and gRPC support
+    version: "1.0"
+servers:
+    - url: http://localhost:8080
+      description: Codelab service server
+    - url: http://localhost:80
+      description: Codelab service gRPC server
+paths:
+    /api/codelab/answers/user/{user_id}/exercise/{exercise_id}:
+        get:
+            tags:
+                - codelab
+            summary: GetAnswerByUserAndExercise codelab
+            description: Get user's answer for a specific exercise
+            operationId: codelab#GetAnswerByUserAndExercise
+            parameters:
+                - name: user_id
+                  in: path
+                  description: User ID
+                  required: true
+                  schema:
+                    type: integer
+                    description: User ID
+                    example: 123
+                    format: int64
+                  example: 123
+                - name: exercise_id
+                  in: path
+                  description: Exercise ID
+                  required: true
+                  schema:
+                    type: integer
+                    description: Exercise ID
+                    example: 1
+                    format: int64
+                  example: 1
+                - name: session
+                  in: cookie
+                  description: Authentication session token
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: Authentication session token
+                    example: Sint aut rerum ex blanditiis.
+                  example: Quia sint.
+            responses:
+                "200":
+                    description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Answer'
+                            example:
+                                completed: false
+                                created_at: 1672531200000
+                                exercise_id: 1
+                                id: 1
+                                updated_at: 1672531200000
+                                user_id: 123
+                "400":
+                    description: 'invalid_input: Bad Request response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Minus autem laudantium minima sunt aut maiores.
+                            example: Ut adipisci iure qui.
+                "401":
+                    description: 'unauthorized: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Molestiae sed et autem repellendus.
+                            example: Architecto odio qui.
+                "403":
+                    description: 'permission_denied: Forbidden response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Eligendi consequatur itaque.
+                            example: Dolore consequatur saepe nostrum facere.
+                "404":
+                    description: 'not_found: Not Found response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: In repudiandae.
+                            example: Commodi nobis molestias dicta quis minima.
+                "503":
+                    description: 'service_unavailable: Service Unavailable response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Et optio ipsum tempore.
+                            example: Molestiae commodi dolor voluptates qui dicta.
+    /api/codelab/attempts:
+        post:
+            tags:
+                - codelab
+            summary: CreateAttempt codelab
+            description: Submit a code attempt for an exercise (students)
+            operationId: codelab#CreateAttempt
+            parameters:
+                - name: session
+                  in: cookie
+                  description: Authentication session token
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: Authentication session token
+                    example: Ut asperiores velit quia.
+                  example: Eius quia facere aspernatur.
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CreateAttemptPayload2'
+                        example:
+                            code: |-
+                                def sum_two_numbers(a, b):
+                                    return a + b
+                            exercise_id: 1
+                            success: true
+            responses:
+                "201":
+                    description: Created response.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/SimpleResponse'
+                            example:
+                                message: Sit repudiandae.
+                                success: true
+                "400":
+                    description: 'invalid_input: Bad Request response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Id suscipit consectetur nam.
+                            example: Numquam velit explicabo illum autem.
+                "401":
+                    description: 'unauthorized: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Provident nihil architecto laudantium.
+                            example: Et est sit quaerat.
+                "403":
+                    description: 'permission_denied: Forbidden response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Non aut accusantium.
+                            example: Autem omnis non nam dolore repudiandae.
+                "404":
+                    description: 'not_found: Not Found response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Quia rerum dolor eveniet ut.
+                            example: Qui impedit maxime.
+                "503":
+                    description: 'service_unavailable: Service Unavailable response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Ea sequi veniam debitis enim aut.
+                            example: Quia officia eius repudiandae labore.
+    /api/codelab/exercises:
+        get:
+            tags:
+                - codelab
+            summary: ListExercises codelab
+            description: List all exercises with solutions (professors only)
+            operationId: codelab#ListExercises
+            parameters:
+                - name: session
+                  in: cookie
+                  description: Authentication session token
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: Authentication session token
+                    example: Et cumque assumenda ea.
+                  example: Officia dolore.
+            responses:
+                "200":
+                    description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/Exercise'
+                                example:
+                                    - created_at: 1672531200000
+                                      created_by: 123
+                                      description: Write a function that returns the sum of two numbers
+                                      difficulty: easy
+                                      id: 1
+                                      initial_code: |-
+                                        def sum_two_numbers(a, b):
+                                            # Write your code here
+                                            pass
+                                      solution: |-
+                                        def sum_two_numbers(a, b):
+                                            return a + b
+                                      title: Sum Two Numbers
+                                      updated_at: 1672531200000
+                                    - created_at: 1672531200000
+                                      created_by: 123
+                                      description: Write a function that returns the sum of two numbers
+                                      difficulty: easy
+                                      id: 1
+                                      initial_code: |-
+                                        def sum_two_numbers(a, b):
+                                            # Write your code here
+                                            pass
+                                      solution: |-
+                                        def sum_two_numbers(a, b):
+                                            return a + b
+                                      title: Sum Two Numbers
+                                      updated_at: 1672531200000
+                                    - created_at: 1672531200000
+                                      created_by: 123
+                                      description: Write a function that returns the sum of two numbers
+                                      difficulty: easy
+                                      id: 1
+                                      initial_code: |-
+                                        def sum_two_numbers(a, b):
+                                            # Write your code here
+                                            pass
+                                      solution: |-
+                                        def sum_two_numbers(a, b):
+                                            return a + b
+                                      title: Sum Two Numbers
+                                      updated_at: 1672531200000
+                                    - created_at: 1672531200000
+                                      created_by: 123
+                                      description: Write a function that returns the sum of two numbers
+                                      difficulty: easy
+                                      id: 1
+                                      initial_code: |-
+                                        def sum_two_numbers(a, b):
+                                            # Write your code here
+                                            pass
+                                      solution: |-
+                                        def sum_two_numbers(a, b):
+                                            return a + b
+                                      title: Sum Two Numbers
+                                      updated_at: 1672531200000
+                            example:
+                                - created_at: 1672531200000
+                                  created_by: 123
+                                  description: Write a function that returns the sum of two numbers
+                                  difficulty: easy
+                                  id: 1
+                                  initial_code: |-
+                                    def sum_two_numbers(a, b):
+                                        # Write your code here
+                                        pass
+                                  solution: |-
+                                    def sum_two_numbers(a, b):
+                                        return a + b
+                                  title: Sum Two Numbers
+                                  updated_at: 1672531200000
+                                - created_at: 1672531200000
+                                  created_by: 123
+                                  description: Write a function that returns the sum of two numbers
+                                  difficulty: easy
+                                  id: 1
+                                  initial_code: |-
+                                    def sum_two_numbers(a, b):
+                                        # Write your code here
+                                        pass
+                                  solution: |-
+                                    def sum_two_numbers(a, b):
+                                        return a + b
+                                  title: Sum Two Numbers
+                                  updated_at: 1672531200000
+                                - created_at: 1672531200000
+                                  created_by: 123
+                                  description: Write a function that returns the sum of two numbers
+                                  difficulty: easy
+                                  id: 1
+                                  initial_code: |-
+                                    def sum_two_numbers(a, b):
+                                        # Write your code here
+                                        pass
+                                  solution: |-
+                                    def sum_two_numbers(a, b):
+                                        return a + b
+                                  title: Sum Two Numbers
+                                  updated_at: 1672531200000
+                "401":
+                    description: 'unauthorized: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Quibusdam quisquam et eos omnis.
+                            example: Eos voluptatibus ad consequuntur recusandae consequatur.
+                "403":
+                    description: 'permission_denied: Forbidden response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Voluptatem suscipit dolorum deserunt explicabo quasi.
+                            example: Quo corporis at molestiae consequatur.
+                "404":
+                    description: 'not_found: Not Found response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Reiciendis laboriosam.
+                            example: Exercitationem laboriosam aut corporis.
+                "503":
+                    description: 'service_unavailable: Service Unavailable response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Voluptates nemo.
+                            example: Omnis omnis officia quae quam ducimus.
+        post:
+            tags:
+                - codelab
+            summary: CreateExercise codelab
+            description: Create a new coding exercise (professors only)
+            operationId: codelab#CreateExercise
+            parameters:
+                - name: session
+                  in: cookie
+                  description: Authentication session token
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: Authentication session token
+                    example: Vel doloribus ipsam quo dolorem repellendus veniam.
+                  example: Sint ut repellat praesentium illo accusantium est.
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CreateExercisePayload2'
+                        example:
+                            created_by: 123
+                            description: Write a function that returns the sum of two numbers
+                            difficulty: easy
+                            initial_code: |-
+                                def sum_two_numbers(a, b):
+                                    # Write your code here
+                                    pass
+                            solution: |-
+                                def sum_two_numbers(a, b):
+                                    return a + b
+                            title: Sum Two Numbers
+            responses:
+                "201":
+                    description: Created response.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/SimpleResponse'
+                            example:
+                                message: Rerum dolores praesentium aut corrupti ducimus.
+                                success: true
+                "400":
+                    description: 'invalid_input: Bad Request response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Quis aliquam.
+                            example: Consequatur adipisci id similique.
+                "401":
+                    description: 'unauthorized: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Fugiat ex possimus modi quia.
+                            example: Optio provident nam minus.
+                "503":
+                    description: 'service_unavailable: Service Unavailable response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Culpa commodi sit aperiam omnis.
+                            example: Quibusdam repellendus nam officiis et eligendi.
+    /api/codelab/exercises/{exercise_id}/tests:
+        get:
+            tags:
+                - codelab
+            summary: GetTestsByExercise codelab
+            description: Get all test cases for an exercise (professors only)
+            operationId: codelab#GetTestsByExercise
+            parameters:
+                - name: exercise_id
+                  in: path
+                  description: Exercise ID
+                  required: true
+                  schema:
+                    type: integer
+                    description: Exercise ID
+                    example: 1
+                    format: int64
+                  example: 1
+                - name: session
+                  in: cookie
+                  description: Authentication session token
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: Authentication session token
+                    example: Quia aut dignissimos voluptas.
+                  example: Qui voluptas consectetur.
+            responses:
+                "200":
+                    description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/Test'
+                                example:
+                                    - created_at: 1672531200000
+                                      exercise_id: 1
+                                      id: 1
+                                      input: 5, 3
+                                      output: "8"
+                                      public: true
+                                      updated_at: 1672531200000
+                                    - created_at: 1672531200000
+                                      exercise_id: 1
+                                      id: 1
+                                      input: 5, 3
+                                      output: "8"
+                                      public: true
+                                      updated_at: 1672531200000
+                                    - created_at: 1672531200000
+                                      exercise_id: 1
+                                      id: 1
+                                      input: 5, 3
+                                      output: "8"
+                                      public: true
+                                      updated_at: 1672531200000
+                                    - created_at: 1672531200000
+                                      exercise_id: 1
+                                      id: 1
+                                      input: 5, 3
+                                      output: "8"
+                                      public: true
+                                      updated_at: 1672531200000
+                            example:
+                                - created_at: 1672531200000
+                                  exercise_id: 1
+                                  id: 1
+                                  input: 5, 3
+                                  output: "8"
+                                  public: true
+                                  updated_at: 1672531200000
+                                - created_at: 1672531200000
+                                  exercise_id: 1
+                                  id: 1
+                                  input: 5, 3
+                                  output: "8"
+                                  public: true
+                                  updated_at: 1672531200000
+                "400":
+                    description: 'invalid_input: Bad Request response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Aut quos.
+                            example: Rerum ipsam iste delectus.
+                "401":
+                    description: 'unauthorized: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Aut voluptas et laborum qui.
+                            example: Sit voluptatibus sint repellat.
+                "403":
+                    description: 'permission_denied: Forbidden response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Est ea libero ab.
+                            example: Dolores minima sint quasi et autem expedita.
+                "404":
+                    description: 'not_found: Not Found response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Amet doloribus.
+                            example: Veniam mollitia iusto.
+                "503":
+                    description: 'service_unavailable: Service Unavailable response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Sed aut pariatur itaque.
+                            example: Ipsam cumque velit provident in.
+    /api/codelab/exercises/{id}:
+        delete:
+            tags:
+                - codelab
+            summary: DeleteExercise codelab
+            description: Delete an exercise (professors only)
+            operationId: codelab#DeleteExercise
+            parameters:
+                - name: id
+                  in: path
+                  description: Exercise ID
+                  required: true
+                  schema:
+                    type: integer
+                    description: Exercise ID
+                    example: 1
+                    format: int64
+                  example: 1
+                - name: session
+                  in: cookie
+                  description: Authentication session token
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: Authentication session token
+                    example: Dolor provident ullam dolorem.
+                  example: Possimus mollitia et enim et.
+            responses:
+                "200":
+                    description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/SimpleResponse'
+                            example:
+                                message: Beatae quo eum.
+                                success: false
+                "400":
+                    description: 'invalid_input: Bad Request response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Consequatur et quasi sed et nisi blanditiis.
+                            example: Odio perspiciatis.
+                "401":
+                    description: 'unauthorized: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Quas blanditiis recusandae qui praesentium.
+                            example: Et error incidunt ducimus.
+                "403":
+                    description: 'permission_denied: Forbidden response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Molestiae aut ut.
+                            example: Quia nostrum.
+                "404":
+                    description: 'not_found: Not Found response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Similique adipisci saepe nobis.
+                            example: Aut aut mollitia iure molestiae labore.
+                "503":
+                    description: 'service_unavailable: Service Unavailable response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Explicabo iste.
+                            example: Iure veniam vitae rerum est culpa.
+        get:
+            tags:
+                - codelab
+            summary: GetExercise codelab
+            description: Get exercise by ID with solution (professors only)
+            operationId: codelab#GetExercise
+            parameters:
+                - name: id
+                  in: path
+                  description: Exercise ID
+                  required: true
+                  schema:
+                    type: integer
+                    description: Exercise ID
+                    example: 1
+                    format: int64
+                  example: 1
+                - name: session
+                  in: cookie
+                  description: Authentication session token
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: Authentication session token
+                    example: Dicta et consectetur.
+                  example: Voluptates velit fuga.
+            responses:
+                "200":
+                    description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Exercise'
+                            example:
+                                created_at: 1672531200000
+                                created_by: 123
+                                description: Write a function that returns the sum of two numbers
+                                difficulty: easy
+                                id: 1
+                                initial_code: |-
+                                    def sum_two_numbers(a, b):
+                                        # Write your code here
+                                        pass
+                                solution: |-
+                                    def sum_two_numbers(a, b):
+                                        return a + b
+                                title: Sum Two Numbers
+                                updated_at: 1672531200000
+                "401":
+                    description: 'unauthorized: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Consequatur quo sint maiores blanditiis.
+                            example: Unde officiis sint.
+                "403":
+                    description: 'permission_denied: Forbidden response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Tenetur quas aut maiores qui recusandae.
+                            example: Quos cumque suscipit molestias.
+                "404":
+                    description: 'not_found: Not Found response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Explicabo et dolores quis iusto non assumenda.
+                            example: Quis rerum ea tempore dolore.
+                "503":
+                    description: 'service_unavailable: Service Unavailable response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Unde a.
+                            example: Recusandae corrupti vitae nam adipisci nesciunt praesentium.
+        put:
+            tags:
+                - codelab
+            summary: UpdateExercise codelab
+            description: Update an exercise (professors only)
+            operationId: codelab#UpdateExercise
+            parameters:
+                - name: id
+                  in: path
+                  description: Exercise ID
+                  required: true
+                  schema:
+                    type: integer
+                    description: Exercise ID
+                    example: 1
+                    format: int64
+                  example: 1
+                - name: session
+                  in: cookie
+                  description: Authentication session token
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: Authentication session token
+                    example: Animi totam itaque perferendis.
+                  example: Illo est.
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/UpdateExerciseRequestBody'
+                        example:
+                            exercise:
+                                description: Write a function that returns the sum of two numbers
+                                difficulty: easy
+                                initial_code: |-
+                                    def sum_two_numbers(a, b):
+                                        # Write your code here
+                                        pass
+                                solution: |-
+                                    def sum_two_numbers(a, b):
+                                        return a + b
+                                title: Sum Two Numbers
+            responses:
+                "200":
+                    description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/SimpleResponse'
+                            example:
+                                message: Molestiae in.
+                                success: false
+                "400":
+                    description: 'invalid_input: Bad Request response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Omnis corrupti et unde ad.
+                            example: Ut minima.
+                "401":
+                    description: 'unauthorized: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Illo libero corrupti fugiat officiis ullam.
+                            example: Necessitatibus pariatur reprehenderit.
+                "403":
+                    description: 'permission_denied: Forbidden response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Et natus qui ipsum ut.
+                            example: Nam cumque impedit nam consequatur consectetur dolor.
+                "404":
+                    description: 'not_found: Not Found response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Est sint exercitationem numquam corporis quis et.
+                            example: Accusantium et officia maiores animi.
+                "503":
+                    description: 'service_unavailable: Service Unavailable response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Voluptatibus amet earum ea aut et.
+                            example: Quis consectetur aut.
+    /api/codelab/student/exercises:
+        get:
+            tags:
+                - codelab
+            summary: ListExercisesForStudents codelab
+            description: List all exercises without solutions (students)
+            operationId: codelab#ListExercisesForStudents
+            parameters:
+                - name: session
+                  in: cookie
+                  description: Authentication session token
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: Authentication session token
+                    example: Architecto ut illo voluptatem molestias voluptas rerum.
+                  example: Enim dolorem quo.
+            responses:
+                "200":
+                    description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/ExerciseForStudentsListView'
+                                example:
+                                    - completed: false
+                                      created_at: 1672531200000
+                                      created_by: 123
+                                      description: Write a function that returns the sum of two numbers
+                                      difficulty: easy
+                                      id: 1
+                                      title: Sum Two Numbers
+                                      updated_at: 1672531200000
+                                    - completed: false
+                                      created_at: 1672531200000
+                                      created_by: 123
+                                      description: Write a function that returns the sum of two numbers
+                                      difficulty: easy
+                                      id: 1
+                                      title: Sum Two Numbers
+                                      updated_at: 1672531200000
+                            example:
+                                - completed: false
+                                  created_at: 1672531200000
+                                  created_by: 123
+                                  description: Write a function that returns the sum of two numbers
+                                  difficulty: easy
+                                  id: 1
+                                  title: Sum Two Numbers
+                                  updated_at: 1672531200000
+                                - completed: false
+                                  created_at: 1672531200000
+                                  created_by: 123
+                                  description: Write a function that returns the sum of two numbers
+                                  difficulty: easy
+                                  id: 1
+                                  title: Sum Two Numbers
+                                  updated_at: 1672531200000
+                "400":
+                    description: 'invalid_input: Bad Request response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Mollitia est consequatur quam.
+                            example: Et occaecati ipsam eius temporibus voluptatum ullam.
+                "401":
+                    description: 'unauthorized: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Esse natus nemo.
+                            example: Dolorum ad sit quis delectus ea accusamus.
+                "403":
+                    description: 'permission_denied: Forbidden response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Commodi dolore rerum totam repellat.
+                            example: Dolorem dolorem quidem eveniet consequuntur deleniti omnis.
+                "404":
+                    description: 'not_found: Not Found response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Perferendis adipisci sunt.
+                            example: Cum minus est porro eum nemo.
+                "503":
+                    description: 'service_unavailable: Service Unavailable response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Veniam ducimus autem illo ratione aut qui.
+                            example: Aperiam aut suscipit.
+    /api/codelab/student/exercises/{id}:
+        get:
+            tags:
+                - codelab
+            summary: GetExerciseForStudent codelab
+            description: Get exercise by ID without solution (students)
+            operationId: codelab#GetExerciseForStudent
+            parameters:
+                - name: id
+                  in: path
+                  description: Exercise ID
+                  required: true
+                  schema:
+                    type: integer
+                    description: Exercise ID
+                    example: 1
+                    format: int64
+                  example: 1
+                - name: session
+                  in: cookie
+                  description: Authentication session token
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: Authentication session token
+                    example: Reprehenderit recusandae reiciendis.
+                  example: Aut laudantium.
+            responses:
+                "200":
+                    description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ExerciseForStudents'
+                            example:
+                                answer:
+                                    completed: false
+                                    created_at: 1672531200000
+                                    exercise_id: 1
+                                    id: 1
+                                    updated_at: 1672531200000
+                                    user_id: 123
+                                attempts:
+                                    - answer_id: 1
+                                      code: |-
+                                        def sum_two_numbers(a, b):
+                                            return a + b
+                                      created_at: 1672531200000
+                                      id: 1
+                                      success: true
+                                    - answer_id: 1
+                                      code: |-
+                                        def sum_two_numbers(a, b):
+                                            return a + b
+                                      created_at: 1672531200000
+                                      id: 1
+                                      success: true
+                                    - answer_id: 1
+                                      code: |-
+                                        def sum_two_numbers(a, b):
+                                            return a + b
+                                      created_at: 1672531200000
+                                      id: 1
+                                      success: true
+                                created_at: 1672531200000
+                                created_by: 123
+                                description: Write a function that returns the sum of two numbers
+                                difficulty: easy
+                                id: 1
+                                initial_code: |-
+                                    def sum_two_numbers(a, b):
+                                        # Write your code here
+                                        pass
+                                tests:
+                                    - created_at: 1672531200000
+                                      exercise_id: 1
+                                      id: 1
+                                      input: 5, 3
+                                      output: "8"
+                                      public: true
+                                      updated_at: 1672531200000
+                                    - created_at: 1672531200000
+                                      exercise_id: 1
+                                      id: 1
+                                      input: 5, 3
+                                      output: "8"
+                                      public: true
+                                      updated_at: 1672531200000
+                                    - created_at: 1672531200000
+                                      exercise_id: 1
+                                      id: 1
+                                      input: 5, 3
+                                      output: "8"
+                                      public: true
+                                      updated_at: 1672531200000
+                                title: Sum Two Numbers
+                                updated_at: 1672531200000
+                "400":
+                    description: 'invalid_input: Bad Request response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Aut tempore voluptas voluptatem aut quaerat.
+                            example: Libero autem est.
+                "401":
+                    description: 'unauthorized: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Ad qui qui ipsam soluta.
+                            example: Eum voluptate pariatur.
+                "403":
+                    description: 'permission_denied: Forbidden response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Laudantium mollitia nisi in.
+                            example: Quam corrupti.
+                "404":
+                    description: 'not_found: Not Found response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Fugiat consequatur.
+                            example: Eius in laboriosam voluptas esse.
+                "503":
+                    description: 'service_unavailable: Service Unavailable response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Sint laborum sint animi.
+                            example: Pariatur aut vero iusto et sunt modi.
+    /api/codelab/student/users/{user_id}/exercises/{exercise_id}/attempts:
+        get:
+            tags:
+                - codelab
+            summary: GetAttemptsByUserAndExercise codelab
+            description: Get user's attempts for a specific exercise (students)
+            operationId: codelab#GetAttemptsByUserAndExercise
+            parameters:
+                - name: user_id
+                  in: path
+                  description: User ID
+                  required: true
+                  schema:
+                    type: integer
+                    description: User ID
+                    example: 123
+                    format: int64
+                  example: 123
+                - name: exercise_id
+                  in: path
+                  description: Exercise ID
+                  required: true
+                  schema:
+                    type: integer
+                    description: Exercise ID
+                    example: 1
+                    format: int64
+                  example: 1
+                - name: session
+                  in: cookie
+                  description: Authentication session token
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: Authentication session token
+                    example: Consectetur nam.
+                  example: Eos quaerat.
+            responses:
+                "200":
+                    description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/Attempt'
+                                example:
+                                    - answer_id: 1
+                                      code: |-
+                                        def sum_two_numbers(a, b):
+                                            return a + b
+                                      created_at: 1672531200000
+                                      id: 1
+                                      success: true
+                                    - answer_id: 1
+                                      code: |-
+                                        def sum_two_numbers(a, b):
+                                            return a + b
+                                      created_at: 1672531200000
+                                      id: 1
+                                      success: true
+                                    - answer_id: 1
+                                      code: |-
+                                        def sum_two_numbers(a, b):
+                                            return a + b
+                                      created_at: 1672531200000
+                                      id: 1
+                                      success: true
+                            example:
+                                - answer_id: 1
+                                  code: |-
+                                    def sum_two_numbers(a, b):
+                                        return a + b
+                                  created_at: 1672531200000
+                                  id: 1
+                                  success: true
+                                - answer_id: 1
+                                  code: |-
+                                    def sum_two_numbers(a, b):
+                                        return a + b
+                                  created_at: 1672531200000
+                                  id: 1
+                                  success: true
+                                - answer_id: 1
+                                  code: |-
+                                    def sum_two_numbers(a, b):
+                                        return a + b
+                                  created_at: 1672531200000
+                                  id: 1
+                                  success: true
+                                - answer_id: 1
+                                  code: |-
+                                    def sum_two_numbers(a, b):
+                                        return a + b
+                                  created_at: 1672531200000
+                                  id: 1
+                                  success: true
+                "400":
+                    description: 'invalid_input: Bad Request response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Sit quas ut.
+                            example: Quidem ducimus cupiditate nobis hic totam quas.
+                "401":
+                    description: 'unauthorized: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Voluptatibus eum laborum sequi.
+                            example: Neque repudiandae quidem in ut pariatur.
+                "403":
+                    description: 'permission_denied: Forbidden response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Repudiandae quaerat.
+                            example: Unde magnam accusantium.
+                "404":
+                    description: 'not_found: Not Found response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Dignissimos accusantium molestiae voluptatibus sed dolore architecto.
+                            example: Enim vitae.
+                "503":
+                    description: 'service_unavailable: Service Unavailable response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Est quis sed temporibus architecto.
+                            example: Et fuga dolorum.
+    /api/codelab/tests:
+        post:
+            tags:
+                - codelab
+            summary: CreateTest codelab
+            description: Create a new test case for an exercise (professors only)
+            operationId: codelab#CreateTest
+            parameters:
+                - name: session
+                  in: cookie
+                  description: Authentication session token
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: Authentication session token
+                    example: Labore nesciunt aperiam ut maxime hic.
+                  example: Autem quas excepturi laudantium ut earum.
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CreateTestPayload2'
+                        example:
+                            exercise_id: 1
+                            input: 5, 3
+                            output: "8"
+                            public: true
+            responses:
+                "201":
+                    description: Created response.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/SimpleResponse'
+                            example:
+                                message: Sunt autem adipisci ex earum.
+                                success: false
+                "400":
+                    description: 'invalid_input: Bad Request response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Est quae molestiae cupiditate quibusdam non illo.
+                            example: Cumque ut in hic sint labore.
+                "401":
+                    description: 'unauthorized: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Tempora et facilis.
+                            example: Vel cupiditate et.
+                "403":
+                    description: 'permission_denied: Forbidden response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Enim quaerat vero minima harum in.
+                            example: Soluta quia.
+                "503":
+                    description: 'service_unavailable: Service Unavailable response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Consequatur ut.
+                            example: Et illo sed.
+    /api/codelab/tests/{id}:
+        delete:
+            tags:
+                - codelab
+            summary: DeleteTest codelab
+            description: Delete a test case (professors only)
+            operationId: codelab#DeleteTest
+            parameters:
+                - name: id
+                  in: path
+                  description: Test ID
+                  required: true
+                  schema:
+                    type: integer
+                    description: Test ID
+                    example: 1
+                    format: int64
+                  example: 1
+                - name: session
+                  in: cookie
+                  description: Authentication session token
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: Authentication session token
+                    example: Inventore ut rem.
+                  example: Consequatur perferendis non placeat eveniet.
+            responses:
+                "200":
+                    description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/SimpleResponse'
+                            example:
+                                message: Qui in et quibusdam debitis.
+                                success: true
+                "400":
+                    description: 'invalid_input: Bad Request response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Vitae qui consectetur magnam quia.
+                            example: Voluptate quia consequatur consequatur.
+                "401":
+                    description: 'unauthorized: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Consequatur voluptatum vel sint rerum dolorem dolor.
+                            example: Labore nemo dolores.
+                "403":
+                    description: 'permission_denied: Forbidden response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Quod itaque fuga.
+                            example: Dolorem incidunt qui voluptates.
+                "404":
+                    description: 'not_found: Not Found response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Magni quidem est reprehenderit et exercitationem itaque.
+                            example: Debitis esse molestiae illo rerum est ullam.
+                "503":
+                    description: 'service_unavailable: Service Unavailable response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Eum rerum est repellat iusto velit.
+                            example: Exercitationem repudiandae aut et laboriosam quia incidunt.
+        put:
+            tags:
+                - codelab
+            summary: UpdateTest codelab
+            description: Update a test case (professors only)
+            operationId: codelab#UpdateTest
+            parameters:
+                - name: id
+                  in: path
+                  description: Test ID
+                  required: true
+                  schema:
+                    type: integer
+                    description: Test ID
+                    example: 1
+                    format: int64
+                  example: 1
+                - name: session
+                  in: cookie
+                  description: Authentication session token
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: Authentication session token
+                    example: Occaecati iste est nobis assumenda qui.
+                  example: Rem dolorem voluptatem ut ut dolores voluptas.
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/UpdateTestRequestBody'
+                        example:
+                            test:
+                                input: 5, 3
+                                output: "8"
+                                public: true
+            responses:
+                "200":
+                    description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/SimpleResponse'
+                            example:
+                                message: Illum porro facilis debitis error.
+                                success: false
+                "400":
+                    description: 'invalid_input: Bad Request response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Et deleniti.
+                            example: Dignissimos similique dolorem illo ab cum.
+                "401":
+                    description: 'unauthorized: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Magnam exercitationem cum consectetur magnam totam.
+                            example: Aliquid tenetur sed sunt a dignissimos sed.
+                "403":
+                    description: 'permission_denied: Forbidden response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Harum rem rerum minus aut consequatur.
+                            example: Distinctio id iusto qui et velit ullam.
+                "404":
+                    description: 'not_found: Not Found response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Perspiciatis et fuga vel quia praesentium reprehenderit.
+                            example: Doloremque quis ratione eveniet laudantium sequi.
+                "503":
+                    description: 'service_unavailable: Service Unavailable response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Accusantium quaerat modi dolores nobis sed.
+                            example: Et unde nam libero nisi hic laudantium.
+components:
+    schemas:
+        Answer:
+            type: object
+            properties:
+                completed:
+                    type: boolean
+                    description: Whether the exercise is completed
+                    example: false
+                created_at:
+                    type: integer
+                    description: Creation timestamp
+                    example: 1672531200000
+                    format: int64
+                exercise_id:
+                    type: integer
+                    description: Associated exercise ID
+                    example: 1
+                    format: int64
+                id:
+                    type: integer
+                    description: Answer ID
+                    example: 1
+                    format: int64
+                updated_at:
+                    type: integer
+                    description: Last update timestamp
+                    example: 1672531200000
+                    format: int64
+                user_id:
+                    type: integer
+                    description: Student user ID
+                    example: 123
+                    format: int64
+            description: A student's answer/participation in an exercise
+            example:
+                completed: false
+                created_at: 1672531200000
+                exercise_id: 1
+                id: 1
+                updated_at: 1672531200000
+                user_id: 123
+            required:
+                - id
+                - exercise_id
+                - user_id
+                - completed
+                - created_at
+                - updated_at
+        Attempt:
+            type: object
+            properties:
+                answer_id:
+                    type: integer
+                    description: Associated answer ID
+                    example: 1
+                    format: int64
+                code:
+                    type: string
+                    description: Submitted code
+                    example: |-
+                        def sum_two_numbers(a, b):
+                            return a + b
+                created_at:
+                    type: integer
+                    description: Creation timestamp
+                    example: 1672531200000
+                    format: int64
+                id:
+                    type: integer
+                    description: Attempt ID
+                    example: 1
+                    format: int64
+                success:
+                    type: boolean
+                    description: Whether the attempt was successful
+                    example: true
+            description: A code submission attempt for an answer
+            example:
+                answer_id: 1
+                code: |-
+                    def sum_two_numbers(a, b):
+                        return a + b
+                created_at: 1672531200000
+                id: 1
+                success: true
+            required:
+                - id
+                - answer_id
+                - code
+                - success
+                - created_at
+        CreateAttemptPayload:
+            type: object
+            properties:
+                code:
+                    type: string
+                    description: Submitted code
+                    example: |-
+                        def sum_two_numbers(a, b):
+                            return a + b
+                exercise_id:
+                    type: integer
+                    description: Associated exercise ID
+                    example: 1
+                    format: int64
+                session_token:
+                    type: string
+                    description: Authentication session token
+                    example: Fugit nostrum dolor repudiandae.
+                success:
+                    type: boolean
+                    description: Whether the attempt was successful
+                    example: true
+            description: Payload for creating a new attempt
+            example:
+                code: |-
+                    def sum_two_numbers(a, b):
+                        return a + b
+                exercise_id: 1
+                session_token: Illo atque eligendi sunt excepturi omnis.
+                success: true
+            required:
+                - session_token
+                - exercise_id
+                - code
+                - success
+        CreateAttemptPayload2:
+            type: object
+            properties:
+                code:
+                    type: string
+                    description: Submitted code
+                    example: |-
+                        def sum_two_numbers(a, b):
+                            return a + b
+                exercise_id:
+                    type: integer
+                    description: Associated exercise ID
+                    example: 1
+                    format: int64
+                success:
+                    type: boolean
+                    description: Whether the attempt was successful
+                    example: true
+            example:
+                code: |-
+                    def sum_two_numbers(a, b):
+                        return a + b
+                exercise_id: 1
+                success: true
+            required:
+                - exercise_id
+                - code
+                - success
+        CreateExercisePayload:
+            type: object
+            properties:
+                created_by:
+                    type: integer
+                    description: ID of user creating the exercise
+                    example: 123
+                    format: int64
+                description:
+                    type: string
+                    description: Exercise description
+                    example: Write a function that returns the sum of two numbers
+                difficulty:
+                    type: string
+                    description: Exercise difficulty level
+                    example: easy
+                    enum:
+                        - easy
+                        - medium
+                        - hard
+                initial_code:
+                    type: string
+                    description: Initial code template
+                    example: |-
+                        def sum_two_numbers(a, b):
+                            # Write your code here
+                            pass
+                session_token:
+                    type: string
+                    description: Authentication session token
+                    example: Ratione quia et omnis.
+                solution:
+                    type: string
+                    description: Exercise solution
+                    example: |-
+                        def sum_two_numbers(a, b):
+                            return a + b
+                title:
+                    type: string
+                    description: Exercise title
+                    example: Sum Two Numbers
+                    maxLength: 200
+            description: Payload for creating a new exercise
+            example:
+                created_by: 123
+                description: Write a function that returns the sum of two numbers
+                difficulty: easy
+                initial_code: |-
+                    def sum_two_numbers(a, b):
+                        # Write your code here
+                        pass
+                session_token: Ullam incidunt aut quo odit.
+                solution: |-
+                    def sum_two_numbers(a, b):
+                        return a + b
+                title: Sum Two Numbers
+            required:
+                - session_token
+                - title
+                - description
+                - initial_code
+                - solution
+                - difficulty
+                - created_by
+        CreateExercisePayload2:
+            type: object
+            properties:
+                created_by:
+                    type: integer
+                    description: ID of user creating the exercise
+                    example: 123
+                    format: int64
+                description:
+                    type: string
+                    description: Exercise description
+                    example: Write a function that returns the sum of two numbers
+                difficulty:
+                    type: string
+                    description: Exercise difficulty level
+                    example: easy
+                    enum:
+                        - easy
+                        - medium
+                        - hard
+                initial_code:
+                    type: string
+                    description: Initial code template
+                    example: |-
+                        def sum_two_numbers(a, b):
+                            # Write your code here
+                            pass
+                solution:
+                    type: string
+                    description: Exercise solution
+                    example: |-
+                        def sum_two_numbers(a, b):
+                            return a + b
+                title:
+                    type: string
+                    description: Exercise title
+                    example: Sum Two Numbers
+                    maxLength: 200
+            example:
+                created_by: 123
+                description: Write a function that returns the sum of two numbers
+                difficulty: easy
+                initial_code: |-
+                    def sum_two_numbers(a, b):
+                        # Write your code here
+                        pass
+                solution: |-
+                    def sum_two_numbers(a, b):
+                        return a + b
+                title: Sum Two Numbers
+            required:
+                - title
+                - description
+                - initial_code
+                - solution
+                - difficulty
+                - created_by
+        CreateTestPayload:
+            type: object
+            properties:
+                exercise_id:
+                    type: integer
+                    description: Associated exercise ID
+                    example: 1
+                    format: int64
+                input:
+                    type: string
+                    description: Test input
+                    example: 5, 3
+                output:
+                    type: string
+                    description: Expected output
+                    example: "8"
+                public:
+                    type: boolean
+                    description: Whether test is visible to students
+                    example: true
+                session_token:
+                    type: string
+                    description: Authentication session token
+                    example: Laborum sequi quo voluptate omnis porro rem.
+            description: Payload for creating a new test
+            example:
+                exercise_id: 1
+                input: 5, 3
+                output: "8"
+                public: true
+                session_token: Tempore repellat officia reprehenderit mollitia.
+            required:
+                - session_token
+                - input
+                - output
+                - public
+                - exercise_id
+        CreateTestPayload2:
+            type: object
+            properties:
+                exercise_id:
+                    type: integer
+                    description: Associated exercise ID
+                    example: 1
+                    format: int64
+                input:
+                    type: string
+                    description: Test input
+                    example: 5, 3
+                output:
+                    type: string
+                    description: Expected output
+                    example: "8"
+                public:
+                    type: boolean
+                    description: Whether test is visible to students
+                    example: true
+            example:
+                exercise_id: 1
+                input: 5, 3
+                output: "8"
+                public: true
+            required:
+                - input
+                - output
+                - public
+                - exercise_id
+        Exercise:
+            type: object
+            properties:
+                created_at:
+                    type: integer
+                    description: Creation timestamp in miliseconds
+                    example: 1672531200000
+                    format: int64
+                created_by:
+                    type: integer
+                    description: ID of user who created the exercise
+                    example: 123
+                    format: int64
+                description:
+                    type: string
+                    description: Exercise description
+                    example: Write a function that returns the sum of two numbers
+                difficulty:
+                    type: string
+                    description: Exercise difficulty level
+                    example: easy
+                    enum:
+                        - easy
+                        - medium
+                        - hard
+                id:
+                    type: integer
+                    description: Exercise ID
+                    example: 1
+                    format: int64
+                initial_code:
+                    type: string
+                    description: Initial code template
+                    example: |-
+                        def sum_two_numbers(a, b):
+                            # Write your code here
+                            pass
+                solution:
+                    type: string
+                    description: Exercise solution
+                    example: |-
+                        def sum_two_numbers(a, b):
+                            return a + b
+                title:
+                    type: string
+                    description: Exercise title
+                    example: Sum Two Numbers
+                    maxLength: 200
+                updated_at:
+                    type: integer
+                    description: Last update timestamp
+                    example: 1672531200000
+                    format: int64
+            description: A coding exercise with initial code, solution and difficulty level
+            example:
+                created_at: 1672531200000
+                created_by: 123
+                description: Write a function that returns the sum of two numbers
+                difficulty: easy
+                id: 1
+                initial_code: |-
+                    def sum_two_numbers(a, b):
+                        # Write your code here
+                        pass
+                solution: |-
+                    def sum_two_numbers(a, b):
+                        return a + b
+                title: Sum Two Numbers
+                updated_at: 1672531200000
+            required:
+                - id
+                - title
+                - description
+                - initial_code
+                - solution
+                - difficulty
+                - created_by
+                - created_at
+                - updated_at
+        ExerciseForStudents:
+            type: object
+            properties:
+                answer:
+                    $ref: '#/components/schemas/Answer'
+                attempts:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/Attempt'
+                    description: List of attempts made by students for this exercise
+                    example:
+                        - answer_id: 1
+                          code: |-
+                            def sum_two_numbers(a, b):
+                                return a + b
+                          created_at: 1672531200000
+                          id: 1
+                          success: true
+                        - answer_id: 1
+                          code: |-
+                            def sum_two_numbers(a, b):
+                                return a + b
+                          created_at: 1672531200000
+                          id: 1
+                          success: true
+                        - answer_id: 1
+                          code: |-
+                            def sum_two_numbers(a, b):
+                                return a + b
+                          created_at: 1672531200000
+                          id: 1
+                          success: true
+                        - answer_id: 1
+                          code: |-
+                            def sum_two_numbers(a, b):
+                                return a + b
+                          created_at: 1672531200000
+                          id: 1
+                          success: true
+                created_at:
+                    type: integer
+                    description: Creation timestamp
+                    example: 1672531200000
+                    format: int64
+                created_by:
+                    type: integer
+                    description: ID of user who created the exercise
+                    example: 123
+                    format: int64
+                description:
+                    type: string
+                    description: Exercise description
+                    example: Write a function that returns the sum of two numbers
+                difficulty:
+                    type: string
+                    description: Exercise difficulty level
+                    example: easy
+                    enum:
+                        - easy
+                        - medium
+                        - hard
+                id:
+                    type: integer
+                    description: Exercise ID
+                    example: 1
+                    format: int64
+                initial_code:
+                    type: string
+                    description: Initial code template
+                    example: |-
+                        def sum_two_numbers(a, b):
+                            # Write your code here
+                            pass
+                tests:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/Test'
+                    description: List of public tests for the exercise
+                    example:
+                        - created_at: 1672531200000
+                          exercise_id: 1
+                          id: 1
+                          input: 5, 3
+                          output: "8"
+                          public: true
+                          updated_at: 1672531200000
+                        - created_at: 1672531200000
+                          exercise_id: 1
+                          id: 1
+                          input: 5, 3
+                          output: "8"
+                          public: true
+                          updated_at: 1672531200000
+                        - created_at: 1672531200000
+                          exercise_id: 1
+                          id: 1
+                          input: 5, 3
+                          output: "8"
+                          public: true
+                          updated_at: 1672531200000
+                title:
+                    type: string
+                    description: Exercise title
+                    example: Sum Two Numbers
+                    maxLength: 200
+                updated_at:
+                    type: integer
+                    description: Last update timestamp
+                    example: 1672531200000
+                    format: int64
+            description: A coding exercise without solution for students
+            example:
+                answer:
+                    completed: false
+                    created_at: 1672531200000
+                    exercise_id: 1
+                    id: 1
+                    updated_at: 1672531200000
+                    user_id: 123
+                attempts:
+                    - answer_id: 1
+                      code: |-
+                        def sum_two_numbers(a, b):
+                            return a + b
+                      created_at: 1672531200000
+                      id: 1
+                      success: true
+                    - answer_id: 1
+                      code: |-
+                        def sum_two_numbers(a, b):
+                            return a + b
+                      created_at: 1672531200000
+                      id: 1
+                      success: true
+                    - answer_id: 1
+                      code: |-
+                        def sum_two_numbers(a, b):
+                            return a + b
+                      created_at: 1672531200000
+                      id: 1
+                      success: true
+                    - answer_id: 1
+                      code: |-
+                        def sum_two_numbers(a, b):
+                            return a + b
+                      created_at: 1672531200000
+                      id: 1
+                      success: true
+                created_at: 1672531200000
+                created_by: 123
+                description: Write a function that returns the sum of two numbers
+                difficulty: easy
+                id: 1
+                initial_code: |-
+                    def sum_two_numbers(a, b):
+                        # Write your code here
+                        pass
+                tests:
+                    - created_at: 1672531200000
+                      exercise_id: 1
+                      id: 1
+                      input: 5, 3
+                      output: "8"
+                      public: true
+                      updated_at: 1672531200000
+                    - created_at: 1672531200000
+                      exercise_id: 1
+                      id: 1
+                      input: 5, 3
+                      output: "8"
+                      public: true
+                      updated_at: 1672531200000
+                    - created_at: 1672531200000
+                      exercise_id: 1
+                      id: 1
+                      input: 5, 3
+                      output: "8"
+                      public: true
+                      updated_at: 1672531200000
+                title: Sum Two Numbers
+                updated_at: 1672531200000
+            required:
+                - id
+                - title
+                - description
+                - initial_code
+                - difficulty
+                - tests
+                - attempts
+                - answer
+                - created_by
+                - created_at
+                - updated_at
+        ExerciseForStudentsListView:
+            type: object
+            properties:
+                completed:
+                    type: boolean
+                    description: Whether the exercise is completed by the student
+                    example: false
+                created_at:
+                    type: integer
+                    description: Creation timestamp
+                    example: 1672531200000
+                    format: int64
+                created_by:
+                    type: integer
+                    description: ID of user who created the exercise
+                    example: 123
+                    format: int64
+                description:
+                    type: string
+                    description: Exercise description
+                    example: Write a function that returns the sum of two numbers
+                difficulty:
+                    type: string
+                    description: Exercise difficulty level
+                    example: easy
+                    enum:
+                        - easy
+                        - medium
+                        - hard
+                id:
+                    type: integer
+                    description: Exercise ID
+                    example: 1
+                    format: int64
+                title:
+                    type: string
+                    description: Exercise title
+                    example: Sum Two Numbers
+                    maxLength: 200
+                updated_at:
+                    type: integer
+                    description: Last update timestamp
+                    example: 1672531200000
+                    format: int64
+            description: View for listing exercises available to students
+            example:
+                completed: false
+                created_at: 1672531200000
+                created_by: 123
+                description: Write a function that returns the sum of two numbers
+                difficulty: easy
+                id: 1
+                title: Sum Two Numbers
+                updated_at: 1672531200000
+            required:
+                - id
+                - title
+                - description
+                - difficulty
+                - created_by
+                - created_at
+                - updated_at
+        SimpleResponse:
+            type: object
+            properties:
+                message:
+                    type: string
+                    description: Response message
+                    example: Incidunt suscipit quasi.
+                success:
+                    type: boolean
+                    description: Operation success status
+                    example: false
+            description: Basic response with success status and message
+            example:
+                message: Qui reiciendis.
+                success: false
+            required:
+                - success
+                - message
+        Test:
+            type: object
+            properties:
+                created_at:
+                    type: integer
+                    description: Creation timestamp
+                    example: 1672531200000
+                    format: int64
+                exercise_id:
+                    type: integer
+                    description: Associated exercise ID
+                    example: 1
+                    format: int64
+                id:
+                    type: integer
+                    description: Test ID
+                    example: 1
+                    format: int64
+                input:
+                    type: string
+                    description: Test input
+                    example: 5, 3
+                output:
+                    type: string
+                    description: Expected output
+                    example: "8"
+                public:
+                    type: boolean
+                    description: Whether test is visible to students
+                    example: true
+                updated_at:
+                    type: integer
+                    description: Last update timestamp
+                    example: 1672531200000
+                    format: int64
+            description: A test case with input and expected output
+            example:
+                created_at: 1672531200000
+                exercise_id: 1
+                id: 1
+                input: 5, 3
+                output: "8"
+                public: true
+                updated_at: 1672531200000
+            required:
+                - id
+                - input
+                - output
+                - public
+                - exercise_id
+                - created_at
+                - updated_at
+        UpdateExercisePayload:
+            type: object
+            properties:
+                description:
+                    type: string
+                    description: Exercise description
+                    example: Write a function that returns the sum of two numbers
+                difficulty:
+                    type: string
+                    description: Exercise difficulty level
+                    example: easy
+                    enum:
+                        - easy
+                        - medium
+                        - hard
+                initial_code:
+                    type: string
+                    description: Initial code template
+                    example: |-
+                        def sum_two_numbers(a, b):
+                            # Write your code here
+                            pass
+                solution:
+                    type: string
+                    description: Exercise solution
+                    example: |-
+                        def sum_two_numbers(a, b):
+                            return a + b
+                title:
+                    type: string
+                    description: Exercise title
+                    example: Sum Two Numbers
+                    maxLength: 200
+            description: Payload for updating an exercise
+            example:
+                description: Write a function that returns the sum of two numbers
+                difficulty: easy
+                initial_code: |-
+                    def sum_two_numbers(a, b):
+                        # Write your code here
+                        pass
+                solution: |-
+                    def sum_two_numbers(a, b):
+                        return a + b
+                title: Sum Two Numbers
+            required:
+                - title
+                - description
+                - initial_code
+                - solution
+                - difficulty
+        UpdateExerciseRequestBody:
+            type: object
+            properties:
+                exercise:
+                    $ref: '#/components/schemas/UpdateExercisePayload'
+            example:
+                exercise:
+                    description: Write a function that returns the sum of two numbers
+                    difficulty: easy
+                    initial_code: |-
+                        def sum_two_numbers(a, b):
+                            # Write your code here
+                            pass
+                    solution: |-
+                        def sum_two_numbers(a, b):
+                            return a + b
+                    title: Sum Two Numbers
+            required:
+                - exercise
+        UpdateTestPayload:
+            type: object
+            properties:
+                input:
+                    type: string
+                    description: Test input
+                    example: 5, 3
+                output:
+                    type: string
+                    description: Expected output
+                    example: "8"
+                public:
+                    type: boolean
+                    description: Whether test is visible to students
+                    example: true
+            description: Payload for updating a test
+            example:
+                input: 5, 3
+                output: "8"
+                public: true
+            required:
+                - input
+                - output
+                - public
+        UpdateTestRequestBody:
+            type: object
+            properties:
+                test:
+                    $ref: '#/components/schemas/UpdateTestPayload'
+            example:
+                test:
+                    input: 5, 3
+                    output: "8"
+                    public: true
+            required:
+                - test
+tags:
+    - name: codelab
+      description: Codelab microservice for coding exercises, tests, answers and attempts

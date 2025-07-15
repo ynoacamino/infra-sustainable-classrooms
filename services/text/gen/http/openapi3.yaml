@@ -1,0 +1,1702 @@
+openapi: 3.0.3
+info:
+    title: Text Management API
+    description: Microservice for managing text based content in sustainable classrooms
+    version: "1.0"
+servers:
+    - url: http://localhost:8080
+      description: Text microservice HTTP server
+    - url: http://localhost:80
+      description: Text microservice gRPC server
+paths:
+    /api/text/articles/{article_id}:
+        delete:
+            tags:
+                - text
+            summary: DeleteArticle text
+            description: Delete an article (teachers only)
+            operationId: text#DeleteArticle
+            parameters:
+                - name: article_id
+                  in: path
+                  description: Article unique identifier
+                  required: true
+                  schema:
+                    type: integer
+                    description: Article unique identifier
+                    example: 1982717836764732758
+                    format: int64
+                  example: 1348229304560131931
+                - name: session
+                  in: cookie
+                  description: Authentication session token
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: Authentication session token
+                    example: Qui vero mollitia molestiae fugiat veritatis quia.
+                  example: Et labore dolorem dolorem illo pariatur.
+            responses:
+                "200":
+                    description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/SimpleResponse'
+                            example:
+                                message: Voluptates nihil accusamus voluptatibus aliquam neque et.
+                                success: false
+                "400":
+                    description: 'invalid_input: Bad Request response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Autem perferendis.
+                            example: Iste repudiandae adipisci.
+                "401":
+                    description: 'unauthorized: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: In temporibus nemo dolores quasi voluptas.
+                            example: Natus dolores.
+                "403":
+                    description: 'permission_denied: Forbidden response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Occaecati et quia ratione.
+                            example: A ea dolores.
+                "404":
+                    description: 'not_found: Not Found response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Est dolores praesentium magni minima doloribus.
+                            example: Perspiciatis et quidem amet magni.
+                "500":
+                    description: 'internal_error: Internal Server Error response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Odio voluptatem.
+                            example: Voluptas aut et sint.
+                "503":
+                    description: 'service_unavailable: Service Unavailable response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Accusamus eos blanditiis.
+                            example: Dolorum minima.
+        get:
+            tags:
+                - text
+            summary: GetArticle text
+            description: Get article details by ID
+            operationId: text#GetArticle
+            parameters:
+                - name: article_id
+                  in: path
+                  description: Article unique identifier
+                  required: true
+                  schema:
+                    type: integer
+                    description: Article unique identifier
+                    example: 7944502146825387879
+                    format: int64
+                  example: 8524631338481368196
+                - name: session
+                  in: cookie
+                  description: Authentication session token
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: Authentication session token
+                    example: Necessitatibus officia neque ut ut.
+                  example: Itaque quo dicta dolorem.
+            responses:
+                "200":
+                    description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Article'
+                            example:
+                                content: Go is an open source programming language...
+                                created_at: 5114981342813498010
+                                id: 1001
+                                section_id: 101
+                                title: What is Go?
+                                updated_at: 3791189272105456576
+                "400":
+                    description: 'invalid_input: Bad Request response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Ipsam et et nam itaque asperiores.
+                            example: Impedit natus vel.
+                "401":
+                    description: 'unauthorized: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Sint optio quas aut iste id pariatur.
+                            example: Nulla alias numquam dolor velit.
+                "404":
+                    description: 'not_found: Not Found response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Eos et laudantium non nisi dolores dolorem.
+                            example: Quia ut sed voluptates ut deserunt.
+                "500":
+                    description: 'internal_error: Internal Server Error response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Aut officia.
+                            example: Veniam et dolorem eveniet commodi distinctio expedita.
+                "503":
+                    description: 'service_unavailable: Service Unavailable response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Ut magnam.
+                            example: Et cum quibusdam.
+        patch:
+            tags:
+                - text
+            summary: UpdateArticle text
+            description: Update article details (teachers only)
+            operationId: text#UpdateArticle
+            parameters:
+                - name: article_id
+                  in: path
+                  description: Article unique identifier
+                  required: true
+                  schema:
+                    type: integer
+                    description: Article unique identifier
+                    example: 3617858382637153714
+                    format: int64
+                  example: 2346551598889382435
+                - name: session
+                  in: cookie
+                  description: Authentication session token
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: Authentication session token
+                    example: Beatae ducimus laudantium eos qui molestiae.
+                  example: Dolorem quos.
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/UpdateArticleRequestBody'
+                        example:
+                            content: Updated article content...
+                            title: Updated Article Title
+            responses:
+                "200":
+                    description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/SimpleResponse'
+                            example:
+                                message: Aperiam quo.
+                                success: false
+                "400":
+                    description: 'invalid_input: Bad Request response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Nostrum iure quibusdam vero distinctio.
+                            example: Cumque quo at.
+                "401":
+                    description: 'unauthorized: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Corporis quas occaecati.
+                            example: Assumenda provident aut omnis.
+                "403":
+                    description: 'permission_denied: Forbidden response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Repellat accusantium et nesciunt.
+                            example: Consectetur aut.
+                "404":
+                    description: 'not_found: Not Found response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Aperiam labore.
+                            example: Eius assumenda.
+                "500":
+                    description: 'internal_error: Internal Server Error response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Et accusamus impedit totam ut.
+                            example: Ut modi sit dignissimos.
+                "503":
+                    description: 'service_unavailable: Service Unavailable response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Dolorem officia perspiciatis totam odit fuga.
+                            example: Veritatis et voluptas impedit ut omnis quasi.
+    /api/text/courses:
+        get:
+            tags:
+                - text
+            summary: ListCourses text
+            description: List all available courses
+            operationId: text#ListCourses
+            parameters:
+                - name: session
+                  in: cookie
+                  description: Authentication session token
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: Authentication session token
+                    example: Nihil veniam voluptatum qui.
+                  example: Ullam tenetur tempora ut.
+            responses:
+                "200":
+                    description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/Course'
+                                example:
+                                    - created_at: 5525328865836132560
+                                      description: Learn the basics of Go programming language.
+                                      id: 12345
+                                      imageUrl: https://example.com/course-image.jpg
+                                      title: Introduction to Go
+                                      updated_at: 6479693703021602005
+                                    - created_at: 5525328865836132560
+                                      description: Learn the basics of Go programming language.
+                                      id: 12345
+                                      imageUrl: https://example.com/course-image.jpg
+                                      title: Introduction to Go
+                                      updated_at: 6479693703021602005
+                                    - created_at: 5525328865836132560
+                                      description: Learn the basics of Go programming language.
+                                      id: 12345
+                                      imageUrl: https://example.com/course-image.jpg
+                                      title: Introduction to Go
+                                      updated_at: 6479693703021602005
+                            example:
+                                - created_at: 5525328865836132560
+                                  description: Learn the basics of Go programming language.
+                                  id: 12345
+                                  imageUrl: https://example.com/course-image.jpg
+                                  title: Introduction to Go
+                                  updated_at: 6479693703021602005
+                                - created_at: 5525328865836132560
+                                  description: Learn the basics of Go programming language.
+                                  id: 12345
+                                  imageUrl: https://example.com/course-image.jpg
+                                  title: Introduction to Go
+                                  updated_at: 6479693703021602005
+                                - created_at: 5525328865836132560
+                                  description: Learn the basics of Go programming language.
+                                  id: 12345
+                                  imageUrl: https://example.com/course-image.jpg
+                                  title: Introduction to Go
+                                  updated_at: 6479693703021602005
+                                - created_at: 5525328865836132560
+                                  description: Learn the basics of Go programming language.
+                                  id: 12345
+                                  imageUrl: https://example.com/course-image.jpg
+                                  title: Introduction to Go
+                                  updated_at: 6479693703021602005
+                "401":
+                    description: 'unauthorized: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Dolorum architecto velit ab magnam provident cupiditate.
+                            example: Voluptatibus consequatur nihil.
+                "500":
+                    description: 'internal_error: Internal Server Error response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Aperiam voluptates.
+                            example: Sunt enim aut et voluptate facilis vero.
+                "503":
+                    description: 'service_unavailable: Service Unavailable response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Recusandae omnis voluptatem in cumque ab.
+                            example: Est quisquam.
+        post:
+            tags:
+                - text
+            summary: CreateCourse text
+            description: Create a new text-based course (teachers only)
+            operationId: text#CreateCourse
+            parameters:
+                - name: session
+                  in: cookie
+                  description: Authentication session token
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: Authentication session token
+                    example: Sit dolores omnis perferendis blanditiis ut doloribus.
+                  example: Pariatur et.
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CreateCourseRequestBody'
+                        example:
+                            description: Learn the basics of Go programming language.
+                            imageUrl: https://example.com/course-image.jpg
+                            title: Introduction to Go
+            responses:
+                "201":
+                    description: Created response.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/SimpleResponse'
+                            example:
+                                message: Quo velit necessitatibus.
+                                success: true
+                "400":
+                    description: 'invalid_input: Bad Request response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Ut sint veniam.
+                            example: Dolores vero voluptate et voluptatem.
+                "401":
+                    description: 'unauthorized: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Aut iste consequuntur magnam ullam repellendus doloribus.
+                            example: Quo aut.
+                "403":
+                    description: 'permission_denied: Forbidden response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Omnis qui.
+                            example: Quia consequatur impedit et rem molestiae.
+                "500":
+                    description: 'internal_error: Internal Server Error response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Quasi unde deserunt magnam molestiae numquam aperiam.
+                            example: Similique eos consequatur dolorem.
+                "503":
+                    description: 'service_unavailable: Service Unavailable response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Voluptatem repudiandae esse.
+                            example: Qui delectus blanditiis nesciunt.
+    /api/text/courses/{course_id}:
+        delete:
+            tags:
+                - text
+            summary: DeleteCourse text
+            description: Delete a course by ID (teachers only)
+            operationId: text#DeleteCourse
+            parameters:
+                - name: course_id
+                  in: path
+                  description: Course unique identifier
+                  required: true
+                  schema:
+                    type: integer
+                    description: Course unique identifier
+                    example: 12345
+                    format: int64
+                  example: 12345
+                - name: session
+                  in: cookie
+                  description: Authentication session token
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: Authentication session token
+                    example: Iusto eius consequatur.
+                  example: Et nihil.
+            responses:
+                "200":
+                    description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/SimpleResponse'
+                            example:
+                                message: Culpa quis aut dolore fugit.
+                                success: false
+                "400":
+                    description: 'invalid_input: Bad Request response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Voluptatem vitae debitis id.
+                            example: Voluptatem laborum enim.
+                "401":
+                    description: 'unauthorized: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Beatae ea omnis provident mollitia.
+                            example: Nobis et.
+                "403":
+                    description: 'permission_denied: Forbidden response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Non qui.
+                            example: Commodi veritatis repudiandae ratione.
+                "404":
+                    description: 'not_found: Not Found response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Quam consequatur ea aut explicabo iusto modi.
+                            example: Nobis sed reprehenderit sed neque cupiditate.
+                "500":
+                    description: 'internal_error: Internal Server Error response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Blanditiis reiciendis soluta vero.
+                            example: Distinctio sint fugiat ullam.
+                "503":
+                    description: 'service_unavailable: Service Unavailable response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Ullam omnis fuga rem voluptatem voluptatem commodi.
+                            example: Est distinctio est rerum ut quaerat tempora.
+        get:
+            tags:
+                - text
+            summary: GetCourse text
+            description: Retrieve course details by ID
+            operationId: text#GetCourse
+            parameters:
+                - name: course_id
+                  in: path
+                  description: Course unique identifier
+                  required: true
+                  schema:
+                    type: integer
+                    description: Course unique identifier
+                    example: 12345
+                    format: int64
+                  example: 12345
+                - name: session
+                  in: cookie
+                  description: Authentication session token
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: Authentication session token
+                    example: Quos pariatur provident hic laboriosam optio.
+                  example: Ratione tempora sed sed harum id.
+            responses:
+                "200":
+                    description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Course'
+                            example:
+                                created_at: 4758086632461075724
+                                description: Learn the basics of Go programming language.
+                                id: 12345
+                                imageUrl: https://example.com/course-image.jpg
+                                title: Introduction to Go
+                                updated_at: 2047663265169752962
+                "400":
+                    description: 'invalid_input: Bad Request response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Aspernatur dolores omnis tenetur qui ipsa.
+                            example: Est incidunt iure est autem expedita aut.
+                "401":
+                    description: 'unauthorized: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Ad et amet saepe quia animi.
+                            example: Rerum animi consequatur possimus harum.
+                "404":
+                    description: 'not_found: Not Found response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Ad magnam quos.
+                            example: Nihil itaque saepe nesciunt voluptatem ut.
+                "500":
+                    description: 'internal_error: Internal Server Error response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Aut culpa aspernatur aspernatur nisi.
+                            example: Beatae deserunt fuga praesentium.
+                "503":
+                    description: 'service_unavailable: Service Unavailable response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Tempora quia.
+                            example: Praesentium est eius nemo vero aut.
+        patch:
+            tags:
+                - text
+            summary: UpdateCourse text
+            description: Update course details by ID (teachers only)
+            operationId: text#UpdateCourse
+            parameters:
+                - name: course_id
+                  in: path
+                  description: Course unique identifier
+                  required: true
+                  schema:
+                    type: integer
+                    description: Course unique identifier
+                    example: 12345
+                    format: int64
+                  example: 12345
+                - name: session
+                  in: cookie
+                  description: Authentication session token
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: Authentication session token
+                    example: Assumenda alias.
+                  example: Dignissimos rerum aut vel reprehenderit.
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/UpdateCourseRequestBody'
+                        example:
+                            description: Deep dive into Go programming language features.
+                            imageUrl: https://example.com/updated-course-image.jpg
+                            title: Advanced Go Programming
+            responses:
+                "200":
+                    description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/SimpleResponse'
+                            example:
+                                message: Sed atque.
+                                success: true
+                "400":
+                    description: 'invalid_input: Bad Request response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Maxime repellendus repudiandae repudiandae aut autem.
+                            example: Sit distinctio eligendi et voluptatum ullam.
+                "401":
+                    description: 'unauthorized: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Et nam ad neque sit esse.
+                            example: Omnis qui optio sed sed atque velit.
+                "403":
+                    description: 'permission_denied: Forbidden response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Culpa fugiat suscipit et dolores dolorum culpa.
+                            example: Dolores voluptatem harum atque architecto.
+                "404":
+                    description: 'not_found: Not Found response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Impedit quos doloremque.
+                            example: Ipsa cumque.
+                "500":
+                    description: 'internal_error: Internal Server Error response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Veritatis quidem temporibus.
+                            example: Facere iure praesentium asperiores sunt consequuntur.
+                "503":
+                    description: 'service_unavailable: Service Unavailable response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Non quia et quae fugit sequi.
+                            example: Libero dolorem perspiciatis velit incidunt est.
+    /api/text/courses/{course_id}/sections:
+        get:
+            tags:
+                - text
+            summary: ListSections text
+            description: List all sections for a course
+            operationId: text#ListSections
+            parameters:
+                - name: course_id
+                  in: path
+                  description: Course unique identifier
+                  required: true
+                  schema:
+                    type: integer
+                    description: Course unique identifier
+                    example: 7226086468884483916
+                    format: int64
+                  example: 7259839656757170887
+                - name: session
+                  in: cookie
+                  description: Authentication session token
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: Authentication session token
+                    example: Autem ab eos laudantium perspiciatis tenetur fugiat.
+                  example: Porro aperiam qui et.
+            responses:
+                "200":
+                    description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/Section'
+                                example:
+                                    - course_id: 12345
+                                      created_at: 8768479586831911923
+                                      description: Introduction to the course structure.
+                                      id: 101
+                                      order: 1
+                                      title: Getting Started
+                                      updated_at: 9099430046142708696
+                                    - course_id: 12345
+                                      created_at: 8768479586831911923
+                                      description: Introduction to the course structure.
+                                      id: 101
+                                      order: 1
+                                      title: Getting Started
+                                      updated_at: 9099430046142708696
+                                    - course_id: 12345
+                                      created_at: 8768479586831911923
+                                      description: Introduction to the course structure.
+                                      id: 101
+                                      order: 1
+                                      title: Getting Started
+                                      updated_at: 9099430046142708696
+                                    - course_id: 12345
+                                      created_at: 8768479586831911923
+                                      description: Introduction to the course structure.
+                                      id: 101
+                                      order: 1
+                                      title: Getting Started
+                                      updated_at: 9099430046142708696
+                            example:
+                                - course_id: 12345
+                                  created_at: 8768479586831911923
+                                  description: Introduction to the course structure.
+                                  id: 101
+                                  order: 1
+                                  title: Getting Started
+                                  updated_at: 9099430046142708696
+                                - course_id: 12345
+                                  created_at: 8768479586831911923
+                                  description: Introduction to the course structure.
+                                  id: 101
+                                  order: 1
+                                  title: Getting Started
+                                  updated_at: 9099430046142708696
+                "401":
+                    description: 'unauthorized: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Quam soluta ad cupiditate autem in.
+                            example: A voluptas.
+                "404":
+                    description: 'not_found: Not Found response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Repellat consequatur impedit nemo.
+                            example: Sint aliquam eaque libero ad sed.
+                "500":
+                    description: 'internal_error: Internal Server Error response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Ad architecto molestiae qui non.
+                            example: Fugiat provident suscipit voluptate officia quia.
+                "503":
+                    description: 'service_unavailable: Service Unavailable response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Sed error laborum reprehenderit.
+                            example: Ad et.
+        post:
+            tags:
+                - text
+            summary: CreateSection text
+            description: Create a new section in a course (teachers only)
+            operationId: text#CreateSection
+            parameters:
+                - name: course_id
+                  in: path
+                  description: Course unique identifier
+                  required: true
+                  schema:
+                    type: integer
+                    description: Course unique identifier
+                    example: 1467818813838255978
+                    format: int64
+                  example: 3404484432615626123
+                - name: session
+                  in: cookie
+                  description: Authentication session token
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: Authentication session token
+                    example: Velit inventore omnis optio iusto eaque.
+                  example: Rerum aut illo dignissimos.
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CreateSectionRequestBody'
+                        example:
+                            description: Introduction to the course structure.
+                            order: 1
+                            title: Getting Started
+            responses:
+                "201":
+                    description: Created response.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/SimpleResponse'
+                            example:
+                                message: Occaecati consectetur.
+                                success: true
+                "400":
+                    description: 'invalid_input: Bad Request response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Ut aut quibusdam.
+                            example: Voluptatum eos non odit.
+                "401":
+                    description: 'unauthorized: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Culpa eum.
+                            example: Facere soluta cumque cum aliquam molestiae.
+                "403":
+                    description: 'permission_denied: Forbidden response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Praesentium libero doloremque qui.
+                            example: Qui sed nemo.
+                "404":
+                    description: 'not_found: Not Found response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Ducimus unde consequatur sed qui necessitatibus ad.
+                            example: Iusto iusto cupiditate atque.
+                "500":
+                    description: 'internal_error: Internal Server Error response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Aut nulla laboriosam voluptate amet quo porro.
+                            example: Est facilis corrupti quos.
+                "503":
+                    description: 'service_unavailable: Service Unavailable response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Provident aut.
+                            example: Neque cum quasi consequatur sunt.
+    /api/text/sections/{section_id}:
+        delete:
+            tags:
+                - text
+            summary: DeleteSection text
+            description: Delete a section (teachers only)
+            operationId: text#DeleteSection
+            parameters:
+                - name: section_id
+                  in: path
+                  description: Section unique identifier
+                  required: true
+                  schema:
+                    type: integer
+                    description: Section unique identifier
+                    example: 1530237264617625606
+                    format: int64
+                  example: 4317415656593794859
+                - name: session
+                  in: cookie
+                  description: Authentication session token
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: Authentication session token
+                    example: Autem cumque architecto quam quae aliquid aliquam.
+                  example: Qui quis dolores quia sed.
+            responses:
+                "200":
+                    description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/SimpleResponse'
+                            example:
+                                message: Adipisci animi.
+                                success: false
+                "400":
+                    description: 'invalid_input: Bad Request response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Aut est distinctio laboriosam omnis atque.
+                            example: Repudiandae molestiae vel id.
+                "401":
+                    description: 'unauthorized: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Necessitatibus ducimus esse itaque omnis.
+                            example: Aut ea qui qui enim totam.
+                "403":
+                    description: 'permission_denied: Forbidden response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Voluptatem est vel.
+                            example: Laboriosam maiores.
+                "404":
+                    description: 'not_found: Not Found response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Voluptas repudiandae.
+                            example: Est necessitatibus laudantium consectetur.
+                "500":
+                    description: 'internal_error: Internal Server Error response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Qui tenetur et voluptatem facere ipsum debitis.
+                            example: Qui sint veritatis vero id eos quam.
+                "503":
+                    description: 'service_unavailable: Service Unavailable response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Omnis amet quos voluptas ipsa et.
+                            example: Consequatur dolores fuga doloremque tempore eum.
+        get:
+            tags:
+                - text
+            summary: GetSection text
+            description: Get section details by ID
+            operationId: text#GetSection
+            parameters:
+                - name: section_id
+                  in: path
+                  description: Section unique identifier
+                  required: true
+                  schema:
+                    type: integer
+                    description: Section unique identifier
+                    example: 6104510523137986773
+                    format: int64
+                  example: 4231078075528494134
+                - name: session
+                  in: cookie
+                  description: Authentication session token
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: Authentication session token
+                    example: Quisquam modi dolore esse dolorem.
+                  example: Sed consequatur debitis qui et.
+            responses:
+                "200":
+                    description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Section'
+                            example:
+                                course_id: 12345
+                                created_at: 4729343217099526222
+                                description: Introduction to the course structure.
+                                id: 101
+                                order: 1
+                                title: Getting Started
+                                updated_at: 3698332138544594217
+                "400":
+                    description: 'invalid_input: Bad Request response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Nihil modi dolores distinctio sint.
+                            example: Itaque illo ex ducimus aut officiis sunt.
+                "401":
+                    description: 'unauthorized: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Minus aspernatur exercitationem.
+                            example: Quasi quia ut.
+                "404":
+                    description: 'not_found: Not Found response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Laborum veniam quo sapiente.
+                            example: Commodi possimus perspiciatis incidunt et suscipit.
+                "500":
+                    description: 'internal_error: Internal Server Error response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Rerum accusantium.
+                            example: Facere aut.
+                "503":
+                    description: 'service_unavailable: Service Unavailable response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Optio voluptas aut non est.
+                            example: Voluptas et excepturi molestias sit suscipit at.
+        patch:
+            tags:
+                - text
+            summary: UpdateSection text
+            description: Update section details (teachers only)
+            operationId: text#UpdateSection
+            parameters:
+                - name: section_id
+                  in: path
+                  description: Section unique identifier
+                  required: true
+                  schema:
+                    type: integer
+                    description: Section unique identifier
+                    example: 1736085594849916856
+                    format: int64
+                  example: 6762344211136979594
+                - name: session
+                  in: cookie
+                  description: Authentication session token
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: Authentication session token
+                    example: Omnis vero et odio non earum.
+                  example: Nihil ea rerum hic ut soluta animi.
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/UpdateSectionRequestBody'
+                        example:
+                            description: Updated section description.
+                            order: 2
+                            title: Updated Section Title.
+            responses:
+                "200":
+                    description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/SimpleResponse'
+                            example:
+                                message: Ab officia tenetur.
+                                success: false
+                "400":
+                    description: 'invalid_input: Bad Request response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Sint voluptate et.
+                            example: Facilis delectus consequatur.
+                "401":
+                    description: 'unauthorized: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Sunt in rem aliquam.
+                            example: Occaecati at.
+                "403":
+                    description: 'permission_denied: Forbidden response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Qui dignissimos.
+                            example: Sunt excepturi esse ullam magnam dolorum.
+                "404":
+                    description: 'not_found: Not Found response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Excepturi soluta.
+                            example: Reprehenderit ipsa sint cupiditate nihil dolores corrupti.
+                "500":
+                    description: 'internal_error: Internal Server Error response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Assumenda hic.
+                            example: Esse occaecati assumenda.
+                "503":
+                    description: 'service_unavailable: Service Unavailable response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Tenetur dolor consectetur iusto.
+                            example: Rerum eum sed possimus.
+    /api/text/sections/{section_id}/articles:
+        get:
+            tags:
+                - text
+            summary: ListArticles text
+            description: List all articles for a section
+            operationId: text#ListArticles
+            parameters:
+                - name: section_id
+                  in: path
+                  description: Section unique identifier
+                  required: true
+                  schema:
+                    type: integer
+                    description: Section unique identifier
+                    example: 3427665112831280783
+                    format: int64
+                  example: 3968094256701422103
+                - name: session
+                  in: cookie
+                  description: Authentication session token
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: Authentication session token
+                    example: Repudiandae sit et ipsam repellat velit.
+                  example: Ut et.
+            responses:
+                "200":
+                    description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/Article'
+                                example:
+                                    - content: Go is an open source programming language...
+                                      created_at: 5654282454714979230
+                                      id: 1001
+                                      section_id: 101
+                                      title: What is Go?
+                                      updated_at: 3250568116949988458
+                                    - content: Go is an open source programming language...
+                                      created_at: 5654282454714979230
+                                      id: 1001
+                                      section_id: 101
+                                      title: What is Go?
+                                      updated_at: 3250568116949988458
+                                    - content: Go is an open source programming language...
+                                      created_at: 5654282454714979230
+                                      id: 1001
+                                      section_id: 101
+                                      title: What is Go?
+                                      updated_at: 3250568116949988458
+                                    - content: Go is an open source programming language...
+                                      created_at: 5654282454714979230
+                                      id: 1001
+                                      section_id: 101
+                                      title: What is Go?
+                                      updated_at: 3250568116949988458
+                            example:
+                                - content: Go is an open source programming language...
+                                  created_at: 5654282454714979230
+                                  id: 1001
+                                  section_id: 101
+                                  title: What is Go?
+                                  updated_at: 3250568116949988458
+                                - content: Go is an open source programming language...
+                                  created_at: 5654282454714979230
+                                  id: 1001
+                                  section_id: 101
+                                  title: What is Go?
+                                  updated_at: 3250568116949988458
+                                - content: Go is an open source programming language...
+                                  created_at: 5654282454714979230
+                                  id: 1001
+                                  section_id: 101
+                                  title: What is Go?
+                                  updated_at: 3250568116949988458
+                                - content: Go is an open source programming language...
+                                  created_at: 5654282454714979230
+                                  id: 1001
+                                  section_id: 101
+                                  title: What is Go?
+                                  updated_at: 3250568116949988458
+                "401":
+                    description: 'unauthorized: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Qui omnis laboriosam.
+                            example: Et quam commodi et amet sequi ut.
+                "404":
+                    description: 'not_found: Not Found response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Doloremque rem voluptas.
+                            example: Libero qui ipsam ad et at pariatur.
+                "500":
+                    description: 'internal_error: Internal Server Error response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Eum maxime.
+                            example: Facere ducimus sed temporibus eum et.
+                "503":
+                    description: 'service_unavailable: Service Unavailable response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Rerum ducimus fuga veritatis sed.
+                            example: Officiis sit harum qui totam nemo.
+        post:
+            tags:
+                - text
+            summary: CreateArticle text
+            description: Create a new article in a section (teachers only)
+            operationId: text#CreateArticle
+            parameters:
+                - name: section_id
+                  in: path
+                  description: Section unique identifier
+                  required: true
+                  schema:
+                    type: integer
+                    description: Section unique identifier
+                    example: 3234497190792041800
+                    format: int64
+                  example: 5170127479921325188
+                - name: session
+                  in: cookie
+                  description: Authentication session token
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: Authentication session token
+                    example: Ex dicta.
+                  example: Blanditiis delectus tempore voluptatem tempore atque.
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CreateArticleRequestBody'
+                        example:
+                            content: Go is an open source programming language...
+                            title: What is Go?
+            responses:
+                "201":
+                    description: Created response.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/SimpleResponse'
+                            example:
+                                message: Fuga sed.
+                                success: true
+                "400":
+                    description: 'invalid_input: Bad Request response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Aut minima doloribus hic exercitationem quas.
+                            example: Voluptatibus et vel architecto consectetur.
+                "401":
+                    description: 'unauthorized: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Voluptas minus.
+                            example: Quo qui.
+                "403":
+                    description: 'permission_denied: Forbidden response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Blanditiis ut ipsam eaque voluptas commodi eum.
+                            example: Voluptatum voluptatem earum omnis.
+                "404":
+                    description: 'not_found: Not Found response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Eligendi consequatur iusto pariatur qui.
+                            example: Delectus illo.
+                "500":
+                    description: 'internal_error: Internal Server Error response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Eius odit.
+                            example: Maiores nesciunt quia sit.
+                "503":
+                    description: 'service_unavailable: Service Unavailable response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Hic placeat sed consequatur ea.
+                            example: Facere eos.
+components:
+    schemas:
+        Article:
+            type: object
+            properties:
+                content:
+                    type: string
+                    description: Content of the article
+                    example: Go is an open source programming language...
+                created_at:
+                    type: integer
+                    description: Timestamp when the article was created (milliseconds since epoch)
+                    example: 1976550419311036902
+                    format: int64
+                id:
+                    type: integer
+                    description: Unique identifier for the article
+                    example: 1001
+                    format: int64
+                section_id:
+                    type: integer
+                    description: ID of the parent section
+                    example: 101
+                    format: int64
+                title:
+                    type: string
+                    description: Title of the article
+                    example: What is Go?
+                updated_at:
+                    type: integer
+                    description: Timestamp when the article was last updated (milliseconds since epoch)
+                    example: 4119419324467251271
+                    format: int64
+            description: Article details within a section
+            example:
+                content: Go is an open source programming language...
+                created_at: 3390046555449953896
+                id: 1001
+                section_id: 101
+                title: What is Go?
+                updated_at: 4443705951006882838
+            required:
+                - id
+                - section_id
+                - title
+                - content
+                - created_at
+                - updated_at
+        Course:
+            type: object
+            properties:
+                created_at:
+                    type: integer
+                    description: Timestamp when the course was created (milliseconds since epoch)
+                    example: 7829802509732690076
+                    format: int64
+                description:
+                    type: string
+                    description: Description of the course
+                    example: Learn the basics of Go programming language.
+                id:
+                    type: integer
+                    description: Unique identifier for the course
+                    example: 12345
+                    format: int64
+                imageUrl:
+                    type: string
+                    description: URL of the course image
+                    example: https://example.com/course-image.jpg
+                title:
+                    type: string
+                    description: Title of the course
+                    example: Introduction to Go
+                updated_at:
+                    type: integer
+                    description: Timestamp when the course was last updated (milliseconds since epoch)
+                    example: 2591684605226687812
+                    format: int64
+            description: Course details
+            example:
+                created_at: 7196887183807208872
+                description: Learn the basics of Go programming language.
+                id: 12345
+                imageUrl: https://example.com/course-image.jpg
+                title: Introduction to Go
+                updated_at: 4607367164675870849
+            required:
+                - id
+                - title
+                - description
+                - created_at
+                - updated_at
+        CreateArticleRequestBody:
+            type: object
+            properties:
+                content:
+                    type: string
+                    description: Article content
+                    example: Go is an open source programming language...
+                    minLength: 10
+                title:
+                    type: string
+                    description: Article title
+                    example: What is Go?
+                    minLength: 3
+                    maxLength: 100
+            example:
+                content: Go is an open source programming language...
+                title: What is Go?
+            required:
+                - title
+                - content
+        CreateCourseRequestBody:
+            type: object
+            properties:
+                description:
+                    type: string
+                    description: Course description
+                    example: Learn the basics of Go programming language.
+                    minLength: 10
+                    maxLength: 300
+                imageUrl:
+                    type: string
+                    description: Course image URL
+                    example: https://example.com/course-image.jpg
+                    format: uri
+                    minLength: 5
+                    maxLength: 500
+                title:
+                    type: string
+                    description: Course title
+                    example: Introduction to Go
+                    minLength: 3
+                    maxLength: 150
+            example:
+                description: Learn the basics of Go programming language.
+                imageUrl: https://example.com/course-image.jpg
+                title: Introduction to Go
+            required:
+                - title
+                - description
+        CreateSectionRequestBody:
+            type: object
+            properties:
+                description:
+                    type: string
+                    description: Section description
+                    example: Introduction to the course structure.
+                    minLength: 5
+                    maxLength: 200
+                order:
+                    type: integer
+                    description: Order of the section in the course (optional, if not set it will be auto-numbered)
+                    example: 1
+                    format: int64
+                    minimum: 1
+                title:
+                    type: string
+                    description: Section title
+                    example: Getting Started
+                    minLength: 3
+                    maxLength: 100
+            example:
+                description: Introduction to the course structure.
+                order: 1
+                title: Getting Started
+            required:
+                - description
+                - title
+        Section:
+            type: object
+            properties:
+                course_id:
+                    type: integer
+                    description: ID of the parent course
+                    example: 12345
+                    format: int64
+                created_at:
+                    type: integer
+                    description: Timestamp when the section was created (milliseconds since epoch)
+                    example: 2158727148320312748
+                    format: int64
+                description:
+                    type: string
+                    description: Description of the section
+                    example: Introduction to the course structure.
+                id:
+                    type: integer
+                    description: Unique identifier for the section
+                    example: 101
+                    format: int64
+                order:
+                    type: integer
+                    description: Order of the section in the course (autonumbered for frontend rendering)
+                    example: 1
+                    format: int64
+                    minimum: 1
+                title:
+                    type: string
+                    description: Title of the section
+                    example: Getting Started
+                updated_at:
+                    type: integer
+                    description: Timestamp when the section was last updated (milliseconds since epoch)
+                    example: 3233089192712193867
+                    format: int64
+            description: Section details within a course
+            example:
+                course_id: 12345
+                created_at: 3230987147552229757
+                description: Introduction to the course structure.
+                id: 101
+                order: 1
+                title: Getting Started
+                updated_at: 7289809845868828632
+            required:
+                - id
+                - course_id
+                - description
+                - title
+                - order
+                - created_at
+                - updated_at
+        SimpleResponse:
+            type: object
+            properties:
+                message:
+                    type: string
+                    description: Response message
+                    example: Nihil consectetur accusamus quam.
+                success:
+                    type: boolean
+                    description: Operation success status
+                    example: false
+            description: Basic response with success status and message
+            example:
+                message: Omnis ducimus.
+                success: true
+            required:
+                - success
+                - message
+        UpdateArticleRequestBody:
+            type: object
+            properties:
+                content:
+                    type: string
+                    description: Article content
+                    example: Updated article content...
+                    minLength: 10
+                title:
+                    type: string
+                    description: Article title
+                    example: Updated Article Title
+                    minLength: 3
+                    maxLength: 100
+            example:
+                content: Updated article content...
+                title: Updated Article Title
+        UpdateCourseRequestBody:
+            type: object
+            properties:
+                description:
+                    type: string
+                    description: Course description
+                    example: Deep dive into Go programming language features.
+                    minLength: 10
+                    maxLength: 300
+                imageUrl:
+                    type: string
+                    description: Course image URL
+                    example: https://example.com/updated-course-image.jpg
+                    format: uri
+                    minLength: 5
+                    maxLength: 500
+                title:
+                    type: string
+                    description: Course title
+                    example: Advanced Go Programming
+                    minLength: 3
+                    maxLength: 150
+            example:
+                description: Deep dive into Go programming language features.
+                imageUrl: https://example.com/updated-course-image.jpg
+                title: Advanced Go Programming
+        UpdateSectionRequestBody:
+            type: object
+            properties:
+                description:
+                    type: string
+                    description: Section description
+                    example: Updated section description.
+                    minLength: 5
+                    maxLength: 200
+                order:
+                    type: integer
+                    description: Order of the section in the course (optional, if set will update the order)
+                    example: 2
+                    format: int64
+                    minimum: 1
+                title:
+                    type: string
+                    description: Section title
+                    example: Updated Section Title.
+                    minLength: 3
+                    maxLength: 100
+            example:
+                description: Updated section description.
+                order: 2
+                title: Updated Section Title.
+tags:
+    - name: text
+      description: Course management service for text-based learning, with sections and articles. Only teachers can create, update, or delete content. All endpoints require session_token via cookie.

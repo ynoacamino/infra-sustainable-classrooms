@@ -1,0 +1,94 @@
+// Code generated with goa v3.21.1, DO NOT EDIT.
+//
+// profiles protocol buffer definition
+//
+// Command:
+// $ goa gen
+// github.com/ynoacamino/infra-sustainable-classrooms/services/profiles/design/api
+// -o ./services/profiles/
+
+syntax = "proto3";
+
+package profiles;
+
+option go_package = "/profilespb";
+
+// Profiles microservice for managing student and teacher profiles
+service Profiles {
+	// Get user's complete profile
+	rpc GetCompleteProfile (GetCompleteProfileRequest) returns (GetCompleteProfileResponse);
+	// Get public profile information by user ID
+	rpc GetPublicProfileByID (GetPublicProfileByIDRequest) returns (GetPublicProfileByIDResponse);
+	// Validate user role for inter-service communication
+	rpc ValidateUserRole (ValidateUserRoleRequest) returns (ValidateUserRoleResponse);
+}
+
+message GetCompleteProfileRequest {
+	// Authentication session token
+	string session_token = 1;
+}
+
+message GetCompleteProfileResponse {
+	// User identifier
+	sint64 user_id = 1;
+	// User role (student, teacher)
+	string role = 2;
+	// First name
+	string first_name = 3;
+	// Last name
+	string last_name = 4;
+	// Email address
+	string email = 5;
+	// Phone number
+	optional string phone = 6;
+	// Profile picture URL
+	optional string avatar_url = 7;
+	// Biography/description
+	optional string bio = 8;
+	// Profile creation timestamp
+	sint64 created_at = 9;
+	// Last update timestamp
+	optional sint64 updated_at = 10;
+	// Whether profile is active
+	bool is_active = 11;
+	// Grade level (for students)
+	optional string grade_level = 12;
+	// Major/field of study (for students)
+	optional string major = 13;
+	// Position/title (for teachers)
+	optional string position = 14;
+}
+
+message GetPublicProfileByIDRequest {
+	// User ID to retrieve profile for
+	sint64 user_id = 1;
+}
+
+message GetPublicProfileByIDResponse {
+	// User identifier
+	sint64 user_id = 1;
+	// User role
+	string role = 2;
+	// First name
+	string first_name = 3;
+	// Last name
+	string last_name = 4;
+	// Profile picture URL
+	optional string avatar_url = 5;
+	// Public biography
+	optional string bio = 6;
+	// Whether profile is active
+	bool is_active = 7;
+}
+
+message ValidateUserRoleRequest {
+	// User ID to validate
+	sint64 user_id = 1;
+}
+
+message ValidateUserRoleResponse {
+	// User identifier
+	sint64 user_id = 1;
+	// User role
+	string role = 2;
+}

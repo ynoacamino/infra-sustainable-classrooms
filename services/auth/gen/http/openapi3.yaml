@@ -1,0 +1,893 @@
+openapi: 3.0.3
+info:
+    title: Authentication Microservice
+    description: Microservice for authentication using OTP strategy with HTTP and gRPC support
+    version: "1.0"
+servers:
+    - url: http://localhost:8080
+      description: Auth service server
+    - url: http://localhost:80
+      description: Auth service gRPC server
+paths:
+    /api/auth/backup/verify:
+        post:
+            tags:
+                - auth
+            summary: VerifyBackupCode auth
+            description: Verify backup recovery code as alternative to TOTP
+            operationId: auth#VerifyBackupCode
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/VerifyBackupCodeRequestBody'
+                        example:
+                            backup_code: ABC12345
+                            device_info:
+                                device_id: Et provident ab ea alias minus.
+                                ip_address: Debitis illo iusto maxime voluptas aliquid totam.
+                                platform: Aut doloribus consequatur aut.
+                                user_agent: Vel blanditiis ratione corrupti nostrum.
+                            identifier: Reprehenderit quae.
+            responses:
+                "200":
+                    description: OK response.
+                    headers:
+                        Set-Cookie:
+                            description: Authentication session cookie
+                            schema:
+                                type: string
+                                description: Authentication session cookie
+                                example: Eum similique perferendis vero.
+                            example: Voluptas ut numquam.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/BackupCodeResponse2'
+                            example:
+                                message: Facilis molestiae sequi quibusdam dolores.
+                                remaining_codes: 3493640863600349317
+                                success: false
+                                user:
+                                    created_at: 1697750117362507490
+                                    id: 6499148755757050421
+                                    identifier: Cupiditate adipisci omnis ex porro quia illo.
+                                    is_verified: true
+                                    last_login: 2439583339064803490
+                                    metadata:
+                                        Eius suscipit laboriosam laborum voluptas at ut.: Cum voluptate.
+                                        Modi est adipisci autem rem fuga.: Architecto aspernatur vel.
+                                        Qui sit reprehenderit a ut et ea.: Repudiandae fugiat molestiae aliquid voluptas.
+                "400":
+                    description: 'invalid_input: Bad Request response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Eligendi velit labore in alias.
+                            example: Dolores reiciendis rem maxime temporibus quod.
+                "401":
+                    description: 'invalid_otp: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Vero culpa.
+                            example: Modi ab pariatur ducimus ex non deserunt.
+                "404":
+                    description: 'user_not_found: Not Found response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Culpa laborum et nesciunt nesciunt.
+                            example: Provident sed qui dolore illo eligendi autem.
+    /api/auth/logout:
+        post:
+            tags:
+                - auth
+            summary: Logout auth
+            description: Logout user and invalidate session
+            operationId: auth#Logout
+            parameters:
+                - name: session
+                  in: cookie
+                  description: Session token to invalidate
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: Session token to invalidate
+                    example: Laudantium quos ut.
+                  example: Non velit.
+            responses:
+                "200":
+                    description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/SimpleResponse'
+                            example:
+                                message: Quia accusantium excepturi sit.
+                                session_token: Aliquam numquam voluptatem ad veritatis qui.
+                                success: true
+    /api/auth/profile:
+        get:
+            tags:
+                - auth
+            summary: GetUserProfile auth
+            description: Get authenticated user profile
+            operationId: auth#GetUserProfile
+            parameters:
+                - name: session
+                  in: cookie
+                  description: Session token for authentication
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: Session token for authentication
+                    example: Quo rem dolore aspernatur qui.
+                  example: Sit et accusamus nobis itaque.
+            responses:
+                "200":
+                    description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/User'
+                            example:
+                                created_at: 4974573348844628574
+                                id: 2324436208130792780
+                                identifier: Sint ea.
+                                is_verified: false
+                                last_login: 125165631568283939
+                                metadata:
+                                    Fugit vitae totam aut dignissimos.: Eum est corrupti non.
+                "401":
+                    description: 'unauthorized: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Magni natus.
+                            example: Sed saepe a.
+                "404":
+                    description: 'user_not_found: Not Found response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Commodi est quos error.
+                            example: Minima deleniti veniam quia expedita assumenda labore.
+    /api/auth/session/refresh:
+        post:
+            tags:
+                - auth
+            summary: RefreshSession auth
+            description: Refresh user session using existing token
+            operationId: auth#RefreshSession
+            parameters:
+                - name: session
+                  in: cookie
+                  description: Current session token
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: Current session token
+                    example: Recusandae omnis necessitatibus veniam.
+                  example: Itaque corporis ipsam officia quaerat alias.
+            responses:
+                "200":
+                    description: OK response.
+                    headers:
+                        Set-Cookie:
+                            description: Refreshed session token
+                            schema:
+                                type: string
+                                description: Refreshed session token
+                                example: Qui quaerat.
+                            example: Voluptas sed deleniti.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/SimpleResponse2'
+                            example:
+                                message: Rerum et deserunt saepe quia.
+                                success: true
+                "401":
+                    description: 'unauthorized: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Numquam sit doloribus ipsa fuga.
+                            example: Asperiores veniam porro quisquam ea.
+    /api/auth/totp/generate:
+        post:
+            tags:
+                - auth
+            summary: GenerateSecret auth
+            description: Generate TOTP secret for new user registration
+            operationId: auth#GenerateSecret
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/GenerateSecretRequestBody'
+                        example:
+                            identifier: user@example.com
+            responses:
+                "200":
+                    description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/TOTPSecret'
+                            example:
+                                backup_codes:
+                                    - Error doloremque.
+                                    - Deserunt repudiandae quod.
+                                    - Quia rerum dolores et.
+                                issuer: Illum ducimus et voluptatem.
+                                totp_url: Voluptatem impedit rem eligendi consectetur.
+                "400":
+                    description: 'invalid_input: Bad Request response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Quidem delectus iure adipisci.
+                            example: Reprehenderit soluta.
+                "503":
+                    description: 'service_unavailable: Service Unavailable response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Animi et odio accusamus.
+                            example: Est accusantium perferendis vel deleniti reiciendis.
+    /api/auth/totp/verify:
+        post:
+            tags:
+                - auth
+            summary: VerifyTOTP auth
+            description: Verify TOTP code and authenticate user
+            operationId: auth#VerifyTOTP
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/VerifyTOTPRequestBody'
+                        example:
+                            device_info:
+                                device_id: Et provident ab ea alias minus.
+                                ip_address: Debitis illo iusto maxime voluptas aliquid totam.
+                                platform: Aut doloribus consequatur aut.
+                                user_agent: Vel blanditiis ratione corrupti nostrum.
+                            identifier: Qui laudantium voluptatem assumenda ratione rem tempora.
+                            totp_code: "123456"
+            responses:
+                "200":
+                    description: OK response.
+                    headers:
+                        Set-Cookie:
+                            description: Authentication session cookie
+                            schema:
+                                type: string
+                                description: Authentication session cookie
+                                example: Autem vero necessitatibus quis sunt ut nulla.
+                            example: Qui corporis aut omnis vel officia.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/AuthResponse2'
+                            example:
+                                message: Nihil sed quas sequi nemo occaecati voluptatum.
+                                success: true
+                                user:
+                                    created_at: 1697750117362507490
+                                    id: 6499148755757050421
+                                    identifier: Cupiditate adipisci omnis ex porro quia illo.
+                                    is_verified: true
+                                    last_login: 2439583339064803490
+                                    metadata:
+                                        Eius suscipit laboriosam laborum voluptas at ut.: Cum voluptate.
+                                        Modi est adipisci autem rem fuga.: Architecto aspernatur vel.
+                                        Qui sit reprehenderit a ut et ea.: Repudiandae fugiat molestiae aliquid voluptas.
+                "400":
+                    description: 'invalid_input: Bad Request response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Similique vitae.
+                            example: Necessitatibus perspiciatis nihil sapiente tempore velit omnis.
+                "401":
+                    description: 'invalid_otp: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: At quis quia non reprehenderit quo necessitatibus.
+                            example: Placeat assumenda laboriosam aliquam.
+                "404":
+                    description: 'user_not_found: Not Found response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Voluptas saepe optio sint.
+                            example: Nulla placeat rerum.
+components:
+    schemas:
+        AuthAttempt:
+            type: object
+            properties:
+                attempt_type:
+                    type: string
+                    description: Type of authentication attempt
+                    example: Eum voluptas commodi necessitatibus illum praesentium.
+                attempted_at:
+                    type: integer
+                    description: Attempt timestamp in milliseconds
+                    example: 2499728209399777341
+                    format: int64
+                id:
+                    type: integer
+                    description: Attempt unique identifier
+                    example: 2390823818548567110
+                    format: int64
+                identifier:
+                    type: string
+                    description: User identifier
+                    example: Possimus voluptatibus.
+                ip_address:
+                    type: string
+                    description: Client IP address
+                    example: Blanditiis quis iure ab.
+                success:
+                    type: boolean
+                    description: Whether the attempt was successful
+                    example: true
+            description: Authentication attempt information
+            example:
+                attempt_type: Ratione blanditiis non.
+                attempted_at: 73079538701088462
+                id: 1781495560505748585
+                identifier: Quibusdam ullam soluta aut similique reprehenderit.
+                ip_address: Et adipisci eius.
+                success: false
+            required:
+                - id
+                - identifier
+                - ip_address
+                - attempt_type
+                - success
+                - attempted_at
+        AuthResponse:
+            type: object
+            properties:
+                message:
+                    type: string
+                    description: Response message
+                    example: Occaecati quibusdam dolor.
+                session_token:
+                    type: string
+                    description: Session token for cookie
+                    example: Eligendi quasi vero modi earum neque et.
+                success:
+                    type: boolean
+                    description: Authentication success status
+                    example: false
+                user:
+                    $ref: '#/components/schemas/User'
+            description: Standard authentication response
+            example:
+                message: Quia quam dolores excepturi.
+                session_token: Ipsam eius assumenda et enim.
+                success: true
+                user:
+                    created_at: 4709232224494564193
+                    id: 3718707274165986015
+                    identifier: Consequatur maiores at cupiditate.
+                    is_verified: true
+                    last_login: 1892569019354447307
+                    metadata:
+                        Consequatur consectetur et.: Voluptas ex sit voluptate dolores.
+                        Ea pariatur itaque.: Repellendus rerum tempore.
+                        Error quasi.: Tenetur et voluptate possimus.
+            required:
+                - success
+                - message
+                - user
+                - session_token
+        AuthResponse2:
+            type: object
+            properties:
+                message:
+                    type: string
+                    description: Response message
+                    example: Quae quaerat.
+                success:
+                    type: boolean
+                    description: Authentication success status
+                    example: false
+                user:
+                    $ref: '#/components/schemas/User'
+            example:
+                message: Dolorem perferendis libero omnis consequuntur ut alias.
+                success: false
+                user:
+                    created_at: 1697750117362507490
+                    id: 6499148755757050421
+                    identifier: Cupiditate adipisci omnis ex porro quia illo.
+                    is_verified: true
+                    last_login: 2439583339064803490
+                    metadata:
+                        Eius suscipit laboriosam laborum voluptas at ut.: Cum voluptate.
+                        Modi est adipisci autem rem fuga.: Architecto aspernatur vel.
+                        Qui sit reprehenderit a ut et ea.: Repudiandae fugiat molestiae aliquid voluptas.
+            required:
+                - success
+                - message
+                - user
+        BackupCode:
+            type: object
+            properties:
+                created_at:
+                    type: integer
+                    description: Creation timestamp in milliseconds
+                    example: 7789851428439329391
+                    format: int64
+                id:
+                    type: integer
+                    description: Backup code unique identifier
+                    example: 1633874758987753364
+                    format: int64
+                used_at:
+                    type: integer
+                    description: Usage timestamp in milliseconds
+                    example: 1550959026224128017
+                    format: int64
+                user_id:
+                    type: integer
+                    description: Associated user ID
+                    example: 379484930625404040
+                    format: int64
+            description: Backup recovery code information
+            example:
+                created_at: 6755063983474679120
+                id: 8358375349601744513
+                used_at: 6366664568135608378
+                user_id: 475758206594594986
+            required:
+                - id
+                - user_id
+                - created_at
+        BackupCodeResponse:
+            type: object
+            properties:
+                message:
+                    type: string
+                    description: Response message
+                    example: Omnis impedit ipsa vel.
+                remaining_codes:
+                    type: integer
+                    description: Number of remaining backup codes
+                    example: 4288181976185748519
+                    format: int64
+                session_token:
+                    type: string
+                    description: Session token for cookie
+                    example: Eos alias recusandae consectetur voluptatibus.
+                success:
+                    type: boolean
+                    description: Authentication success status
+                    example: true
+                user:
+                    $ref: '#/components/schemas/User'
+            description: Backup code verification response
+            example:
+                message: Aut eum.
+                remaining_codes: 6081521932558538281
+                session_token: Repudiandae ex.
+                success: true
+                user:
+                    created_at: 4709232224494564193
+                    id: 3718707274165986015
+                    identifier: Consequatur maiores at cupiditate.
+                    is_verified: true
+                    last_login: 1892569019354447307
+                    metadata:
+                        Consequatur consectetur et.: Voluptas ex sit voluptate dolores.
+                        Ea pariatur itaque.: Repellendus rerum tempore.
+                        Error quasi.: Tenetur et voluptate possimus.
+            required:
+                - success
+                - message
+                - user
+                - remaining_codes
+                - session_token
+        BackupCodeResponse2:
+            type: object
+            properties:
+                message:
+                    type: string
+                    description: Response message
+                    example: Nihil est.
+                remaining_codes:
+                    type: integer
+                    description: Number of remaining backup codes
+                    example: 5349942191912183450
+                    format: int64
+                success:
+                    type: boolean
+                    description: Authentication success status
+                    example: true
+                user:
+                    $ref: '#/components/schemas/User'
+            example:
+                message: Et qui adipisci.
+                remaining_codes: 3565588639392978436
+                success: true
+                user:
+                    created_at: 1697750117362507490
+                    id: 6499148755757050421
+                    identifier: Cupiditate adipisci omnis ex porro quia illo.
+                    is_verified: true
+                    last_login: 2439583339064803490
+                    metadata:
+                        Eius suscipit laboriosam laborum voluptas at ut.: Cum voluptate.
+                        Modi est adipisci autem rem fuga.: Architecto aspernatur vel.
+                        Qui sit reprehenderit a ut et ea.: Repudiandae fugiat molestiae aliquid voluptas.
+            required:
+                - success
+                - message
+                - user
+                - remaining_codes
+        DeviceInfo:
+            type: object
+            properties:
+                device_id:
+                    type: string
+                    description: Unique device identifier
+                    example: Ut ipsam rerum corporis est atque debitis.
+                ip_address:
+                    type: string
+                    description: Client IP address
+                    example: Quis facilis cupiditate fuga quia.
+                platform:
+                    type: string
+                    description: Platform (web, ios, android)
+                    example: Alias ut itaque.
+                user_agent:
+                    type: string
+                    description: Browser/app user agent
+                    example: Et libero doloribus qui iste.
+            description: Device information for security purposes
+            example:
+                device_id: Corporis quas optio aliquam consequatur dolorem suscipit.
+                ip_address: Qui quam facilis esse.
+                platform: Voluptatem iusto.
+                user_agent: Et voluptate voluptatum nostrum quidem eos.
+        GenerateSecretRequestBody:
+            type: object
+            properties:
+                identifier:
+                    type: string
+                    description: User identifier (username/email)
+                    example: user@example.com
+                    minLength: 3
+                    maxLength: 100
+            example:
+                identifier: user@example.com
+            required:
+                - identifier
+        Session:
+            type: object
+            properties:
+                created_at:
+                    type: integer
+                    description: Session creation timestamp in milliseconds
+                    example: 3178931594349043247
+                    format: int64
+                device_id:
+                    type: string
+                    description: Device identifier
+                    example: Quibusdam optio expedita molestias.
+                expires_at:
+                    type: integer
+                    description: Session expiration timestamp in milliseconds
+                    example: 3390178089119894858
+                    format: int64
+                id:
+                    type: integer
+                    description: Session unique identifier
+                    example: 6612656724674986881
+                    format: int64
+                ip_address:
+                    type: string
+                    description: Client IP address
+                    example: Voluptas velit eveniet consequuntur est corporis.
+                is_active:
+                    type: boolean
+                    description: Session active status
+                    example: true
+                last_accessed:
+                    type: integer
+                    description: Last access timestamp in milliseconds
+                    example: 3505705990664340638
+                    format: int64
+                platform:
+                    type: string
+                    description: Platform (web, ios, android)
+                    example: Culpa nesciunt inventore quae quis velit molestias.
+                user_agent:
+                    type: string
+                    description: Browser/app user agent
+                    example: Autem nam voluptas ipsa unde quibusdam.
+                user_id:
+                    type: integer
+                    description: Associated user ID
+                    example: 801828960436102736
+                    format: int64
+            description: User session information
+            example:
+                created_at: 2744180817754084770
+                device_id: Similique vel dolorem et.
+                expires_at: 999998010790732201
+                id: 480599222235030493
+                ip_address: In consequatur dicta.
+                is_active: false
+                last_accessed: 5612516649801176918
+                platform: Ut doloremque omnis.
+                user_agent: Aut modi nemo fuga.
+                user_id: 1479809398492091695
+            required:
+                - id
+                - user_id
+                - created_at
+                - expires_at
+                - is_active
+        SimpleResponse:
+            type: object
+            properties:
+                message:
+                    type: string
+                    description: Response message
+                    example: Labore placeat impedit.
+                session_token:
+                    type: string
+                    description: Session token for cookie (when applicable)
+                    example: Autem omnis.
+                success:
+                    type: boolean
+                    description: Operation success status
+                    example: true
+            description: Simple response with success status and message
+            example:
+                message: Quod et corporis perferendis ad.
+                session_token: Necessitatibus suscipit aut nostrum nobis.
+                success: false
+            required:
+                - success
+                - message
+        SimpleResponse2:
+            type: object
+            properties:
+                message:
+                    type: string
+                    description: Response message
+                    example: Quia ea et omnis ab doloremque magni.
+                success:
+                    type: boolean
+                    description: Operation success status
+                    example: true
+            example:
+                message: Et delectus nisi.
+                success: true
+            required:
+                - success
+                - message
+        TOTPSecret:
+            type: object
+            properties:
+                backup_codes:
+                    type: array
+                    items:
+                        type: string
+                        example: Exercitationem qui voluptatem.
+                    description: Backup recovery codes
+                    example:
+                        - Quibusdam aut at fugiat et excepturi et.
+                        - Exercitationem saepe laboriosam ut.
+                issuer:
+                    type: string
+                    description: Service name for authenticator app
+                    example: Id dolor iure repellat quia eum.
+                totp_url:
+                    type: string
+                    description: TOTP URL in otpauth:// format for authenticator apps
+                    example: Corrupti et.
+            description: TOTP secret information for user registration
+            example:
+                backup_codes:
+                    - Recusandae ut aliquid sit atque.
+                    - Et repellat.
+                issuer: Voluptates nobis est voluptatem quis ipsa.
+                totp_url: Dolor aliquam sint quaerat possimus minima.
+            required:
+                - totp_url
+                - backup_codes
+                - issuer
+        User:
+            type: object
+            properties:
+                created_at:
+                    type: integer
+                    description: Account creation timestamp in milliseconds
+                    example: 7517534423270747003
+                    format: int64
+                id:
+                    type: integer
+                    description: User unique identifier
+                    example: 5487593374481063335
+                    format: int64
+                identifier:
+                    type: string
+                    description: Phone number or email
+                    example: Ut nihil esse.
+                is_verified:
+                    type: boolean
+                    description: Account verification status
+                    example: true
+                last_login:
+                    type: integer
+                    description: Last login timestamp in milliseconds
+                    example: 7462711643691940940
+                    format: int64
+                metadata:
+                    type: object
+                    description: Additional user metadata
+                    example:
+                        Earum rerum voluptates.: Accusantium et adipisci doloribus sequi sed dolorem.
+                        Est est amet et voluptates atque.: Expedita cumque voluptatum.
+                    additionalProperties:
+                        type: string
+                        example: Et voluptatum architecto reiciendis fugiat eum.
+            description: User information
+            example:
+                created_at: 6914751553011375605
+                id: 2797033476692716717
+                identifier: Iste enim.
+                is_verified: false
+                last_login: 9034357202418608551
+                metadata:
+                    Consequatur qui a sunt.: Repudiandae vel ducimus.
+                    Molestiae labore omnis.: Omnis perferendis nam quos asperiores est vel.
+                    Ut aliquam et et architecto nam.: Voluptatem quasi rem voluptatum.
+            required:
+                - id
+                - identifier
+                - created_at
+                - is_verified
+        UserValidationResponse:
+            type: object
+            properties:
+                session:
+                    $ref: '#/components/schemas/Session'
+                user:
+                    $ref: '#/components/schemas/User'
+                valid:
+                    type: boolean
+                    description: Session validity status
+                    example: true
+            description: User validation response with complete user and session information
+            example:
+                session:
+                    created_at: 7862120284467847803
+                    device_id: Commodi fugit et voluptas.
+                    expires_at: 6402646603291768489
+                    id: 186233865119358519
+                    ip_address: Iure autem rerum.
+                    is_active: false
+                    last_accessed: 4681640140504944389
+                    platform: Necessitatibus ipsam illum ut repellendus velit.
+                    user_agent: Quam voluptatem quia sapiente est sed accusamus.
+                    user_id: 2284498980271543451
+                user:
+                    created_at: 4709232224494564193
+                    id: 3718707274165986015
+                    identifier: Consequatur maiores at cupiditate.
+                    is_verified: true
+                    last_login: 1892569019354447307
+                    metadata:
+                        Consequatur consectetur et.: Voluptas ex sit voluptate dolores.
+                        Ea pariatur itaque.: Repellendus rerum tempore.
+                        Error quasi.: Tenetur et voluptate possimus.
+                valid: false
+            required:
+                - valid
+        ValidationResponse:
+            type: object
+            properties:
+                user:
+                    $ref: '#/components/schemas/User'
+                valid:
+                    type: boolean
+                    description: Session validity status
+                    example: true
+            description: Session validation response
+            example:
+                user:
+                    created_at: 4709232224494564193
+                    id: 3718707274165986015
+                    identifier: Consequatur maiores at cupiditate.
+                    is_verified: true
+                    last_login: 1892569019354447307
+                    metadata:
+                        Consequatur consectetur et.: Voluptas ex sit voluptate dolores.
+                        Ea pariatur itaque.: Repellendus rerum tempore.
+                        Error quasi.: Tenetur et voluptate possimus.
+                valid: false
+            required:
+                - valid
+        VerifyBackupCodeRequestBody:
+            type: object
+            properties:
+                backup_code:
+                    type: string
+                    description: 8-character backup code
+                    example: ABC12345
+                    minLength: 8
+                    maxLength: 8
+                device_info:
+                    $ref: '#/components/schemas/DeviceInfo'
+                identifier:
+                    type: string
+                    description: User identifier
+                    example: Aut aliquid.
+            example:
+                backup_code: ABC12345
+                device_info:
+                    device_id: Et provident ab ea alias minus.
+                    ip_address: Debitis illo iusto maxime voluptas aliquid totam.
+                    platform: Aut doloribus consequatur aut.
+                    user_agent: Vel blanditiis ratione corrupti nostrum.
+                identifier: Reprehenderit occaecati id voluptas laudantium.
+            required:
+                - identifier
+                - backup_code
+        VerifyTOTPRequestBody:
+            type: object
+            properties:
+                device_info:
+                    $ref: '#/components/schemas/DeviceInfo'
+                identifier:
+                    type: string
+                    description: User identifier
+                    example: Neque ipsa corrupti dignissimos aut.
+                totp_code:
+                    type: string
+                    description: 6-digit TOTP code from authenticator app
+                    example: "123456"
+                    pattern: ^[0-9]{6}$
+            example:
+                device_info:
+                    device_id: Et provident ab ea alias minus.
+                    ip_address: Debitis illo iusto maxime voluptas aliquid totam.
+                    platform: Aut doloribus consequatur aut.
+                    user_agent: Vel blanditiis ratione corrupti nostrum.
+                identifier: Tenetur et et odio nesciunt aut perferendis.
+                totp_code: "123456"
+            required:
+                - identifier
+                - totp_code
+tags:
+    - name: auth
+      description: Authentication microservice with OTP support

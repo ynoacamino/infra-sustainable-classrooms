@@ -1,0 +1,1364 @@
+swagger: "2.0"
+info:
+    title: Knowledge Test Management API
+    description: Microservice for managing MCQ tests, validations, grading, and student progress tracking
+    version: "1.0"
+host: localhost:8080
+consumes:
+    - application/json
+    - application/xml
+    - application/gob
+produces:
+    - application/json
+    - application/xml
+    - application/gob
+paths:
+    /api/knowledge/submissions/{submission_id}:
+        get:
+            tags:
+                - knowledge
+            summary: GetSubmissionById knowledge
+            description: Get a submission by ID
+            operationId: knowledge#GetSubmissionById
+            parameters:
+                - name: submission_id
+                  in: path
+                  description: Submission ID
+                  required: true
+                  type: integer
+                  format: int64
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        $ref: '#/definitions/SubmissionResponse'
+                        required:
+                            - submission
+                "401":
+                    description: Unauthorized response.
+                    schema:
+                        type: string
+                "404":
+                    description: Not Found response.
+                    schema:
+                        type: string
+            schemes:
+                - http
+    /api/knowledge/submissions/{submission_id}/result:
+        get:
+            tags:
+                - knowledge
+            summary: GetSubmissionResult knowledge
+            description: Get detailed submission result
+            operationId: knowledge#GetSubmissionResult
+            parameters:
+                - name: submission_id
+                  in: path
+                  description: Submission ID
+                  required: true
+                  type: integer
+                  format: int64
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        $ref: '#/definitions/SubmissionResult'
+                        required:
+                            - submission
+                            - questions
+                "401":
+                    description: Unauthorized response.
+                    schema:
+                        type: string
+                "404":
+                    description: Not Found response.
+                    schema:
+                        type: string
+            schemes:
+                - http
+    /api/knowledge/submissions/my:
+        get:
+            tags:
+                - knowledge
+            summary: GetMySubmissions knowledge
+            description: Get my test submissions
+            operationId: knowledge#GetMySubmissions
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        $ref: '#/definitions/SubmissionsResponse'
+                        required:
+                            - submissions
+                "401":
+                    description: Unauthorized response.
+                    schema:
+                        type: string
+            schemes:
+                - http
+    /api/knowledge/tests:
+        post:
+            tags:
+                - knowledge
+            summary: CreateTest knowledge
+            description: Create a new test form
+            operationId: knowledge#CreateTest
+            parameters:
+                - name: CreateTestRequestBody
+                  in: body
+                  required: true
+                  schema:
+                    $ref: '#/definitions/KnowledgeCreateTestRequestBody'
+                    required:
+                        - title
+            responses:
+                "201":
+                    description: Created response.
+                    schema:
+                        $ref: '#/definitions/SimpleResponse'
+                        required:
+                            - success
+                            - message
+                "400":
+                    description: Bad Request response.
+                    schema:
+                        type: string
+                "401":
+                    description: Unauthorized response.
+                    schema:
+                        type: string
+            schemes:
+                - http
+    /api/knowledge/tests/{test_id}:
+        get:
+            tags:
+                - knowledge
+            summary: GetTestById knowledge
+            description: Get a test by ID
+            operationId: knowledge#GetTestById
+            parameters:
+                - name: test_id
+                  in: path
+                  description: Test ID
+                  required: true
+                  type: integer
+                  format: int64
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        $ref: '#/definitions/TestResponse'
+                        required:
+                            - test
+                "401":
+                    description: Unauthorized response.
+                    schema:
+                        type: string
+                "404":
+                    description: Not Found response.
+                    schema:
+                        type: string
+            schemes:
+                - http
+        put:
+            tags:
+                - knowledge
+            summary: UpdateTest knowledge
+            description: Update test title
+            operationId: knowledge#UpdateTest
+            parameters:
+                - name: test_id
+                  in: path
+                  description: Test ID
+                  required: true
+                  type: integer
+                  format: int64
+                - name: UpdateTestRequestBody
+                  in: body
+                  required: true
+                  schema:
+                    $ref: '#/definitions/KnowledgeUpdateTestRequestBody'
+                    required:
+                        - title
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        $ref: '#/definitions/SimpleResponse'
+                        required:
+                            - success
+                            - message
+                "401":
+                    description: Unauthorized response.
+                    schema:
+                        type: string
+                "404":
+                    description: Not Found response.
+                    schema:
+                        type: string
+            schemes:
+                - http
+        delete:
+            tags:
+                - knowledge
+            summary: DeleteTest knowledge
+            description: Delete a test
+            operationId: knowledge#DeleteTest
+            parameters:
+                - name: test_id
+                  in: path
+                  description: Test ID
+                  required: true
+                  type: integer
+                  format: int64
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        $ref: '#/definitions/SimpleResponse'
+                        required:
+                            - success
+                            - message
+                "401":
+                    description: Unauthorized response.
+                    schema:
+                        type: string
+                "404":
+                    description: Not Found response.
+                    schema:
+                        type: string
+            schemes:
+                - http
+    /api/knowledge/tests/{test_id}/form:
+        get:
+            tags:
+                - knowledge
+            summary: GetTestForm knowledge
+            description: Get test form for taking
+            operationId: knowledge#GetTestForm
+            parameters:
+                - name: test_id
+                  in: path
+                  description: Test ID
+                  required: true
+                  type: integer
+                  format: int64
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        $ref: '#/definitions/FormResponse'
+                        required:
+                            - test
+                            - questions
+                "401":
+                    description: Unauthorized response.
+                    schema:
+                        type: string
+                "404":
+                    description: Not Found response.
+                    schema:
+                        type: string
+                "409":
+                    description: Conflict response.
+                    schema:
+                        type: string
+            schemes:
+                - http
+    /api/knowledge/tests/{test_id}/questions:
+        get:
+            tags:
+                - knowledge
+            summary: GetTestQuestions knowledge
+            description: Get questions for a test
+            operationId: knowledge#GetTestQuestions
+            parameters:
+                - name: test_id
+                  in: path
+                  description: Test ID
+                  required: true
+                  type: integer
+                  format: int64
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        $ref: '#/definitions/QuestionsResponse'
+                        required:
+                            - questions
+                "401":
+                    description: Unauthorized response.
+                    schema:
+                        type: string
+                "404":
+                    description: Not Found response.
+                    schema:
+                        type: string
+            schemes:
+                - http
+        post:
+            tags:
+                - knowledge
+            summary: AddQuestion knowledge
+            description: Add a question to a test
+            operationId: knowledge#AddQuestion
+            parameters:
+                - name: test_id
+                  in: path
+                  description: Test ID
+                  required: true
+                  type: integer
+                  format: int64
+                - name: AddQuestionRequestBody
+                  in: body
+                  required: true
+                  schema:
+                    $ref: '#/definitions/KnowledgeAddQuestionRequestBody'
+                    required:
+                        - question_text
+                        - option_a
+                        - option_b
+                        - option_c
+                        - option_d
+                        - correct_answer
+            responses:
+                "201":
+                    description: Created response.
+                    schema:
+                        $ref: '#/definitions/SimpleResponse'
+                        required:
+                            - success
+                            - message
+                "400":
+                    description: Bad Request response.
+                    schema:
+                        type: string
+                "401":
+                    description: Unauthorized response.
+                    schema:
+                        type: string
+                "404":
+                    description: Not Found response.
+                    schema:
+                        type: string
+            schemes:
+                - http
+    /api/knowledge/tests/{test_id}/questions/{question_id}:
+        get:
+            tags:
+                - knowledge
+            summary: GetQuestionById knowledge
+            description: Get a question by ID
+            operationId: knowledge#GetQuestionById
+            parameters:
+                - name: test_id
+                  in: path
+                  description: Test ID
+                  required: true
+                  type: integer
+                  format: int64
+                - name: question_id
+                  in: path
+                  description: Question ID
+                  required: true
+                  type: integer
+                  format: int64
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        $ref: '#/definitions/QuestionResponse'
+                        required:
+                            - question
+                "401":
+                    description: Unauthorized response.
+                    schema:
+                        type: string
+                "404":
+                    description: Not Found response.
+                    schema:
+                        type: string
+            schemes:
+                - http
+        put:
+            tags:
+                - knowledge
+            summary: UpdateQuestion knowledge
+            description: Update a question
+            operationId: knowledge#UpdateQuestion
+            parameters:
+                - name: test_id
+                  in: path
+                  description: Test ID
+                  required: true
+                  type: integer
+                  format: int64
+                - name: question_id
+                  in: path
+                  description: Question ID
+                  required: true
+                  type: integer
+                  format: int64
+                - name: UpdateQuestionRequestBody
+                  in: body
+                  required: true
+                  schema:
+                    $ref: '#/definitions/KnowledgeUpdateQuestionRequestBody'
+                    required:
+                        - question_text
+                        - option_a
+                        - option_b
+                        - option_c
+                        - option_d
+                        - correct_answer
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        $ref: '#/definitions/SimpleResponse'
+                        required:
+                            - success
+                            - message
+                "401":
+                    description: Unauthorized response.
+                    schema:
+                        type: string
+                "404":
+                    description: Not Found response.
+                    schema:
+                        type: string
+            schemes:
+                - http
+        delete:
+            tags:
+                - knowledge
+            summary: DeleteQuestion knowledge
+            description: Delete a question
+            operationId: knowledge#DeleteQuestion
+            parameters:
+                - name: test_id
+                  in: path
+                  description: Test ID
+                  required: true
+                  type: integer
+                  format: int64
+                - name: question_id
+                  in: path
+                  description: Question ID
+                  required: true
+                  type: integer
+                  format: int64
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        $ref: '#/definitions/SimpleResponse'
+                        required:
+                            - success
+                            - message
+                "401":
+                    description: Unauthorized response.
+                    schema:
+                        type: string
+                "404":
+                    description: Not Found response.
+                    schema:
+                        type: string
+            schemes:
+                - http
+    /api/knowledge/tests/{test_id}/submit:
+        post:
+            tags:
+                - knowledge
+            summary: SubmitTest knowledge
+            description: Submit test answers
+            operationId: knowledge#SubmitTest
+            parameters:
+                - name: test_id
+                  in: path
+                  description: Test ID
+                  required: true
+                  type: integer
+                  format: int64
+                - name: SubmitTestRequestBody
+                  in: body
+                  required: true
+                  schema:
+                    $ref: '#/definitions/KnowledgeSubmitTestRequestBody'
+                    required:
+                        - answers
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        $ref: '#/definitions/SubmitResponse'
+                        required:
+                            - success
+                            - message
+                            - submission_id
+                            - score
+                "400":
+                    description: Bad Request response.
+                    schema:
+                        type: string
+                "401":
+                    description: Unauthorized response.
+                    schema:
+                        type: string
+                "404":
+                    description: Not Found response.
+                    schema:
+                        type: string
+                "409":
+                    description: Conflict response.
+                    schema:
+                        type: string
+            schemes:
+                - http
+    /api/knowledge/tests/available:
+        get:
+            tags:
+                - knowledge
+            summary: GetAvailableTests knowledge
+            description: Get available tests for students
+            operationId: knowledge#GetAvailableTests
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        $ref: '#/definitions/TestsResponse'
+                        required:
+                            - tests
+                "401":
+                    description: Unauthorized response.
+                    schema:
+                        type: string
+            schemes:
+                - http
+    /api/knowledge/tests/my:
+        get:
+            tags:
+                - knowledge
+            summary: GetMyTests knowledge
+            description: Get my created tests
+            operationId: knowledge#GetMyTests
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        $ref: '#/definitions/TestsResponse'
+                        required:
+                            - tests
+                "401":
+                    description: Unauthorized response.
+                    schema:
+                        type: string
+            schemes:
+                - http
+definitions:
+    Answer:
+        title: Answer
+        type: object
+        properties:
+            question_id:
+                type: integer
+                description: Question ID
+                example: 921592075100543249
+                format: int64
+            selected_answer:
+                type: integer
+                description: Selected answer (0=A, 1=B, 2=C, 3=D)
+                example: 6375186722834115536
+                format: int64
+        description: Answer submission
+        example:
+            question_id: 2534203789797466795
+            selected_answer: 8096546748115719525
+        required:
+            - question_id
+            - selected_answer
+    FormResponse:
+        title: FormResponse
+        type: object
+        properties:
+            questions:
+                type: array
+                items:
+                    $ref: '#/definitions/QuestionForm'
+                description: Questions
+                example:
+                    - id: 1386912032327522300
+                      option_a: Sed aut.
+                      option_b: Qui eos consectetur error numquam repellendus.
+                      option_c: Pariatur quaerat nisi commodi sed quaerat non.
+                      option_d: Quod et et suscipit sequi et voluptas.
+                      question_order: 5216712828886377323
+                      question_text: Nam sunt et laboriosam et.
+                    - id: 1386912032327522300
+                      option_a: Sed aut.
+                      option_b: Qui eos consectetur error numquam repellendus.
+                      option_c: Pariatur quaerat nisi commodi sed quaerat non.
+                      option_d: Quod et et suscipit sequi et voluptas.
+                      question_order: 5216712828886377323
+                      question_text: Nam sunt et laboriosam et.
+                    - id: 1386912032327522300
+                      option_a: Sed aut.
+                      option_b: Qui eos consectetur error numquam repellendus.
+                      option_c: Pariatur quaerat nisi commodi sed quaerat non.
+                      option_d: Quod et et suscipit sequi et voluptas.
+                      question_order: 5216712828886377323
+                      question_text: Nam sunt et laboriosam et.
+                    - id: 1386912032327522300
+                      option_a: Sed aut.
+                      option_b: Qui eos consectetur error numquam repellendus.
+                      option_c: Pariatur quaerat nisi commodi sed quaerat non.
+                      option_d: Quod et et suscipit sequi et voluptas.
+                      question_order: 5216712828886377323
+                      question_text: Nam sunt et laboriosam et.
+            test:
+                $ref: '#/definitions/Test'
+        example:
+            questions:
+                - id: 1386912032327522300
+                  option_a: Sed aut.
+                  option_b: Qui eos consectetur error numquam repellendus.
+                  option_c: Pariatur quaerat nisi commodi sed quaerat non.
+                  option_d: Quod et et suscipit sequi et voluptas.
+                  question_order: 5216712828886377323
+                  question_text: Nam sunt et laboriosam et.
+                - id: 1386912032327522300
+                  option_a: Sed aut.
+                  option_b: Qui eos consectetur error numquam repellendus.
+                  option_c: Pariatur quaerat nisi commodi sed quaerat non.
+                  option_d: Quod et et suscipit sequi et voluptas.
+                  question_order: 5216712828886377323
+                  question_text: Nam sunt et laboriosam et.
+                - id: 1386912032327522300
+                  option_a: Sed aut.
+                  option_b: Qui eos consectetur error numquam repellendus.
+                  option_c: Pariatur quaerat nisi commodi sed quaerat non.
+                  option_d: Quod et et suscipit sequi et voluptas.
+                  question_order: 5216712828886377323
+                  question_text: Nam sunt et laboriosam et.
+            test:
+                created_at: 1420935487501310329
+                created_by: 1206683619787336617
+                id: 3470926693855757846
+                question_count: 4231937269603915069
+                title: Repudiandae eos itaque quia.
+        required:
+            - test
+            - questions
+    KnowledgeAddQuestionRequestBody:
+        title: KnowledgeAddQuestionRequestBody
+        type: object
+        properties:
+            correct_answer:
+                type: integer
+                description: Correct answer (0=A, 1=B, 2=C, 3=D)
+                example: 2677194928192130305
+                format: int64
+            option_a:
+                type: string
+                description: Option A
+                example: Optio ullam incidunt et quia.
+            option_b:
+                type: string
+                description: Option B
+                example: Et velit nihil.
+            option_c:
+                type: string
+                description: Option C
+                example: Voluptatem eligendi voluptas fugiat id placeat atque.
+            option_d:
+                type: string
+                description: Option D
+                example: Nihil dolor omnis labore nisi.
+            question_text:
+                type: string
+                description: Question text
+                example: Exercitationem totam vel.
+        example:
+            correct_answer: 2400833450123805111
+            option_a: Quia rerum.
+            option_b: Eum vitae mollitia.
+            option_c: Harum ratione pariatur repellendus consequatur.
+            option_d: Facere non distinctio.
+            question_text: Incidunt atque est ut ut molestiae.
+        required:
+            - question_text
+            - option_a
+            - option_b
+            - option_c
+            - option_d
+            - correct_answer
+    KnowledgeCreateTestRequestBody:
+        title: KnowledgeCreateTestRequestBody
+        type: object
+        properties:
+            title:
+                type: string
+                description: Test title
+                example: Temporibus autem.
+        example:
+            title: At consequatur laudantium vel quas et explicabo.
+        required:
+            - title
+    KnowledgeSubmitTestRequestBody:
+        title: KnowledgeSubmitTestRequestBody
+        type: object
+        properties:
+            answers:
+                type: array
+                items:
+                    $ref: '#/definitions/Answer'
+                description: Answer submissions
+                example:
+                    - question_id: 4096248363570844082
+                      selected_answer: 3700718689874649655
+                    - question_id: 4096248363570844082
+                      selected_answer: 3700718689874649655
+                    - question_id: 4096248363570844082
+                      selected_answer: 3700718689874649655
+        example:
+            answers:
+                - question_id: 4096248363570844082
+                  selected_answer: 3700718689874649655
+                - question_id: 4096248363570844082
+                  selected_answer: 3700718689874649655
+        required:
+            - answers
+    KnowledgeUpdateQuestionRequestBody:
+        title: KnowledgeUpdateQuestionRequestBody
+        type: object
+        properties:
+            correct_answer:
+                type: integer
+                description: Correct answer (0=A, 1=B, 2=C, 3=D)
+                example: 4776769402262378810
+                format: int64
+            option_a:
+                type: string
+                description: Option A
+                example: Laboriosam et eum eaque.
+            option_b:
+                type: string
+                description: Option B
+                example: Et sit placeat minus.
+            option_c:
+                type: string
+                description: Option C
+                example: Voluptate ut porro non.
+            option_d:
+                type: string
+                description: Option D
+                example: Illo error.
+            question_text:
+                type: string
+                description: Question text
+                example: Ut rem recusandae est.
+        example:
+            correct_answer: 548591867104623775
+            option_a: Repellendus minima voluptas autem.
+            option_b: Hic ipsam.
+            option_c: Aperiam numquam tenetur.
+            option_d: Dolorem commodi cupiditate.
+            question_text: Blanditiis nesciunt hic sapiente dolor quia ipsam.
+        required:
+            - question_text
+            - option_a
+            - option_b
+            - option_c
+            - option_d
+            - correct_answer
+    KnowledgeUpdateTestRequestBody:
+        title: KnowledgeUpdateTestRequestBody
+        type: object
+        properties:
+            title:
+                type: string
+                description: New title
+                example: Officiis aut impedit.
+        example:
+            title: Exercitationem minima ipsa impedit quidem.
+        required:
+            - title
+    Question:
+        title: Question
+        type: object
+        properties:
+            correct_answer:
+                type: integer
+                description: Correct answer (0=A, 1=B, 2=C, 3=D)
+                example: 6846783790303164528
+                format: int64
+            id:
+                type: integer
+                description: Question ID
+                example: 4262432612895364752
+                format: int64
+            option_a:
+                type: string
+                description: Option A
+                example: Nihil deserunt necessitatibus tenetur.
+            option_b:
+                type: string
+                description: Option B
+                example: Omnis cum omnis exercitationem id quia saepe.
+            option_c:
+                type: string
+                description: Option C
+                example: Fugit perspiciatis voluptatum dolorem saepe voluptate.
+            option_d:
+                type: string
+                description: Option D
+                example: At sunt error maxime nihil dolor.
+            question_order:
+                type: integer
+                description: Question order
+                example: 7915448915343328835
+                format: int64
+            question_text:
+                type: string
+                description: Question text
+                example: Velit asperiores eveniet minus assumenda.
+            test_id:
+                type: integer
+                description: Test ID
+                example: 4323096128098886746
+                format: int64
+        description: Question information
+        example:
+            correct_answer: 3898734310607728006
+            id: 1952282564861904686
+            option_a: Accusamus aut voluptas nulla nam.
+            option_b: Nihil iusto voluptas sit aliquid enim.
+            option_c: Suscipit corporis est iste ut aliquid.
+            option_d: Ut debitis qui.
+            question_order: 2281262061258571995
+            question_text: Reiciendis quos quod et fugit adipisci quae.
+            test_id: 6968888152477393737
+        required:
+            - id
+            - test_id
+            - question_text
+            - option_a
+            - option_b
+            - option_c
+            - option_d
+            - correct_answer
+            - question_order
+    QuestionForm:
+        title: QuestionForm
+        type: object
+        properties:
+            id:
+                type: integer
+                description: Question ID
+                example: 1856862897070870917
+                format: int64
+            option_a:
+                type: string
+                description: Option A
+                example: Vero aliquid molestiae nostrum natus.
+            option_b:
+                type: string
+                description: Option B
+                example: Vel debitis maxime ad quia quis.
+            option_c:
+                type: string
+                description: Option C
+                example: Qui qui.
+            option_d:
+                type: string
+                description: Option D
+                example: Earum mollitia doloribus aut et facere eligendi.
+            question_order:
+                type: integer
+                description: Question order
+                example: 3396464642196323140
+                format: int64
+            question_text:
+                type: string
+                description: Question text
+                example: Consequatur assumenda impedit.
+        description: Question for form taking (without correct answer)
+        example:
+            id: 2640581455593318526
+            option_a: Inventore aspernatur excepturi.
+            option_b: Quos incidunt.
+            option_c: Voluptate nostrum est et deserunt est.
+            option_d: Autem itaque qui eos laboriosam tempora velit.
+            question_order: 5240850485737529189
+            question_text: Maiores et magnam voluptatibus numquam et.
+        required:
+            - id
+            - question_text
+            - option_a
+            - option_b
+            - option_c
+            - option_d
+            - question_order
+    QuestionResponse:
+        title: QuestionResponse
+        type: object
+        properties:
+            question:
+                $ref: '#/definitions/Question'
+        example:
+            question:
+                correct_answer: 8158836247619934102
+                id: 2772649688831219518
+                option_a: Eligendi commodi.
+                option_b: Iure cumque neque aut cupiditate.
+                option_c: Quo nam et modi omnis maiores.
+                option_d: Soluta voluptate consequuntur.
+                question_order: 5700393763100931995
+                question_text: Ipsa dolor quia aliquam quo iste.
+                test_id: 4395952286367801254
+        required:
+            - question
+    QuestionResult:
+        title: QuestionResult
+        type: object
+        properties:
+            is_correct:
+                type: boolean
+                description: Whether answer was correct
+                example: false
+            question:
+                $ref: '#/definitions/Question'
+            selected_answer:
+                type: integer
+                description: User selected answer
+                example: 2075262028827156675
+                format: int64
+        description: Question result with user answer
+        example:
+            is_correct: true
+            question:
+                correct_answer: 8158836247619934102
+                id: 2772649688831219518
+                option_a: Eligendi commodi.
+                option_b: Iure cumque neque aut cupiditate.
+                option_c: Quo nam et modi omnis maiores.
+                option_d: Soluta voluptate consequuntur.
+                question_order: 5700393763100931995
+                question_text: Ipsa dolor quia aliquam quo iste.
+                test_id: 4395952286367801254
+            selected_answer: 7680971268377376713
+        required:
+            - question
+            - selected_answer
+            - is_correct
+    QuestionsResponse:
+        title: QuestionsResponse
+        type: object
+        properties:
+            questions:
+                type: array
+                items:
+                    $ref: '#/definitions/Question'
+                description: Questions
+                example:
+                    - correct_answer: 8158836247619934102
+                      id: 2772649688831219518
+                      option_a: Eligendi commodi.
+                      option_b: Iure cumque neque aut cupiditate.
+                      option_c: Quo nam et modi omnis maiores.
+                      option_d: Soluta voluptate consequuntur.
+                      question_order: 5700393763100931995
+                      question_text: Ipsa dolor quia aliquam quo iste.
+                      test_id: 4395952286367801254
+                    - correct_answer: 8158836247619934102
+                      id: 2772649688831219518
+                      option_a: Eligendi commodi.
+                      option_b: Iure cumque neque aut cupiditate.
+                      option_c: Quo nam et modi omnis maiores.
+                      option_d: Soluta voluptate consequuntur.
+                      question_order: 5700393763100931995
+                      question_text: Ipsa dolor quia aliquam quo iste.
+                      test_id: 4395952286367801254
+                    - correct_answer: 8158836247619934102
+                      id: 2772649688831219518
+                      option_a: Eligendi commodi.
+                      option_b: Iure cumque neque aut cupiditate.
+                      option_c: Quo nam et modi omnis maiores.
+                      option_d: Soluta voluptate consequuntur.
+                      question_order: 5700393763100931995
+                      question_text: Ipsa dolor quia aliquam quo iste.
+                      test_id: 4395952286367801254
+        example:
+            questions:
+                - correct_answer: 8158836247619934102
+                  id: 2772649688831219518
+                  option_a: Eligendi commodi.
+                  option_b: Iure cumque neque aut cupiditate.
+                  option_c: Quo nam et modi omnis maiores.
+                  option_d: Soluta voluptate consequuntur.
+                  question_order: 5700393763100931995
+                  question_text: Ipsa dolor quia aliquam quo iste.
+                  test_id: 4395952286367801254
+                - correct_answer: 8158836247619934102
+                  id: 2772649688831219518
+                  option_a: Eligendi commodi.
+                  option_b: Iure cumque neque aut cupiditate.
+                  option_c: Quo nam et modi omnis maiores.
+                  option_d: Soluta voluptate consequuntur.
+                  question_order: 5700393763100931995
+                  question_text: Ipsa dolor quia aliquam quo iste.
+                  test_id: 4395952286367801254
+                - correct_answer: 8158836247619934102
+                  id: 2772649688831219518
+                  option_a: Eligendi commodi.
+                  option_b: Iure cumque neque aut cupiditate.
+                  option_c: Quo nam et modi omnis maiores.
+                  option_d: Soluta voluptate consequuntur.
+                  question_order: 5700393763100931995
+                  question_text: Ipsa dolor quia aliquam quo iste.
+                  test_id: 4395952286367801254
+                - correct_answer: 8158836247619934102
+                  id: 2772649688831219518
+                  option_a: Eligendi commodi.
+                  option_b: Iure cumque neque aut cupiditate.
+                  option_c: Quo nam et modi omnis maiores.
+                  option_d: Soluta voluptate consequuntur.
+                  question_order: 5700393763100931995
+                  question_text: Ipsa dolor quia aliquam quo iste.
+                  test_id: 4395952286367801254
+        required:
+            - questions
+    SimpleResponse:
+        title: SimpleResponse
+        type: object
+        properties:
+            message:
+                type: string
+                description: Response message
+                example: Dolorum quasi aut perferendis atque quis.
+            success:
+                type: boolean
+                description: Operation success status
+                example: false
+        example:
+            message: Aut sed ex commodi quis corrupti.
+            success: false
+        required:
+            - success
+            - message
+    Submission:
+        title: Submission
+        type: object
+        properties:
+            id:
+                type: integer
+                description: Submission ID
+                example: 9200333239952558600
+                format: int64
+            score:
+                type: number
+                description: Score percentage
+                example: 0.4663418625414468
+                format: double
+            submitted_at:
+                type: integer
+                description: Submission timestamp
+                example: 8965575444124104258
+                format: int64
+            test_id:
+                type: integer
+                description: Test ID
+                example: 3502643510082498803
+                format: int64
+            test_title:
+                type: string
+                description: Test title
+                example: Molestias vel.
+        description: Test submission
+        example:
+            id: 3803263975582609630
+            score: 0.5654969416597301
+            submitted_at: 660536448787754080
+            test_id: 7148677147692653001
+            test_title: Dolores ut dolor iste velit.
+        required:
+            - id
+            - test_id
+            - test_title
+            - score
+            - submitted_at
+    SubmissionResponse:
+        title: SubmissionResponse
+        type: object
+        properties:
+            submission:
+                $ref: '#/definitions/Submission'
+        example:
+            submission:
+                id: 710322948557236049
+                score: 0.1854650483718396
+                submitted_at: 5771385760104791669
+                test_id: 7221911436021527010
+                test_title: Est ipsum nulla numquam.
+        required:
+            - submission
+    SubmissionResult:
+        title: SubmissionResult
+        type: object
+        properties:
+            questions:
+                type: array
+                items:
+                    $ref: '#/definitions/QuestionResult'
+                description: Question results
+                example:
+                    - is_correct: true
+                      question:
+                        correct_answer: 8158836247619934102
+                        id: 2772649688831219518
+                        option_a: Eligendi commodi.
+                        option_b: Iure cumque neque aut cupiditate.
+                        option_c: Quo nam et modi omnis maiores.
+                        option_d: Soluta voluptate consequuntur.
+                        question_order: 5700393763100931995
+                        question_text: Ipsa dolor quia aliquam quo iste.
+                        test_id: 4395952286367801254
+                      selected_answer: 5259965828207597356
+                    - is_correct: true
+                      question:
+                        correct_answer: 8158836247619934102
+                        id: 2772649688831219518
+                        option_a: Eligendi commodi.
+                        option_b: Iure cumque neque aut cupiditate.
+                        option_c: Quo nam et modi omnis maiores.
+                        option_d: Soluta voluptate consequuntur.
+                        question_order: 5700393763100931995
+                        question_text: Ipsa dolor quia aliquam quo iste.
+                        test_id: 4395952286367801254
+                      selected_answer: 5259965828207597356
+                    - is_correct: true
+                      question:
+                        correct_answer: 8158836247619934102
+                        id: 2772649688831219518
+                        option_a: Eligendi commodi.
+                        option_b: Iure cumque neque aut cupiditate.
+                        option_c: Quo nam et modi omnis maiores.
+                        option_d: Soluta voluptate consequuntur.
+                        question_order: 5700393763100931995
+                        question_text: Ipsa dolor quia aliquam quo iste.
+                        test_id: 4395952286367801254
+                      selected_answer: 5259965828207597356
+            submission:
+                $ref: '#/definitions/Submission'
+        example:
+            questions:
+                - is_correct: true
+                  question:
+                    correct_answer: 8158836247619934102
+                    id: 2772649688831219518
+                    option_a: Eligendi commodi.
+                    option_b: Iure cumque neque aut cupiditate.
+                    option_c: Quo nam et modi omnis maiores.
+                    option_d: Soluta voluptate consequuntur.
+                    question_order: 5700393763100931995
+                    question_text: Ipsa dolor quia aliquam quo iste.
+                    test_id: 4395952286367801254
+                  selected_answer: 5259965828207597356
+                - is_correct: true
+                  question:
+                    correct_answer: 8158836247619934102
+                    id: 2772649688831219518
+                    option_a: Eligendi commodi.
+                    option_b: Iure cumque neque aut cupiditate.
+                    option_c: Quo nam et modi omnis maiores.
+                    option_d: Soluta voluptate consequuntur.
+                    question_order: 5700393763100931995
+                    question_text: Ipsa dolor quia aliquam quo iste.
+                    test_id: 4395952286367801254
+                  selected_answer: 5259965828207597356
+                - is_correct: true
+                  question:
+                    correct_answer: 8158836247619934102
+                    id: 2772649688831219518
+                    option_a: Eligendi commodi.
+                    option_b: Iure cumque neque aut cupiditate.
+                    option_c: Quo nam et modi omnis maiores.
+                    option_d: Soluta voluptate consequuntur.
+                    question_order: 5700393763100931995
+                    question_text: Ipsa dolor quia aliquam quo iste.
+                    test_id: 4395952286367801254
+                  selected_answer: 5259965828207597356
+            submission:
+                id: 710322948557236049
+                score: 0.1854650483718396
+                submitted_at: 5771385760104791669
+                test_id: 7221911436021527010
+                test_title: Est ipsum nulla numquam.
+        required:
+            - submission
+            - questions
+    SubmissionsResponse:
+        title: SubmissionsResponse
+        type: object
+        properties:
+            submissions:
+                type: array
+                items:
+                    $ref: '#/definitions/Submission'
+                description: Submissions
+                example:
+                    - id: 710322948557236049
+                      score: 0.1854650483718396
+                      submitted_at: 5771385760104791669
+                      test_id: 7221911436021527010
+                      test_title: Est ipsum nulla numquam.
+                    - id: 710322948557236049
+                      score: 0.1854650483718396
+                      submitted_at: 5771385760104791669
+                      test_id: 7221911436021527010
+                      test_title: Est ipsum nulla numquam.
+        example:
+            submissions:
+                - id: 710322948557236049
+                  score: 0.1854650483718396
+                  submitted_at: 5771385760104791669
+                  test_id: 7221911436021527010
+                  test_title: Est ipsum nulla numquam.
+                - id: 710322948557236049
+                  score: 0.1854650483718396
+                  submitted_at: 5771385760104791669
+                  test_id: 7221911436021527010
+                  test_title: Est ipsum nulla numquam.
+        required:
+            - submissions
+    SubmitResponse:
+        title: SubmitResponse
+        type: object
+        properties:
+            message:
+                type: string
+                description: Response message
+                example: Ratione saepe.
+            score:
+                type: number
+                description: Score percentage
+                example: 0.004823911560060788
+                format: double
+            submission_id:
+                type: integer
+                description: Submission ID
+                example: 7816128237485887980
+                format: int64
+            success:
+                type: boolean
+                description: Success status
+                example: false
+        example:
+            message: Molestias aut blanditiis.
+            score: 0.7268074816695564
+            submission_id: 1148126700318968815
+            success: false
+        required:
+            - success
+            - message
+            - submission_id
+            - score
+    Test:
+        title: Test
+        type: object
+        properties:
+            created_at:
+                type: integer
+                description: Creation timestamp
+                example: 8378402157626223592
+                format: int64
+            created_by:
+                type: integer
+                description: Creator user ID
+                example: 280452819580930836
+                format: int64
+            id:
+                type: integer
+                description: Test ID
+                example: 1195682763916275345
+                format: int64
+            question_count:
+                type: integer
+                description: Number of questions
+                example: 2970074103244494137
+                format: int64
+            title:
+                type: string
+                description: Test title
+                example: Quae cumque perspiciatis quasi eaque.
+        description: Test/Form information
+        example:
+            created_at: 7331837025642570622
+            created_by: 3488713912950167416
+            id: 2681378811559554410
+            question_count: 6797517791786934623
+            title: Incidunt nihil accusamus.
+        required:
+            - id
+            - title
+            - created_by
+            - created_at
+    TestResponse:
+        title: TestResponse
+        type: object
+        properties:
+            test:
+                $ref: '#/definitions/Test'
+        example:
+            test:
+                created_at: 1420935487501310329
+                created_by: 1206683619787336617
+                id: 3470926693855757846
+                question_count: 4231937269603915069
+                title: Repudiandae eos itaque quia.
+        required:
+            - test
+    TestsResponse:
+        title: TestsResponse
+        type: object
+        properties:
+            tests:
+                type: array
+                items:
+                    $ref: '#/definitions/Test'
+                description: Tests
+                example:
+                    - created_at: 1420935487501310329
+                      created_by: 1206683619787336617
+                      id: 3470926693855757846
+                      question_count: 4231937269603915069
+                      title: Repudiandae eos itaque quia.
+                    - created_at: 1420935487501310329
+                      created_by: 1206683619787336617
+                      id: 3470926693855757846
+                      question_count: 4231937269603915069
+                      title: Repudiandae eos itaque quia.
+        example:
+            tests:
+                - created_at: 1420935487501310329
+                  created_by: 1206683619787336617
+                  id: 3470926693855757846
+                  question_count: 4231937269603915069
+                  title: Repudiandae eos itaque quia.
+                - created_at: 1420935487501310329
+                  created_by: 1206683619787336617
+                  id: 3470926693855757846
+                  question_count: 4231937269603915069
+                  title: Repudiandae eos itaque quia.
+                - created_at: 1420935487501310329
+                  created_by: 1206683619787336617
+                  id: 3470926693855757846
+                  question_count: 4231937269603915069
+                  title: Repudiandae eos itaque quia.
+                - created_at: 1420935487501310329
+                  created_by: 1206683619787336617
+                  id: 3470926693855757846
+                  question_count: 4231937269603915069
+                  title: Repudiandae eos itaque quia.
+        required:
+            - tests

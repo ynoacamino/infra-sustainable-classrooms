@@ -1,0 +1,858 @@
+openapi: 3.0.3
+info:
+    title: User Profiles Management API
+    description: Microservice for managing student and teacher profiles in sustainable classrooms
+    version: "1.0"
+servers:
+    - url: http://localhost:8082
+      description: Profiles microservice HTTP server
+    - url: http://localhost:80
+      description: Profiles microservice gRPC server
+paths:
+    /api/profiles/me:
+        get:
+            tags:
+                - profiles
+            summary: GetCompleteProfile profiles
+            description: Get user's complete profile
+            operationId: profiles#GetCompleteProfile
+            parameters:
+                - name: session
+                  in: cookie
+                  description: Authentication session token
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: Authentication session token
+                    example: Dignissimos error quia aut voluptatem praesentium aut.
+                  example: Et ducimus possimus.
+            responses:
+                "200":
+                    description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/CompleteProfileResponse'
+                            example:
+                                avatar_url: Harum eum.
+                                bio: Inventore est omnis expedita.
+                                created_at: 1763166784302125187
+                                email: Nulla a hic autem.
+                                first_name: Ex itaque et nihil deserunt.
+                                grade_level: Amet cum incidunt quidem et iusto veniam.
+                                is_active: false
+                                last_name: Sed atque unde.
+                                major: Cum amet corrupti eum ut voluptate.
+                                phone: Consequatur culpa ea.
+                                position: Ut eaque facere temporibus provident ipsam.
+                                role: Odio aliquam vitae.
+                                updated_at: 2727063839837957015
+                                user_id: 2443707213776884529
+                "401":
+                    description: 'unauthorized: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Quas sit temporibus aut.
+                            example: Nulla molestiae optio similique nihil distinctio commodi.
+                "404":
+                    description: 'profile_not_found: Not Found response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Aut et eum dolorem.
+                            example: Laboriosam modi praesentium quo et perferendis.
+        put:
+            tags:
+                - profiles
+            summary: UpdateProfile profiles
+            description: Update basic profile information
+            operationId: profiles#UpdateProfile
+            parameters:
+                - name: session
+                  in: cookie
+                  description: Authentication session token
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: Authentication session token
+                    example: Dolorem aut at.
+                  example: Deleniti vero cumque.
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/UpdateProfileRequestBody'
+                        example:
+                            avatar_url: Qui alias provident vel minima saepe delectus.
+                            bio: In ut id aut fuga blanditiis.
+                            email: aglae.hudson@mosciski.name
+                            first_name: Repudiandae rem quia.
+                            last_name: Consequatur aperiam ad suscipit aut distinctio et.
+                            major: Error rerum.
+                            phone: Magni itaque non quae assumenda.
+                            position: Est quaerat commodi.
+            responses:
+                "200":
+                    description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ProfileResponse'
+                            example:
+                                avatar_url: Dolor culpa.
+                                bio: Quod qui dignissimos.
+                                created_at: 5299821170854443828
+                                email: Est est autem accusantium.
+                                first_name: Voluptatem rerum nulla ipsum voluptates veniam.
+                                is_active: false
+                                last_name: Harum aut.
+                                phone: Quas voluptatum at ea.
+                                role: Asperiores cum aut deserunt voluptatem minima quidem.
+                                updated_at: 7266897677840434627
+                                user_id: 3050561775326405589
+                "400":
+                    description: 'invalid_input: Bad Request response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Nulla dicta ut quam libero.
+                            example: Quia dolorem debitis quia quia facilis possimus.
+                "401":
+                    description: 'unauthorized: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Adipisci quis.
+                            example: Nam aut.
+                "404":
+                    description: 'profile_not_found: Not Found response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Similique exercitationem doloremque veniam reiciendis non magni.
+                            example: Voluptate explicabo inventore atque maxime.
+    /api/profiles/public/{user_id}:
+        get:
+            tags:
+                - profiles
+            summary: GetPublicProfileById profiles
+            description: Get public profile information by user ID
+            operationId: profiles#GetPublicProfileById
+            parameters:
+                - name: user_id
+                  in: path
+                  description: User ID to retrieve profile for
+                  required: true
+                  schema:
+                    type: integer
+                    description: User ID to retrieve profile for
+                    example: 1264445204835995824
+                    format: int64
+                  example: 8802352130481784483
+            responses:
+                "200":
+                    description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/PublicProfileResponse'
+                            example:
+                                avatar_url: Aut adipisci recusandae eligendi culpa soluta et.
+                                bio: Magni natus qui id aut fugiat.
+                                first_name: Magni tempora.
+                                is_active: true
+                                last_name: Placeat perspiciatis quidem ut illum est ex.
+                                role: Tempora natus.
+                                user_id: 6993883084322377690
+                "400":
+                    description: 'invalid_input: Bad Request response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Vero voluptatibus aspernatur voluptate.
+                            example: Illo atque ut numquam.
+                "404":
+                    description: 'profile_not_found: Not Found response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Autem accusamus.
+                            example: Sint omnis consectetur veritatis est.
+    /api/profiles/student:
+        post:
+            tags:
+                - profiles
+            summary: CreateStudentProfile profiles
+            description: Create a new student profile with basic information
+            operationId: profiles#CreateStudentProfile
+            parameters:
+                - name: session
+                  in: cookie
+                  description: Authentication session token
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: Authentication session token
+                    example: Vel voluptatibus labore.
+                  example: Nihil ipsum dolores minima officiis ipsam fugit.
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CreateStudentProfileRequestBody'
+                        example:
+                            avatar_url: Nemo corporis ratione quo.
+                            bio: Qui ut aut et facilis excepturi.
+                            email: lera@farrelljast.name
+                            first_name: Dolorem hic sapiente ea.
+                            grade_level: Harum cum velit laboriosam tenetur maxime maxime.
+                            last_name: Consequatur id facilis eaque incidunt.
+                            major: Voluptatem ab.
+                            phone: Totam laboriosam veniam.
+            responses:
+                "201":
+                    description: Created response.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/StudentProfileResponse'
+                            example:
+                                avatar_url: Omnis hic beatae fuga.
+                                bio: Soluta voluptatibus omnis animi.
+                                created_at: 8838320818322210761
+                                email: Incidunt dicta dolores harum.
+                                first_name: Reprehenderit dignissimos quas maxime voluptatem eum.
+                                grade_level: Est ratione sunt dicta soluta aut.
+                                is_active: false
+                                last_name: Ratione quidem deleniti ducimus est nesciunt.
+                                major: Ipsam itaque saepe distinctio quaerat dignissimos tempora.
+                                phone: Eos doloremque qui.
+                                updated_at: 5496411629056915403
+                                user_id: 1099863846807747952
+                "400":
+                    description: 'invalid_input: Bad Request response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Magnam quia rerum.
+                            example: Assumenda fugit.
+                "401":
+                    description: 'unauthorized: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Nulla fugit dicta.
+                            example: Voluptas ea magnam qui id consequatur.
+                "409":
+                    description: 'profile_already_exists: Conflict response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Dolore et autem ullam et ducimus.
+                            example: Necessitatibus nihil voluptates.
+    /api/profiles/teacher:
+        post:
+            tags:
+                - profiles
+            summary: CreateTeacherProfile profiles
+            description: Create a new teacher profile with basic information
+            operationId: profiles#CreateTeacherProfile
+            parameters:
+                - name: session
+                  in: cookie
+                  description: Authentication session token
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: Authentication session token
+                    example: Aspernatur quaerat eos corrupti dignissimos quibusdam.
+                  example: Libero eligendi tenetur in tempore provident quis.
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CreateTeacherProfileRequestBody'
+                        example:
+                            avatar_url: Omnis alias dolor voluptatibus occaecati nemo.
+                            bio: Qui consectetur perferendis tempore porro ut velit.
+                            email: rosalinda@osinskigoodwin.com
+                            first_name: Quaerat officia ut velit odit architecto.
+                            last_name: Voluptatibus voluptas sequi voluptatibus.
+                            phone: Voluptatem adipisci in.
+                            position: Quaerat amet et consectetur.
+            responses:
+                "201":
+                    description: Created response.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/TeacherProfileResponse'
+                            example:
+                                avatar_url: Omnis nobis ab.
+                                bio: Placeat tenetur itaque cumque dolore voluptatum amet.
+                                created_at: 8248881797369015537
+                                email: Sapiente repellat recusandae rerum quisquam incidunt.
+                                first_name: Totam aut consectetur et voluptas.
+                                is_active: true
+                                last_name: Quibusdam voluptatem deserunt mollitia nulla est.
+                                phone: Maxime adipisci aliquam quia at.
+                                position: Ut praesentium nam.
+                                updated_at: 2676968778773866275
+                                user_id: 3898310091838479973
+                "400":
+                    description: 'invalid_input: Bad Request response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Corrupti perferendis et non.
+                            example: Molestiae sint.
+                "401":
+                    description: 'unauthorized: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Eum perferendis corporis cumque fugit asperiores odio.
+                            example: Beatae quia rem vel.
+                "409":
+                    description: 'profile_already_exists: Conflict response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Et nobis.
+                            example: Ab totam omnis non nostrum fugit.
+components:
+    schemas:
+        CompleteProfileResponse:
+            type: object
+            properties:
+                avatar_url:
+                    type: string
+                    description: Profile picture URL
+                    example: Et quaerat at autem maiores voluptatem.
+                bio:
+                    type: string
+                    description: Biography/description
+                    example: Similique porro.
+                created_at:
+                    type: integer
+                    description: Profile creation timestamp
+                    example: 1962109345305622946
+                    format: int64
+                email:
+                    type: string
+                    description: Email address
+                    example: Dolore quis saepe molestiae.
+                first_name:
+                    type: string
+                    description: First name
+                    example: Totam neque rem dolorem.
+                grade_level:
+                    type: string
+                    description: Grade level (for students)
+                    example: Sit totam doloribus occaecati rerum porro dolores.
+                is_active:
+                    type: boolean
+                    description: Whether profile is active
+                    example: false
+                last_name:
+                    type: string
+                    description: Last name
+                    example: Porro recusandae.
+                major:
+                    type: string
+                    description: Major/field of study (for students)
+                    example: Sequi ut odio.
+                phone:
+                    type: string
+                    description: Phone number
+                    example: Suscipit mollitia.
+                position:
+                    type: string
+                    description: Position/title (for teachers)
+                    example: Porro voluptatem.
+                role:
+                    type: string
+                    description: User role (student, teacher)
+                    example: Ea excepturi autem quia quae vel.
+                updated_at:
+                    type: integer
+                    description: Last update timestamp
+                    example: 2357238281775201886
+                    format: int64
+                user_id:
+                    type: integer
+                    description: User identifier
+                    example: 6468310269540503242
+                    format: int64
+            description: Complete user profile with role-specific information
+            example:
+                avatar_url: Libero officiis iste sequi hic iusto eum.
+                bio: Vitae eos nihil sint eum adipisci.
+                created_at: 5458770323955416458
+                email: Ipsam quasi nam veritatis quia est accusamus.
+                first_name: Modi in sunt.
+                grade_level: Optio hic eligendi et sunt magni commodi.
+                is_active: false
+                last_name: Velit culpa possimus.
+                major: Quo earum quia mollitia quia.
+                phone: Officia error suscipit excepturi quis.
+                position: Perspiciatis perspiciatis ut.
+                role: Itaque eum quia deleniti dignissimos.
+                updated_at: 8173214574942476451
+                user_id: 1923366223699885682
+            required:
+                - user_id
+                - role
+                - first_name
+                - last_name
+                - email
+                - created_at
+                - is_active
+        CreateStudentProfileRequestBody:
+            type: object
+            properties:
+                avatar_url:
+                    type: string
+                    description: Profile picture URL
+                    example: Omnis officia.
+                bio:
+                    type: string
+                    description: Biography/description
+                    example: Omnis possimus.
+                email:
+                    type: string
+                    description: Email address
+                    example: mattie@feil.net
+                    format: email
+                first_name:
+                    type: string
+                    description: First name
+                    example: Alias ea eligendi.
+                grade_level:
+                    type: string
+                    description: Grade level (1-12, undergraduate, graduate)
+                    example: Aperiam explicabo rerum excepturi sed.
+                last_name:
+                    type: string
+                    description: Last name
+                    example: Sed qui quibusdam.
+                major:
+                    type: string
+                    description: Major/field of study
+                    example: Ut eligendi.
+                phone:
+                    type: string
+                    description: Phone number
+                    example: Aut minima voluptas quisquam a.
+            example:
+                avatar_url: Et fugiat ut consectetur rerum.
+                bio: Deleniti sint non nostrum qui.
+                email: hertha_casper@harber.biz
+                first_name: Laboriosam sunt blanditiis ut.
+                grade_level: Pariatur est cum ipsa dicta voluptatem laborum.
+                last_name: Explicabo eius in sit quidem.
+                major: Et voluptas.
+                phone: Qui eaque doloremque excepturi dolores voluptatibus aperiam.
+            required:
+                - first_name
+                - last_name
+                - email
+                - grade_level
+        CreateTeacherProfileRequestBody:
+            type: object
+            properties:
+                avatar_url:
+                    type: string
+                    description: Profile picture URL
+                    example: Qui eos eligendi officiis maiores.
+                bio:
+                    type: string
+                    description: Biography/description
+                    example: Ut qui consequatur.
+                email:
+                    type: string
+                    description: Email address
+                    example: jenifer.robel@osinski.com
+                    format: email
+                first_name:
+                    type: string
+                    description: First name
+                    example: Quo quia commodi et praesentium.
+                last_name:
+                    type: string
+                    description: Last name
+                    example: Rerum et delectus quia.
+                phone:
+                    type: string
+                    description: Phone number
+                    example: Mollitia cum voluptatem eveniet architecto molestias.
+                position:
+                    type: string
+                    description: Position/title
+                    example: Sit sapiente aliquam.
+            example:
+                avatar_url: Quisquam tempora.
+                bio: Impedit rerum neque eius quo.
+                email: herbert@flatley.biz
+                first_name: Nihil consequatur deserunt.
+                last_name: Consequatur qui.
+                phone: Eligendi rerum vitae recusandae qui delectus voluptates.
+                position: Enim voluptates consequatur omnis.
+            required:
+                - first_name
+                - last_name
+                - email
+                - position
+        ProfileResponse:
+            type: object
+            properties:
+                avatar_url:
+                    type: string
+                    description: Profile picture URL
+                    example: Recusandae hic.
+                bio:
+                    type: string
+                    description: Biography/description
+                    example: Aut in facilis.
+                created_at:
+                    type: integer
+                    description: Profile creation timestamp
+                    example: 8947765897922834290
+                    format: int64
+                email:
+                    type: string
+                    description: Email address
+                    example: Sapiente autem minus vero.
+                first_name:
+                    type: string
+                    description: First name
+                    example: Autem neque eligendi recusandae aliquid sint dolores.
+                is_active:
+                    type: boolean
+                    description: Whether profile is active
+                    example: false
+                last_name:
+                    type: string
+                    description: Last name
+                    example: Nemo est illo.
+                phone:
+                    type: string
+                    description: Phone number
+                    example: Atque velit.
+                role:
+                    type: string
+                    description: User role (student, teacher)
+                    example: Perspiciatis labore illo quis.
+                updated_at:
+                    type: integer
+                    description: Last update timestamp
+                    example: 1707090142894587651
+                    format: int64
+                user_id:
+                    type: integer
+                    description: User identifier
+                    example: 635236874133178342
+                    format: int64
+            description: Basic profile information
+            example:
+                avatar_url: Laudantium esse unde in.
+                bio: Qui eum enim quidem provident laudantium velit.
+                created_at: 4616626683714915745
+                email: Et perspiciatis esse itaque.
+                first_name: Omnis possimus fugit quas quam velit.
+                is_active: true
+                last_name: Quae architecto numquam.
+                phone: Qui sint.
+                role: Nemo atque temporibus qui earum.
+                updated_at: 2204243500316079456
+                user_id: 3697743392337969039
+            required:
+                - user_id
+                - role
+                - first_name
+                - last_name
+                - email
+                - created_at
+                - is_active
+        PublicProfileResponse:
+            type: object
+            properties:
+                avatar_url:
+                    type: string
+                    description: Profile picture URL
+                    example: Est ut error ut eaque dolore.
+                bio:
+                    type: string
+                    description: Public biography
+                    example: Consequatur in tenetur et voluptatem ut magni.
+                first_name:
+                    type: string
+                    description: First name
+                    example: Aliquid et et voluptates est porro enim.
+                is_active:
+                    type: boolean
+                    description: Whether profile is active
+                    example: true
+                last_name:
+                    type: string
+                    description: Last name
+                    example: Occaecati eum asperiores.
+                role:
+                    type: string
+                    description: User role
+                    example: Assumenda recusandae repudiandae aliquam quia esse.
+                user_id:
+                    type: integer
+                    description: User identifier
+                    example: 1955629370896694419
+                    format: int64
+            description: Public profile information (limited data)
+            example:
+                avatar_url: Voluptatibus vero nisi modi.
+                bio: Sit fugiat repudiandae recusandae quibusdam aut blanditiis.
+                first_name: Et eaque eveniet.
+                is_active: false
+                last_name: Laborum molestias nihil est explicabo.
+                role: Laborum eveniet doloribus vel.
+                user_id: 5555470740215922501
+            required:
+                - user_id
+                - role
+                - first_name
+                - last_name
+                - is_active
+        RoleValidationResponse:
+            type: object
+            properties:
+                role:
+                    type: string
+                    description: User role
+                    example: Sunt et aut nisi autem voluptatem praesentium.
+                user_id:
+                    type: integer
+                    description: User identifier
+                    example: 4893263808478682889
+                    format: int64
+            description: Response for role validation
+            example:
+                role: Sequi distinctio placeat quasi.
+                user_id: 2192186286108788211
+            required:
+                - user_id
+                - role
+        StudentProfileResponse:
+            type: object
+            properties:
+                avatar_url:
+                    type: string
+                    description: Profile picture URL
+                    example: Unde atque beatae.
+                bio:
+                    type: string
+                    description: Biography/description
+                    example: Sequi mollitia sed.
+                created_at:
+                    type: integer
+                    description: Profile creation timestamp
+                    example: 5921678008566612614
+                    format: int64
+                email:
+                    type: string
+                    description: Email address
+                    example: Incidunt dignissimos accusamus.
+                first_name:
+                    type: string
+                    description: First name
+                    example: Quam consectetur et vitae eum.
+                grade_level:
+                    type: string
+                    description: Grade level
+                    example: Voluptas veniam facere et non nesciunt autem.
+                is_active:
+                    type: boolean
+                    description: Whether profile is active
+                    example: false
+                last_name:
+                    type: string
+                    description: Last name
+                    example: Nam quia adipisci.
+                major:
+                    type: string
+                    description: Major/field of study
+                    example: Maxime similique assumenda eaque.
+                phone:
+                    type: string
+                    description: Phone number
+                    example: Et suscipit labore sed rerum.
+                updated_at:
+                    type: integer
+                    description: Last update timestamp
+                    example: 187930113903520390
+                    format: int64
+                user_id:
+                    type: integer
+                    description: User identifier
+                    example: 4764743558355363434
+                    format: int64
+            description: Student profile information
+            example:
+                avatar_url: Corporis harum accusamus nulla eius velit non.
+                bio: Fugit repellat corrupti reprehenderit.
+                created_at: 6349186290387251503
+                email: Similique officiis.
+                first_name: Repellat dolorem alias consequatur vero.
+                grade_level: Aut necessitatibus.
+                is_active: true
+                last_name: Aspernatur aut sint voluptate impedit.
+                major: Voluptas quia.
+                phone: Odio quia.
+                updated_at: 5177222090915910716
+                user_id: 295696444791452962
+            required:
+                - user_id
+                - first_name
+                - last_name
+                - email
+                - grade_level
+                - created_at
+                - is_active
+        TeacherProfileResponse:
+            type: object
+            properties:
+                avatar_url:
+                    type: string
+                    description: Profile picture URL
+                    example: Est sed qui reiciendis aperiam ad.
+                bio:
+                    type: string
+                    description: Biography/description
+                    example: Sit voluptates tenetur in aliquid assumenda.
+                created_at:
+                    type: integer
+                    description: Profile creation timestamp
+                    example: 7613174056882334673
+                    format: int64
+                email:
+                    type: string
+                    description: Email address
+                    example: Eum quasi similique.
+                first_name:
+                    type: string
+                    description: First name
+                    example: Neque autem inventore et dignissimos commodi.
+                is_active:
+                    type: boolean
+                    description: Whether profile is active
+                    example: false
+                last_name:
+                    type: string
+                    description: Last name
+                    example: Quis iste ad omnis.
+                phone:
+                    type: string
+                    description: Phone number
+                    example: Aut temporibus illo.
+                position:
+                    type: string
+                    description: Position/title
+                    example: Quae ad.
+                updated_at:
+                    type: integer
+                    description: Last update timestamp
+                    example: 1618400766773990094
+                    format: int64
+                user_id:
+                    type: integer
+                    description: User identifier
+                    example: 3844083134053058950
+                    format: int64
+            description: Teacher profile information
+            example:
+                avatar_url: Aspernatur vitae saepe quas consequuntur.
+                bio: Distinctio nisi minima commodi quis amet non.
+                created_at: 7248388278190840594
+                email: Assumenda dolorem nihil et doloremque dolores quis.
+                first_name: Aperiam voluptatibus.
+                is_active: false
+                last_name: Aut voluptatem qui sint est rem natus.
+                phone: Facere consequatur hic.
+                position: Ipsa aut vel omnis hic.
+                updated_at: 5432628038579793179
+                user_id: 8473851116832038401
+            required:
+                - user_id
+                - first_name
+                - last_name
+                - email
+                - position
+                - created_at
+                - is_active
+        UpdateProfileRequestBody:
+            type: object
+            properties:
+                avatar_url:
+                    type: string
+                    description: Updated profile picture URL
+                    example: Aut eum ex.
+                bio:
+                    type: string
+                    description: Updated biography
+                    example: Modi aut et.
+                email:
+                    type: string
+                    description: Updated email address
+                    example: sidney.schowalter@carter.name
+                    format: email
+                first_name:
+                    type: string
+                    description: Updated first name
+                    example: Voluptatibus autem.
+                last_name:
+                    type: string
+                    description: Updated last name
+                    example: Ratione eum voluptate.
+                major:
+                    type: string
+                    description: Updated major (students)
+                    example: Repellendus vel eos.
+                phone:
+                    type: string
+                    description: Updated phone number
+                    example: Ducimus consequatur recusandae dolorem.
+                position:
+                    type: string
+                    description: Updated position (teachers)
+                    example: Ad eos tempore voluptatem aut quia.
+            example:
+                avatar_url: Rerum est qui necessitatibus illum dolore.
+                bio: Et nemo veniam.
+                email: emmitt.runolfsdottir@beer.biz
+                first_name: Sit ducimus alias neque magni voluptas.
+                last_name: Omnis quia perspiciatis ipsa distinctio quia corrupti.
+                major: Id rerum.
+                phone: Saepe ea.
+                position: Reiciendis libero facilis sint.
+tags:
+    - name: profiles
+      description: Profiles microservice for managing student and teacher profiles

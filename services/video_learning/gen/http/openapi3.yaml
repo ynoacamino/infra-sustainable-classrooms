@@ -1,0 +1,1975 @@
+openapi: 3.0.3
+info:
+    title: Video Learning Microservice
+    description: Microservice for video learning platform with HTTP and gRPC support
+    version: "1.0"
+servers:
+    - url: http://localhost:8080
+      description: Video Learning service server
+    - url: http://localhost:80
+      description: Video Learning service gRPC server
+paths:
+    /api/video_learning/categories:
+        get:
+            tags:
+                - video_learning
+            summary: GetAllCategories video_learning
+            description: Get all video categories
+            operationId: video_learning#GetAllCategories
+            parameters:
+                - name: session
+                  in: cookie
+                  description: User session token
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: User session token
+                    example: Ut sed fuga vero.
+                  example: Sint magni.
+            responses:
+                "200":
+                    description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/VideoCategory'
+                                example:
+                                    - id: 4764768822492718106
+                                      name: Nihil architecto aut rerum dolores.
+                                    - id: 4764768822492718106
+                                      name: Nihil architecto aut rerum dolores.
+                                    - id: 4764768822492718106
+                                      name: Nihil architecto aut rerum dolores.
+                            example:
+                                - id: 4764768822492718106
+                                  name: Nihil architecto aut rerum dolores.
+                                - id: 4764768822492718106
+                                  name: Nihil architecto aut rerum dolores.
+                                - id: 4764768822492718106
+                                  name: Nihil architecto aut rerum dolores.
+                                - id: 4764768822492718106
+                                  name: Nihil architecto aut rerum dolores.
+                "401":
+                    description: 'invalid_session: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Et aliquam pariatur corrupti dignissimos.
+                            example: Maiores esse et soluta omnis quisquam.
+    /api/video_learning/category:
+        post:
+            tags:
+                - video_learning
+            summary: GetOrCreateCategory video_learning
+            description: Create a new video category or get existing one
+            operationId: video_learning#GetOrCreateCategory
+            parameters:
+                - name: session
+                  in: cookie
+                  description: User session token
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: User session token
+                    example: Incidunt illo.
+                  example: Tempora quo quia quia nisi omnis.
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/GetOrCreateCategoryRequestBody'
+                        example:
+                            name: g7
+            responses:
+                "201":
+                    description: Created response.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/VideoCategory'
+                            example:
+                                id: 4436404920824139122
+                                name: Laborum quas occaecati et eum qui excepturi.
+                "400":
+                    description: 'invalid_input: Bad Request response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Ipsa inventore maiores.
+                            example: Dicta voluptatem.
+                "401":
+                    description: 'invalid_session: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Sit corporis qui.
+                            example: At et voluptatem voluptates sint reprehenderit.
+    /api/video_learning/category/{category_id}:
+        get:
+            tags:
+                - video_learning
+            summary: GetCategoryById video_learning
+            description: Get video category by ID
+            operationId: video_learning#GetCategoryById
+            parameters:
+                - name: category_id
+                  in: path
+                  description: Category ID
+                  required: true
+                  schema:
+                    type: integer
+                    description: Category ID
+                    example: 1761806852382481560
+                    format: int64
+                    minimum: 1
+                  example: 2717841373187704235
+                - name: session
+                  in: cookie
+                  description: User session token
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: User session token
+                    example: Modi illum ut provident harum.
+                  example: Atque quia qui et sit.
+            responses:
+                "200":
+                    description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/VideoCategory'
+                            example:
+                                id: 5209906692838583187
+                                name: Nihil rerum.
+                "400":
+                    description: 'invalid_input: Bad Request response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Debitis est dolores saepe expedita qui et.
+                            example: Voluptatem explicabo natus dolorem ullam.
+                "401":
+                    description: 'invalid_session: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Laboriosam impedit voluptatem a.
+                            example: Id deserunt veritatis quidem in et sequi.
+                "404":
+                    description: 'category_not_found: Not Found response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Illum possimus numquam sunt.
+                            example: Consequuntur quo doloribus sunt.
+    /api/video_learning/comment/{comment_id}:
+        delete:
+            tags:
+                - video_learning
+            summary: DeleteComment video_learning
+            description: Delete user's own comment
+            operationId: video_learning#DeleteComment
+            parameters:
+                - name: comment_id
+                  in: path
+                  description: Comment ID
+                  required: true
+                  schema:
+                    type: integer
+                    description: Comment ID
+                    example: 1895822591270173353
+                    format: int64
+                    minimum: 1
+                  example: 1131167647218014381
+                - name: session
+                  in: cookie
+                  description: User session token
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: User session token
+                    example: Ut in perferendis.
+                  example: Ipsam unde doloribus distinctio sed.
+            responses:
+                "200":
+                    description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/SimpleResponse'
+                            example:
+                                id: 2288172717298513874
+                                message: Commodi ut modi quia et unde nostrum.
+                                success: true
+                "400":
+                    description: 'invalid_input: Bad Request response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Facilis et quos repellat explicabo nisi.
+                            example: Quas eligendi quam fugit.
+                "401":
+                    description: 'invalid_session: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Suscipit dolores est nostrum unde aut eos.
+                            example: Quod ea ea praesentium omnis veniam ex.
+                "403":
+                    description: 'permission_denied: Forbidden response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Autem consectetur.
+                            example: Similique eaque asperiores qui.
+    /api/video_learning/comments/{video_id}:
+        get:
+            tags:
+                - video_learning
+            summary: GetComments video_learning
+            description: Get paginated comments for a video
+            operationId: video_learning#GetComments
+            parameters:
+                - name: page
+                  in: query
+                  description: Page number for pagination
+                  allowEmptyValue: true
+                  schema:
+                    type: integer
+                    description: Page number for pagination
+                    default: 1
+                    example: 1486308089590699930
+                    format: int64
+                    minimum: 1
+                  example: 7379318475174140232
+                - name: page_size
+                  in: query
+                  description: Number of comments per page
+                  allowEmptyValue: true
+                  schema:
+                    type: integer
+                    description: Number of comments per page
+                    default: 10
+                    example: 35
+                    format: int64
+                    minimum: 1
+                    maximum: 50
+                  example: 20
+                - name: video_id
+                  in: path
+                  description: Video ID to get comments for
+                  required: true
+                  schema:
+                    type: integer
+                    description: Video ID to get comments for
+                    example: 5698723947549653714
+                    format: int64
+                    minimum: 1
+                  example: 6509491888441133492
+                - name: session
+                  in: cookie
+                  description: User session token
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: User session token
+                    example: Eos dignissimos.
+                  example: Laborum temporibus.
+            responses:
+                "200":
+                    description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/CommentList'
+                            example:
+                                comments:
+                                    - author: Minima provident.
+                                      body: Corrupti ut minus dolores suscipit consequatur recusandae.
+                                      date: 8348863359107820308
+                                      id: 2905539084649269720
+                                      title: In aliquam laudantium praesentium.
+                                      video_id: 4659746127252001311
+                                    - author: Minima provident.
+                                      body: Corrupti ut minus dolores suscipit consequatur recusandae.
+                                      date: 8348863359107820308
+                                      id: 2905539084649269720
+                                      title: In aliquam laudantium praesentium.
+                                      video_id: 4659746127252001311
+                                    - author: Minima provident.
+                                      body: Corrupti ut minus dolores suscipit consequatur recusandae.
+                                      date: 8348863359107820308
+                                      id: 2905539084649269720
+                                      title: In aliquam laudantium praesentium.
+                                      video_id: 4659746127252001311
+                                    - author: Minima provident.
+                                      body: Corrupti ut minus dolores suscipit consequatur recusandae.
+                                      date: 8348863359107820308
+                                      id: 2905539084649269720
+                                      title: In aliquam laudantium praesentium.
+                                      video_id: 4659746127252001311
+                "400":
+                    description: 'invalid_input: Bad Request response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Fugiat veritatis sunt reiciendis.
+                            example: Praesentium est.
+                "401":
+                    description: 'invalid_session: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Qui sint temporibus.
+                            example: Quisquam magnam natus vitae.
+                "404":
+                    description: 'video_not_found: Not Found response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Velit nihil et adipisci et est.
+                            example: Consequuntur omnis est sunt sed magni.
+    /api/video_learning/comments/{video_id}/create:
+        post:
+            tags:
+                - video_learning
+            summary: CreateComment video_learning
+            description: Create a new comment on a video
+            operationId: video_learning#CreateComment
+            parameters:
+                - name: video_id
+                  in: path
+                  description: Video ID
+                  required: true
+                  schema:
+                    type: integer
+                    description: Video ID
+                    example: 3276822944206395598
+                    format: int64
+                    minimum: 1
+                  example: 5470267846227602313
+                - name: session
+                  in: cookie
+                  description: User session token
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: User session token
+                    example: Dolorem esse aut consequatur dolor.
+                  example: Incidunt rem rerum nihil sequi.
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CreateCommentRequestBody'
+                        example:
+                            body: j7
+                            title: a
+            responses:
+                "201":
+                    description: Created response.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/SimpleResponse'
+                            example:
+                                id: 7272709114419000485
+                                message: Voluptatibus reiciendis.
+                                success: true
+                "400":
+                    description: 'invalid_input: Bad Request response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Reprehenderit corporis delectus aut quia quis.
+                            example: Sed consequatur fuga sed distinctio voluptatem quaerat.
+                "401":
+                    description: 'invalid_session: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Voluptatem voluptas.
+                            example: Necessitatibus ea qui voluptatibus amet odit eos.
+                "404":
+                    description: 'video_not_found: Not Found response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Ab cupiditate minima voluptatem consequuntur nesciunt aut.
+                            example: Modi aut quae sint molestiae enim.
+    /api/video_learning/my-videos:
+        get:
+            tags:
+                - video_learning
+            summary: GetOwnVideos video_learning
+            description: Get authenticated user's uploaded videos, paginated
+            operationId: video_learning#GetOwnVideos
+            parameters:
+                - name: page
+                  in: query
+                  description: Page number for pagination
+                  allowEmptyValue: true
+                  schema:
+                    type: integer
+                    description: Page number for pagination
+                    default: 1
+                    example: 6984422917664038672
+                    format: int64
+                    minimum: 1
+                  example: 2327689620521544063
+                - name: page_size
+                  in: query
+                  description: Number of videos per page
+                  allowEmptyValue: true
+                  schema:
+                    type: integer
+                    description: Number of videos per page
+                    default: 20
+                    example: 56
+                    format: int64
+                    minimum: 1
+                    maximum: 100
+                  example: 32
+                - name: session
+                  in: cookie
+                  description: User session token
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: User session token
+                    example: Sapiente aut enim praesentium et quis.
+                  example: Omnis sit nam eum maiores molestias.
+            responses:
+                "200":
+                    description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/OwnVideo'
+                                example:
+                                    - id: 5326370513666368525
+                                      likes: 7160691403435332244
+                                      thumbnail_url: Dolorum amet omnis hic et nobis.
+                                      title: Modi fugiat libero.
+                                      upload_date: 1853943914860818907
+                                      views: 6854468610822631826
+                                    - id: 5326370513666368525
+                                      likes: 7160691403435332244
+                                      thumbnail_url: Dolorum amet omnis hic et nobis.
+                                      title: Modi fugiat libero.
+                                      upload_date: 1853943914860818907
+                                      views: 6854468610822631826
+                                    - id: 5326370513666368525
+                                      likes: 7160691403435332244
+                                      thumbnail_url: Dolorum amet omnis hic et nobis.
+                                      title: Modi fugiat libero.
+                                      upload_date: 1853943914860818907
+                                      views: 6854468610822631826
+                            example:
+                                - id: 5326370513666368525
+                                  likes: 7160691403435332244
+                                  thumbnail_url: Dolorum amet omnis hic et nobis.
+                                  title: Modi fugiat libero.
+                                  upload_date: 1853943914860818907
+                                  views: 6854468610822631826
+                                - id: 5326370513666368525
+                                  likes: 7160691403435332244
+                                  thumbnail_url: Dolorum amet omnis hic et nobis.
+                                  title: Modi fugiat libero.
+                                  upload_date: 1853943914860818907
+                                  views: 6854468610822631826
+                "401":
+                    description: 'invalid_session: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Et suscipit harum voluptates voluptatibus perspiciatis sapiente.
+                            example: Id ipsa maiores aut quidem magnam delectus.
+    /api/video_learning/recommendations:
+        get:
+            tags:
+                - video_learning
+            summary: GetRecommendations video_learning
+            description: Get random set of recommended videos for user
+            operationId: video_learning#GetRecommendations
+            parameters:
+                - name: amount
+                  in: query
+                  description: How many videos to get
+                  allowEmptyValue: true
+                  schema:
+                    type: integer
+                    description: How many videos to get
+                    default: 20
+                    example: 93
+                    format: int64
+                    minimum: 1
+                    maximum: 100
+                  example: 39
+                - name: session
+                  in: cookie
+                  description: User session token
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: User session token
+                    example: Nihil ullam quae consequatur placeat.
+                  example: Dolore autem.
+            responses:
+                "200":
+                    description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/VideoList'
+                            example:
+                                videos:
+                                    - author: Officiis excepturi sit nostrum velit.
+                                      id: 9018032772272637239
+                                      likes: 2221701127821578401
+                                      thumbnail_url: Ex et quam rerum animi.
+                                      title: Ducimus a tenetur dicta.
+                                      views: 1715337270403106040
+                                    - author: Officiis excepturi sit nostrum velit.
+                                      id: 9018032772272637239
+                                      likes: 2221701127821578401
+                                      thumbnail_url: Ex et quam rerum animi.
+                                      title: Ducimus a tenetur dicta.
+                                      views: 1715337270403106040
+                                    - author: Officiis excepturi sit nostrum velit.
+                                      id: 9018032772272637239
+                                      likes: 2221701127821578401
+                                      thumbnail_url: Ex et quam rerum animi.
+                                      title: Ducimus a tenetur dicta.
+                                      views: 1715337270403106040
+                "401":
+                    description: 'invalid_session: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Ullam repudiandae optio.
+                            example: Voluptas voluptas.
+                "503":
+                    description: 'service_unavailable: Service Unavailable response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Earum aut dignissimos.
+                            example: Ad eaque doloribus aperiam dolores.
+    /api/video_learning/search:
+        get:
+            tags:
+                - video_learning
+            summary: SearchVideos video_learning
+            description: Search videos by query string and category, paginated
+            operationId: video_learning#SearchVideos
+            parameters:
+                - name: query
+                  in: query
+                  description: Search query string
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: Search query string
+                    example: machine learning
+                    minLength: 1
+                    maxLength: 200
+                  example: machine learning
+                - name: category_id
+                  in: query
+                  description: Category ID to filter by
+                  allowEmptyValue: true
+                  schema:
+                    type: integer
+                    description: Category ID to filter by
+                    example: 718730536766211409
+                    format: int64
+                    minimum: 1
+                  example: 8313257133460478748
+                - name: page
+                  in: query
+                  description: Page number for pagination
+                  allowEmptyValue: true
+                  schema:
+                    type: integer
+                    description: Page number for pagination
+                    default: 1
+                    example: 1040164231886808450
+                    format: int64
+                    minimum: 1
+                  example: 3894659967608976894
+                - name: page_size
+                  in: query
+                  description: Number of videos per page
+                  allowEmptyValue: true
+                  schema:
+                    type: integer
+                    description: Number of videos per page
+                    default: 20
+                    example: 22
+                    format: int64
+                    minimum: 1
+                    maximum: 100
+                  example: 18
+                - name: session
+                  in: cookie
+                  description: User session token
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: User session token
+                    example: Reprehenderit dolores.
+                  example: In eaque nisi iste et.
+            responses:
+                "200":
+                    description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/VideoList'
+                            example:
+                                videos:
+                                    - author: Officiis excepturi sit nostrum velit.
+                                      id: 9018032772272637239
+                                      likes: 2221701127821578401
+                                      thumbnail_url: Ex et quam rerum animi.
+                                      title: Ducimus a tenetur dicta.
+                                      views: 1715337270403106040
+                                    - author: Officiis excepturi sit nostrum velit.
+                                      id: 9018032772272637239
+                                      likes: 2221701127821578401
+                                      thumbnail_url: Ex et quam rerum animi.
+                                      title: Ducimus a tenetur dicta.
+                                      views: 1715337270403106040
+                "400":
+                    description: 'invalid_input: Bad Request response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Omnis esse illum odio.
+                            example: Quia aut quasi sint aut itaque.
+                "401":
+                    description: 'invalid_session: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Deleniti blanditiis iste voluptates.
+                            example: Ipsum delectus dolor.
+                "503":
+                    description: 'service_unavailable: Service Unavailable response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Ea dolore esse eum ullam minima quo.
+                            example: Facere aut beatae nihil iste cumque.
+    /api/video_learning/tag:
+        post:
+            tags:
+                - video_learning
+            summary: GetOrCreateTag video_learning
+            description: Create a new tag or get existing one
+            operationId: video_learning#GetOrCreateTag
+            parameters:
+                - name: session
+                  in: cookie
+                  description: User session token
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: User session token
+                    example: Maiores laborum.
+                  example: Voluptatem dolor.
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/GetOrCreateTagRequestBody'
+                        example:
+                            name: qk
+            responses:
+                "201":
+                    description: Created response.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/VideoTag'
+                            example:
+                                id: 2772423796402877423
+                                name: Sapiente similique provident vero.
+                "400":
+                    description: 'invalid_input: Bad Request response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Ducimus aut nobis nemo corporis aut.
+                            example: Sed at perferendis a dolorum sapiente sunt.
+                "401":
+                    description: 'invalid_session: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Accusantium ut natus sint est cumque.
+                            example: Architecto dicta deserunt.
+    /api/video_learning/tag/{tag_id}:
+        get:
+            tags:
+                - video_learning
+            summary: GetTagById video_learning
+            description: Get video tag by ID
+            operationId: video_learning#GetTagById
+            parameters:
+                - name: tag_id
+                  in: path
+                  description: Tag ID
+                  required: true
+                  schema:
+                    type: integer
+                    description: Tag ID
+                    example: 8752228615097018369
+                    format: int64
+                    minimum: 1
+                  example: 2613406128485685571
+                - name: session
+                  in: cookie
+                  description: User session token
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: User session token
+                    example: Adipisci alias mollitia.
+                  example: Quaerat deserunt nostrum vero cum.
+            responses:
+                "200":
+                    description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/VideoTag'
+                            example:
+                                id: 5083004635103787410
+                                name: Officia autem reiciendis harum rerum consequatur magnam.
+                "400":
+                    description: 'invalid_input: Bad Request response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Sunt modi nemo voluptates voluptatibus.
+                            example: Explicabo molestiae assumenda cumque quisquam.
+                "401":
+                    description: 'invalid_session: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Quos commodi voluptatem ipsa.
+                            example: Quidem et ea.
+                "404":
+                    description: 'tag_not_found: Not Found response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Voluptatem velit dignissimos asperiores.
+                            example: Fugiat cupiditate dolorem sit dolorum nostrum voluptatem.
+    /api/video_learning/tags:
+        get:
+            tags:
+                - video_learning
+            summary: GetAllTags video_learning
+            description: Get all video tags
+            operationId: video_learning#GetAllTags
+            parameters:
+                - name: session
+                  in: cookie
+                  description: User session token
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: User session token
+                    example: Nihil esse velit ut necessitatibus quo quis.
+                  example: Pariatur quas nihil fugit sit natus.
+            responses:
+                "200":
+                    description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/VideoTag'
+                                example:
+                                    - id: 3214034660496431147
+                                      name: Et laborum.
+                                    - id: 3214034660496431147
+                                      name: Et laborum.
+                                    - id: 3214034660496431147
+                                      name: Et laborum.
+                                    - id: 3214034660496431147
+                                      name: Et laborum.
+                            example:
+                                - id: 3214034660496431147
+                                  name: Et laborum.
+                                - id: 3214034660496431147
+                                  name: Et laborum.
+                "401":
+                    description: 'invalid_session: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Eos molestiae suscipit aut iusto.
+                            example: Deserunt porro.
+    /api/video_learning/upload/complete:
+        post:
+            tags:
+                - video_learning
+            summary: CompleteUpload video_learning
+            description: Complete video upload with metadata
+            operationId: video_learning#CompleteUpload
+            parameters:
+                - name: session
+                  in: cookie
+                  description: User session token
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: User session token
+                    example: Beatae quos.
+                  example: Omnis aut ipsum id quos.
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CompleteUploadRequestBody'
+                        example:
+                            category_id: 8870319193588356468
+                            description: jfy
+                            tags:
+                                - Dolorem et officiis enim et fugit.
+                                - Est facilis quaerat similique libero.
+                                - Ducimus aut quis ut ut excepturi.
+                            thumbnail_object_name: Delectus quo consectetur assumenda rerum et.
+                            title: mu3
+                            video_object_name: Exercitationem et recusandae autem.
+            responses:
+                "201":
+                    description: Created response.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/SimpleResponse'
+                            example:
+                                id: 6168784906705205452
+                                message: Et et commodi eaque eius.
+                                success: true
+                "400":
+                    description: 'invalid_input: Bad Request response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Voluptatum mollitia aut ea.
+                            example: Cum magnam.
+                "401":
+                    description: 'invalid_session: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Dolore aliquam aperiam quas.
+                            example: Error quidem.
+    /api/video_learning/upload/thumbnail/{filename}:
+        post:
+            tags:
+                - video_learning
+            summary: UploadThumbnail video_learning
+            description: Upload custom thumbnail for video
+            operationId: video_learning#UploadThumbnail
+            parameters:
+                - name: filename
+                  in: path
+                  description: Original filename
+                  required: true
+                  schema:
+                    type: string
+                    description: Original filename
+                    example: Praesentium nostrum excepturi et eos.
+                  example: Enim voluptas possimus ratione saepe neque.
+                - name: Content-Type
+                  in: header
+                  description: Content type of the thumbnail file
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: Content type of the thumbnail file
+                    example: Fuga ut dolorem.
+                  example: Et excepturi ut assumenda ipsa inventore et.
+                - name: session
+                  in: cookie
+                  description: User session token
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: User session token
+                    example: Labore fugit cupiditate totam.
+                  example: Ut sit impedit aperiam exercitationem consequatur.
+            responses:
+                "200":
+                    description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UploadResponse'
+                            example:
+                                object_name: Non modi commodi ullam nesciunt saepe.
+                                presigned_url: Dolores consequatur aut qui placeat.
+                "400":
+                    description: 'invalid_input: Bad Request response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Quasi voluptate aliquam nostrum dolore provident et.
+                            example: At rerum qui enim optio dolorem illum.
+                "401":
+                    description: 'invalid_session: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Asperiores nesciunt aut temporibus.
+                            example: Sit voluptatibus a.
+                "500":
+                    description: 'upload_failed: Internal Server Error response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Quia itaque.
+                            example: Quia fuga.
+    /api/video_learning/upload/video/{filename}:
+        post:
+            tags:
+                - video_learning
+            summary: InitialUpload video_learning
+            description: Upload video file and get object name
+            operationId: video_learning#InitialUpload
+            parameters:
+                - name: filename
+                  in: path
+                  description: Original filename
+                  required: true
+                  schema:
+                    type: string
+                    description: Original filename
+                    example: Sit voluptate harum eos doloribus.
+                  example: Dolor voluptatem ut.
+                - name: Content-Type
+                  in: header
+                  description: Content type of the video file
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: Content type of the video file
+                    example: Deleniti dolor quaerat est necessitatibus.
+                  example: Quisquam praesentium nihil velit minus quia.
+                - name: session
+                  in: cookie
+                  description: User session token
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: User session token
+                    example: Dolor aut.
+                  example: Excepturi saepe.
+            responses:
+                "200":
+                    description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UploadResponse'
+                            example:
+                                object_name: Consequatur aspernatur.
+                                presigned_url: Deserunt est odio illum sit id et.
+                "400":
+                    description: 'invalid_input: Bad Request response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Soluta ipsam.
+                            example: Officiis eius consequatur quia numquam tempora.
+                "401":
+                    description: 'invalid_session: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Dolor ea rerum rerum ipsam.
+                            example: Nesciunt est possimus rerum.
+                "500":
+                    description: 'upload_failed: Internal Server Error response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Quo eius quo nisi natus ipsa sed.
+                            example: Velit sit omnis.
+    /api/video_learning/video/{video_id}:
+        delete:
+            tags:
+                - video_learning
+            summary: DeleteVideo video_learning
+            description: Delete user's own video
+            operationId: video_learning#DeleteVideo
+            parameters:
+                - name: video_id
+                  in: path
+                  description: Video ID
+                  required: true
+                  schema:
+                    type: integer
+                    description: Video ID
+                    example: 400393910352580146
+                    format: int64
+                    minimum: 1
+                  example: 7116781899042871999
+                - name: session
+                  in: cookie
+                  description: User session token
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: User session token
+                    example: Tempore id.
+                  example: Temporibus est.
+            responses:
+                "200":
+                    description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/SimpleResponse'
+                            example:
+                                id: 1677822129882258813
+                                message: Non ut perferendis numquam cupiditate velit.
+                                success: true
+                "400":
+                    description: 'invalid_input: Bad Request response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Facilis et velit sit dicta.
+                            example: Laboriosam culpa pariatur quos alias est.
+                "401":
+                    description: 'invalid_session: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: In animi quia veniam eos.
+                            example: Ut vel nemo itaque eum est.
+                "404":
+                    description: 'video_not_found: Not Found response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Eius aliquam neque nihil quis.
+                            example: Eum et.
+        get:
+            tags:
+                - video_learning
+            summary: GetVideo video_learning
+            description: Get complete video information including presigned URL
+            operationId: video_learning#GetVideo
+            parameters:
+                - name: video_id
+                  in: path
+                  description: Video ID
+                  required: true
+                  schema:
+                    type: integer
+                    description: Video ID
+                    example: 3251348801094706411
+                    format: int64
+                    minimum: 1
+                  example: 1889672773682204663
+                - name: session
+                  in: cookie
+                  description: User session token
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: User session token
+                    example: Minima ab est.
+                  example: Soluta cum vitae quasi sed.
+            responses:
+                "200":
+                    description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/VideoDetails'
+                            example:
+                                author: Dolore nostrum doloribus aut non commodi.
+                                category_id: 5897368478528143921
+                                description: Reiciendis numquam alias.
+                                id: 644079515627709457
+                                likes: 5336251272413551678
+                                tag_ids:
+                                    - 4068408229215819914
+                                    - 6483975783544963385
+                                thumbnail_url: Autem doloribus eum vitae.
+                                title: Quidem labore molestiae voluptatem laudantium.
+                                upload_date: 4939496666809597263
+                                video_url: Odio ullam deleniti ipsa cumque voluptas rem.
+                                views: 9054688559752787348
+                "400":
+                    description: 'invalid_input: Bad Request response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Quisquam nostrum asperiores dignissimos.
+                            example: Rerum repudiandae assumenda.
+                "401":
+                    description: 'invalid_session: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Est necessitatibus ipsa aliquid id.
+                            example: Eum neque suscipit.
+                "404":
+                    description: 'video_not_found: Not Found response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Neque expedita doloribus.
+                            example: Sit eos voluptatem eos autem a.
+    /api/video_learning/video/{video_id}/like:
+        put:
+            tags:
+                - video_learning
+            summary: ToggleVideoLike video_learning
+            description: Toggle like status for a video
+            operationId: video_learning#ToggleVideoLike
+            parameters:
+                - name: video_id
+                  in: path
+                  description: Video ID
+                  required: true
+                  schema:
+                    type: integer
+                    description: Video ID
+                    example: 5587746186185103118
+                    format: int64
+                    minimum: 1
+                  example: 356790580292932207
+                - name: session
+                  in: cookie
+                  description: User session token
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: User session token
+                    example: Dolorum natus totam quia nesciunt iusto praesentium.
+                  example: Nesciunt doloremque aut dolores assumenda eum adipisci.
+            responses:
+                "200":
+                    description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/SimpleResponse'
+                            example:
+                                id: 7662202083898642733
+                                message: Eius similique accusantium provident et nostrum nam.
+                                success: false
+                "400":
+                    description: 'invalid_input: Bad Request response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Id maiores consectetur quod.
+                            example: A accusantium laboriosam nemo non saepe quae.
+                "401":
+                    description: 'invalid_session: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Magnam culpa itaque.
+                            example: Quis in sit.
+                "404":
+                    description: 'video_not_found: Not Found response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Esse quia facere quae eum.
+                            example: Et at.
+    /api/video_learning/video/{video_id}/similar:
+        get:
+            tags:
+                - video_learning
+            summary: GetSimilarVideos video_learning
+            description: Get random set of videos similar to a specific video
+            operationId: video_learning#GetSimilarVideos
+            parameters:
+                - name: amount
+                  in: query
+                  description: How many similar videos to get
+                  allowEmptyValue: true
+                  schema:
+                    type: integer
+                    description: How many similar videos to get
+                    default: 10
+                    example: 1
+                    format: int64
+                    minimum: 1
+                    maximum: 50
+                  example: 48
+                - name: video_id
+                  in: path
+                  description: Video ID to find similar videos for
+                  required: true
+                  schema:
+                    type: integer
+                    description: Video ID to find similar videos for
+                    example: 1803259109916463743
+                    format: int64
+                    minimum: 1
+                  example: 2421317796183415375
+                - name: session
+                  in: cookie
+                  description: User session token
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: User session token
+                    example: Et aut.
+                  example: Eum et nostrum molestiae numquam.
+            responses:
+                "200":
+                    description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/VideoList'
+                            example:
+                                videos:
+                                    - author: Officiis excepturi sit nostrum velit.
+                                      id: 9018032772272637239
+                                      likes: 2221701127821578401
+                                      thumbnail_url: Ex et quam rerum animi.
+                                      title: Ducimus a tenetur dicta.
+                                      views: 1715337270403106040
+                                    - author: Officiis excepturi sit nostrum velit.
+                                      id: 9018032772272637239
+                                      likes: 2221701127821578401
+                                      thumbnail_url: Ex et quam rerum animi.
+                                      title: Ducimus a tenetur dicta.
+                                      views: 1715337270403106040
+                                    - author: Officiis excepturi sit nostrum velit.
+                                      id: 9018032772272637239
+                                      likes: 2221701127821578401
+                                      thumbnail_url: Ex et quam rerum animi.
+                                      title: Ducimus a tenetur dicta.
+                                      views: 1715337270403106040
+                "400":
+                    description: 'invalid_input: Bad Request response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: At nihil voluptas et.
+                            example: Qui odit aut velit et ducimus.
+                "401":
+                    description: 'invalid_session: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Et nulla rerum rerum provident.
+                            example: Est alias sunt maxime et sed.
+                "404":
+                    description: 'video_not_found: Not Found response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Ad magni eveniet numquam eos aut.
+                            example: Ea qui et deleniti magni nihil unde.
+    /api/video_learning/videos/category/{category_id}:
+        get:
+            tags:
+                - video_learning
+            summary: GetVideosByCategory video_learning
+            description: Get random set of videos of a category
+            operationId: video_learning#GetVideosByCategory
+            parameters:
+                - name: amount
+                  in: query
+                  description: How many videos to get
+                  allowEmptyValue: true
+                  schema:
+                    type: integer
+                    description: How many videos to get
+                    default: 20
+                    example: 49
+                    format: int64
+                    minimum: 1
+                    maximum: 100
+                  example: 87
+                - name: category_id
+                  in: path
+                  description: Category ID
+                  required: true
+                  schema:
+                    type: integer
+                    description: Category ID
+                    example: 4210707607112163240
+                    format: int64
+                    minimum: 1
+                  example: 3568211953720029826
+                - name: session
+                  in: cookie
+                  description: User session token
+                  allowEmptyValue: true
+                  required: true
+                  schema:
+                    type: string
+                    description: User session token
+                    example: Omnis et et doloribus.
+                  example: Libero sunt praesentium repellendus veritatis.
+            responses:
+                "200":
+                    description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/VideoList'
+                            example:
+                                videos:
+                                    - author: Officiis excepturi sit nostrum velit.
+                                      id: 9018032772272637239
+                                      likes: 2221701127821578401
+                                      thumbnail_url: Ex et quam rerum animi.
+                                      title: Ducimus a tenetur dicta.
+                                      views: 1715337270403106040
+                                    - author: Officiis excepturi sit nostrum velit.
+                                      id: 9018032772272637239
+                                      likes: 2221701127821578401
+                                      thumbnail_url: Ex et quam rerum animi.
+                                      title: Ducimus a tenetur dicta.
+                                      views: 1715337270403106040
+                                    - author: Officiis excepturi sit nostrum velit.
+                                      id: 9018032772272637239
+                                      likes: 2221701127821578401
+                                      thumbnail_url: Ex et quam rerum animi.
+                                      title: Ducimus a tenetur dicta.
+                                      views: 1715337270403106040
+                                    - author: Officiis excepturi sit nostrum velit.
+                                      id: 9018032772272637239
+                                      likes: 2221701127821578401
+                                      thumbnail_url: Ex et quam rerum animi.
+                                      title: Ducimus a tenetur dicta.
+                                      views: 1715337270403106040
+                "400":
+                    description: 'invalid_input: Bad Request response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Provident deleniti ipsum dolores commodi doloremque aut.
+                            example: Sint in inventore qui blanditiis numquam doloremque.
+                "401":
+                    description: 'invalid_session: Unauthorized response.'
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Suscipit voluptatem eum vero suscipit.
+                            example: Ipsa asperiores ad harum.
+components:
+    schemas:
+        Comment:
+            type: object
+            properties:
+                author:
+                    type: string
+                    description: Comment author
+                    example: Voluptatem corporis eius architecto.
+                body:
+                    type: string
+                    description: Comment content
+                    example: In nihil qui.
+                date:
+                    type: integer
+                    description: Comment publish date in milliseconds
+                    example: 61277816966433440
+                    format: int64
+                id:
+                    type: integer
+                    description: Comment unique identifier
+                    example: 5933717567190830127
+                    format: int64
+                title:
+                    type: string
+                    description: Comment title
+                    example: Esse nobis saepe incidunt nostrum.
+                video_id:
+                    type: integer
+                    description: ID of the video this comment belongs to
+                    example: 2403055967398954230
+                    format: int64
+            description: Video comment information
+            example:
+                author: Sint non tempore quasi.
+                body: Corporis totam.
+                date: 1846166617494549356
+                id: 7242043766492479495
+                title: Itaque at et omnis maiores ad veniam.
+                video_id: 4818216380761848683
+            required:
+                - id
+                - author
+                - date
+                - title
+                - body
+                - video_id
+        CommentList:
+            type: object
+            properties:
+                comments:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/Comment'
+                    description: List of comments
+                    example:
+                        - author: Aut maxime sint nam illo.
+                          body: Voluptas corrupti nihil est voluptatem et molestiae.
+                          date: 3923542708970651162
+                          id: 1305452211512940608
+                          title: Minima numquam.
+                          video_id: 6046669300988307111
+                        - author: Aut maxime sint nam illo.
+                          body: Voluptas corrupti nihil est voluptatem et molestiae.
+                          date: 3923542708970651162
+                          id: 1305452211512940608
+                          title: Minima numquam.
+                          video_id: 6046669300988307111
+                        - author: Aut maxime sint nam illo.
+                          body: Voluptas corrupti nihil est voluptatem et molestiae.
+                          date: 3923542708970651162
+                          id: 1305452211512940608
+                          title: Minima numquam.
+                          video_id: 6046669300988307111
+            description: Paginated list of comments
+            example:
+                comments:
+                    - author: Aut maxime sint nam illo.
+                      body: Voluptas corrupti nihil est voluptatem et molestiae.
+                      date: 3923542708970651162
+                      id: 1305452211512940608
+                      title: Minima numquam.
+                      video_id: 6046669300988307111
+                    - author: Aut maxime sint nam illo.
+                      body: Voluptas corrupti nihil est voluptatem et molestiae.
+                      date: 3923542708970651162
+                      id: 1305452211512940608
+                      title: Minima numquam.
+                      video_id: 6046669300988307111
+                    - author: Aut maxime sint nam illo.
+                      body: Voluptas corrupti nihil est voluptatem et molestiae.
+                      date: 3923542708970651162
+                      id: 1305452211512940608
+                      title: Minima numquam.
+                      video_id: 6046669300988307111
+            required:
+                - comments
+        CompleteUploadRequestBody:
+            type: object
+            properties:
+                category_id:
+                    type: integer
+                    description: Video category ID
+                    example: 4145697495564352009
+                    format: int64
+                    minimum: 1
+                description:
+                    type: string
+                    description: Video description
+                    example: tf7
+                    maxLength: 2000
+                tags:
+                    type: array
+                    items:
+                        type: string
+                        example: Incidunt culpa provident.
+                    description: Video tags
+                    example:
+                        - Possimus dolores tempora ea.
+                        - Accusantium veniam saepe at qui.
+                        - Voluptas consequatur quas saepe.
+                thumbnail_object_name:
+                    type: string
+                    description: Thumbnail object name in Minio
+                    example: Nam quaerat repudiandae praesentium itaque eligendi repellendus.
+                title:
+                    type: string
+                    description: Video title
+                    example: "41"
+                    minLength: 1
+                    maxLength: 150
+                video_object_name:
+                    type: string
+                    description: Video object name in Minio
+                    example: Nemo et quo consequatur nisi itaque.
+            example:
+                category_id: 7817971590538608694
+                description: bwq
+                tags:
+                    - Recusandae beatae voluptatem sit.
+                    - Ratione omnis dicta autem neque.
+                    - Est enim qui a ratione ad.
+                    - Nobis id.
+                thumbnail_object_name: Itaque accusantium laudantium aut assumenda modi.
+                title: fdt
+                video_object_name: Quasi vel reiciendis excepturi omnis soluta.
+            required:
+                - title
+                - category_id
+                - video_object_name
+                - thumbnail_object_name
+        CreateCommentRequestBody:
+            type: object
+            properties:
+                body:
+                    type: string
+                    description: Comment content
+                    example: 0j
+                    minLength: 1
+                    maxLength: 2000
+                title:
+                    type: string
+                    description: Comment title
+                    example: yg
+                    minLength: 1
+                    maxLength: 150
+            example:
+                body: 2m7
+                title: gzr
+            required:
+                - title
+                - body
+        GetOrCreateCategoryRequestBody:
+            type: object
+            properties:
+                name:
+                    type: string
+                    description: Category name
+                    example: t
+                    minLength: 1
+                    maxLength: 100
+            example:
+                name: z7
+            required:
+                - name
+        GetOrCreateTagRequestBody:
+            type: object
+            properties:
+                name:
+                    type: string
+                    description: Tag name
+                    example: d
+                    minLength: 1
+                    maxLength: 50
+            example:
+                name: hr8
+            required:
+                - name
+        OwnVideo:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: Video unique identifier
+                    example: 2965974526434396522
+                    format: int64
+                likes:
+                    type: integer
+                    description: Number of likes
+                    example: 8160552671851349417
+                    format: int64
+                thumbnail_url:
+                    type: string
+                    description: Minio presigned URL for thumbnail
+                    example: Sed iure earum.
+                title:
+                    type: string
+                    description: Video title
+                    example: Asperiores id ut sapiente omnis voluptas.
+                upload_date:
+                    type: integer
+                    description: Upload timestamp in milliseconds
+                    example: 5984375887671111939
+                    format: int64
+                views:
+                    type: integer
+                    description: Number of views
+                    example: 7665014271884962941
+                    format: int64
+            description: User's own video information
+            example:
+                id: 3246866060512754590
+                likes: 7864731509290927672
+                thumbnail_url: Facere totam quam eligendi sint cupiditate error.
+                title: Sit aut.
+                upload_date: 8719843622817833807
+                views: 5718663174435007326
+            required:
+                - id
+                - title
+                - views
+                - likes
+                - thumbnail_url
+                - upload_date
+        RoleValidationResponse:
+            type: object
+            properties:
+                role:
+                    type: string
+                    description: User role (student, teacher)
+                    example: Dolore excepturi laboriosam est voluptas et quisquam.
+                user_id:
+                    type: integer
+                    description: User unique identifier
+                    example: 8995807895064529669
+                    format: int64
+            description: Response for role validation
+            example:
+                role: Velit at quibusdam.
+                user_id: 6111427724814278258
+            required:
+                - user_id
+                - role
+        SimpleResponse:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: Created resource ID (when applicable)
+                    example: 1110315252801681624
+                    format: int64
+                message:
+                    type: string
+                    description: Response message
+                    example: Est qui eius dolor dolore voluptas.
+                success:
+                    type: boolean
+                    description: Operation success status
+                    example: false
+            description: Simple response with success status and message
+            example:
+                id: 2282080593897003855
+                message: Ipsa recusandae et accusamus delectus.
+                success: true
+            required:
+                - success
+                - message
+        UploadResponse:
+            type: object
+            properties:
+                object_name:
+                    type: string
+                    description: Minio object name
+                    example: Laudantium consectetur.
+                presigned_url:
+                    type: string
+                    description: Presigned URL for accessing the file
+                    example: Quasi beatae sunt ut beatae laboriosam.
+            description: File upload response
+            example:
+                object_name: Tenetur facilis a.
+                presigned_url: Aut atque aut necessitatibus qui.
+            required:
+                - object_name
+        Video:
+            type: object
+            properties:
+                author:
+                    type: string
+                    description: Video author/creator
+                    example: Molestias neque.
+                id:
+                    type: integer
+                    description: Video unique identifier
+                    example: 3875387102531923289
+                    format: int64
+                likes:
+                    type: integer
+                    description: Number of likes
+                    example: 2791268138439410779
+                    format: int64
+                thumbnail_url:
+                    type: string
+                    description: Minio presigned URL for thumbnail
+                    example: Et optio et quae.
+                title:
+                    type: string
+                    description: Video title
+                    example: Harum non.
+                views:
+                    type: integer
+                    description: Number of views
+                    example: 4293049092188406488
+                    format: int64
+            description: Video information
+            example:
+                author: Aut quaerat doloribus culpa.
+                id: 7611618265375252805
+                likes: 7122296800170691125
+                thumbnail_url: Quia voluptatem in et ad.
+                title: Atque non et molestiae et veritatis ratione.
+                views: 6117972993820364356
+            required:
+                - id
+                - title
+                - author
+                - views
+                - likes
+                - thumbnail_url
+        VideoCategory:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: Category unique identifier
+                    example: 248020747241585546
+                    format: int64
+                name:
+                    type: string
+                    description: Category name
+                    example: Atque temporibus ex est facilis.
+            description: Video category information
+            example:
+                id: 3174793813717841425
+                name: Et molestiae dignissimos ea aut quisquam.
+            required:
+                - id
+                - name
+        VideoDetails:
+            type: object
+            properties:
+                author:
+                    type: string
+                    description: Video author/creator
+                    example: Sint rem consequuntur et.
+                category_id:
+                    type: integer
+                    description: Video category
+                    example: 4000993985988128339
+                    format: int64
+                description:
+                    type: string
+                    description: Video description
+                    example: Ea eaque.
+                id:
+                    type: integer
+                    description: Video unique identifier
+                    example: 5285841169899205152
+                    format: int64
+                likes:
+                    type: integer
+                    description: Number of likes
+                    example: 2652075517358300413
+                    format: int64
+                tag_ids:
+                    type: array
+                    items:
+                        type: integer
+                        example: 8351317130438306071
+                        format: int64
+                    description: Video tags
+                    example:
+                        - 8164703612792869484
+                        - 7113766086505409083
+                        - 6473627494810713776
+                thumbnail_url:
+                    type: string
+                    description: Minio presigned URL for thumbnail
+                    example: Tenetur molestiae totam voluptatem nihil.
+                title:
+                    type: string
+                    description: Video title
+                    example: Officiis eum molestiae esse.
+                upload_date:
+                    type: integer
+                    description: Upload timestamp in milliseconds
+                    example: 4655646917589195194
+                    format: int64
+                video_url:
+                    type: string
+                    description: Minio presigned URL for video
+                    example: Minima sint.
+                views:
+                    type: integer
+                    description: Number of views
+                    example: 2733260841397198552
+                    format: int64
+            description: Complete video information
+            example:
+                author: Et fuga id aut repellat eligendi quia.
+                category_id: 22065658655163635
+                description: Deleniti aut aut maxime praesentium est.
+                id: 7780241364823344656
+                likes: 6599950643614360087
+                tag_ids:
+                    - 5624865326783408095
+                    - 7460940508486660478
+                    - 5440066369947523096
+                thumbnail_url: Accusantium ratione velit.
+                title: Eveniet suscipit qui atque.
+                upload_date: 4246269390808612536
+                video_url: Ad minus.
+                views: 8403138471847080335
+            required:
+                - id
+                - title
+                - description
+                - author
+                - views
+                - likes
+                - video_url
+                - thumbnail_url
+                - upload_date
+                - category_id
+                - tag_ids
+        VideoList:
+            type: object
+            properties:
+                videos:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/Video'
+                    description: List of videos
+                    example:
+                        - author: Maiores qui.
+                          id: 1680115108926067713
+                          likes: 4138777584244489841
+                          thumbnail_url: Omnis nihil nobis expedita.
+                          title: Eum quo iure id.
+                          views: 2092611142052070351
+                        - author: Maiores qui.
+                          id: 1680115108926067713
+                          likes: 4138777584244489841
+                          thumbnail_url: Omnis nihil nobis expedita.
+                          title: Eum quo iure id.
+                          views: 2092611142052070351
+                        - author: Maiores qui.
+                          id: 1680115108926067713
+                          likes: 4138777584244489841
+                          thumbnail_url: Omnis nihil nobis expedita.
+                          title: Eum quo iure id.
+                          views: 2092611142052070351
+            description: Paginated list of videos
+            example:
+                videos:
+                    - author: Maiores qui.
+                      id: 1680115108926067713
+                      likes: 4138777584244489841
+                      thumbnail_url: Omnis nihil nobis expedita.
+                      title: Eum quo iure id.
+                      views: 2092611142052070351
+                    - author: Maiores qui.
+                      id: 1680115108926067713
+                      likes: 4138777584244489841
+                      thumbnail_url: Omnis nihil nobis expedita.
+                      title: Eum quo iure id.
+                      views: 2092611142052070351
+            required:
+                - videos
+        VideoTag:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: Tag unique identifier
+                    example: 8131645369417645514
+                    format: int64
+                name:
+                    type: string
+                    description: Tag name
+                    example: Quaerat harum possimus.
+            description: Video tag information
+            example:
+                id: 4319652695620171277
+                name: Eos perspiciatis.
+            required:
+                - id
+                - name
+tags:
+    - name: video_learning
+      description: Video Learning microservice
