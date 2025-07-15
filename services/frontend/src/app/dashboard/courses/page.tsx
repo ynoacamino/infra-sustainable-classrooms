@@ -50,7 +50,8 @@ export default async function CoursesPage() {
                   <Image
                     src={course.imageUrl}
                     alt={course.title}
-                    fill
+                    width={400}
+                    height={225}
                     className="w-full h-full object-cover"
                   />
                 ) : (

@@ -5,9 +5,11 @@ import { Eye, Heart, User, Play } from 'lucide-react';
 import { Button } from '@/ui/button';
 import { Link } from '@/ui/link';
 import type { Video } from '@/types/video_learning/models';
-import Image from 'next/image';
 import { toggleVideoLikeAction } from '@/actions/video_learning/actions';
 import { toast } from 'sonner';
+import Image from 'next/image';
+import { formatViews } from '@/lib/video_learning/utils';
+import { mapToFile } from '@/lib/shared/files/utils';
 
 interface VideoCardProps {
   video: Video;
@@ -58,28 +60,16 @@ export function VideoCard({
     }
   };
 
-  const formatViews = (views: number) => {
-    if (views >= 1000000) {
-      return `${(views / 1000000).toFixed(1)}M`;
-    } else if (views >= 1000) {
-      return `${(views / 1000).toFixed(1)}K`;
-    }
-    return views.toString();
-  };
-
   return (
     <div className="bg-card border rounded-lg overflow-hidden hover:shadow-md transition-shadow">
       {/* Thumbnail */}
       <div className="relative aspect-video bg-muted">
         <Image
-          src={video.thumbnail_url}
+          src={mapToFile(video.thumbnail_url)}
           alt={video.title}
-          fill
+          width={640}
+          height={360}
           className="w-full h-full object-cover"
-          onError={(e) => {
-            const target = e.target as HTMLImageElement;
-            target.src = '/placeholder-video.jpg';
-          }}
         />
         <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
           <Link href={`/dashboard/videos/${video.id}`}>

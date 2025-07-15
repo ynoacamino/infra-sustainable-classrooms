@@ -26,7 +26,9 @@ import { toast } from 'sonner';
 import { VideoCard } from '@/components/video_learning/shared/video-card';
 import { useGetOwnVideos } from '@/hooks/video_learning/useSWR';
 import { deleteVideoAction } from '@/actions/video_learning/actions';
+import { formatDate } from '@/lib/shared/utils';
 import Image from 'next/image';
+import { mapToFile } from '@/lib/shared/files/utils';
 
 type SortOption = 'title' | 'views' | 'likes' | 'upload_date';
 type SortDirection = 'asc' | 'desc';
@@ -111,14 +113,6 @@ export function MyVideos() {
       console.error('Failed to delete video:', error);
       toast.error('An error occurred while deleting the video');
     }
-  };
-
-  const formatDate = (timestamp: number) => {
-    return new Date(timestamp * 1000).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    });
   };
 
   const toggleSortDirection = () => {
@@ -324,29 +318,18 @@ export function MyVideos() {
                 <div key={video.id} className="bg-card border rounded-lg p-4">
                   <div className="flex gap-4">
                     <Image
-                      src={video.thumbnail_url}
+                      src={mapToFile(video.thumbnail_url)}
                       alt={video.title}
                       width={128}
-                      height={80}
+                      height={72}
                       className="w-32 h-20 object-cover rounded flex-shrink-0"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.src = '/placeholder-video.jpg';
-                      }}
                     />
                     <div className="flex-1 space-y-2">
                       <div className="flex items-start justify-between">
-                        <Link href={`/teacher/videos/${video.id}`}>
-                          <h4 className="font-semibold hover:text-primary transition-colors">
-                            {video.title}
-                          </h4>
-                        </Link>
+                        <h4 className="font-semibold hover:text-primary transition-colors">
+                          {video.title}
+                        </h4>
                         <div className="flex gap-2">
-                          <Link href={`/teacher/videos/${video.id}/edit`}>
-                            <Button variant="outline" size="sm">
-                              Edit
-                            </Button>
-                          </Link>
                           <Button
                             variant="destructive"
                             size="sm"
