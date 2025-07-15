@@ -1,12 +1,14 @@
 package controllers
 
 import (
-	"bytes"
 	"context"
 	"database/sql"
 	"errors"
 	"fmt"
+	"io"
 	"log"
+	"mime"
+	"mime/multipart"
 	"time"
 
 	"github.com/jackc/pgx/v5/pgtype"
@@ -517,19 +519,29 @@ func (s *videolearningsrvc) GetOwnVideos(ctx context.Context, p *videolearning.G
 }
 
 // InitialUpload uploads video file and returns object name
-func (s *videolearningsrvc) InitialUpload(ctx context.Context, p *videolearning.InitialUploadPayload) (res *videolearning.UploadResponse, err error) {
+func (s *videolearningsrvc) InitialUpload(ctx context.Context, p *videolearning.InitialUploadPayload, req io.ReadCloser) (res *videolearning.UploadResponse, err error) {
+	defer req.Close()
+
 	// Validate session and check teacher role
 	profile, err := s.validateTeacherRole(ctx, p.SessionToken)
 	if err != nil {
 		return nil, videolearning.PermissionDenied("only teachers can upload videos")
 	}
 
+	_, params, err := mime.ParseMediaType(p.ContentType)
+	if err != nil {
+		return nil, videolearning.InvalidContentType("invalid content type")
+	}
+	mr := multipart.NewReader(req, params["boundary"])
+
+	part, err := mr.NextPart()
+	if err != nil {
+		return nil, videolearning.InvalidInput("failed to read multipart form data")
+	}
 	// Generate object name
 	objectName := s.generateObjectName(p.Filename, profile.UserID)
 
-	// Upload to staging bucket
-	reader := bytes.NewReader(p.File)
-	err = s.storageRepo.UploadFile(ctx, "video-learning-videos-staging", objectName, reader, int64(len(p.File)), "video/mp4")
+	err = s.storageRepo.UploadFile(ctx, "video-learning-videos-staging", objectName, part, "video/mp4")
 	if err != nil {
 		return nil, videolearning.UploadFailed("failed to upload video")
 	}
@@ -614,19 +626,30 @@ func (s *videolearningsrvc) CompleteUpload(ctx context.Context, p *videolearning
 }
 
 // UploadThumbnail uploads custom thumbnail for video
-func (s *videolearningsrvc) UploadThumbnail(ctx context.Context, p *videolearning.UploadThumbnailPayload) (res *videolearning.UploadResponse, err error) {
+func (s *videolearningsrvc) UploadThumbnail(ctx context.Context, p *videolearning.UploadThumbnailPayload, req io.ReadCloser) (res *videolearning.UploadResponse, err error) {
+	defer req.Close()
 	// Validate session and check teacher role
 	profile, err := s.validateTeacherRole(ctx, p.SessionToken)
 	if err != nil {
 		return nil, videolearning.PermissionDenied("only teachers can upload thumbnails")
 	}
 
+	_, params, err := mime.ParseMediaType(p.ContentType)
+	if err != nil {
+		return nil, videolearning.InvalidContentType("invalid content type")
+	}
+	mr := multipart.NewReader(req, params["boundary"])
+
+	part, err := mr.NextPart()
+	if err != nil {
+		return nil, videolearning.InvalidInput("failed to read multipart form data")
+	}
+
 	// Generate object name for thumbnail
 	objectName := s.generateObjectName(p.Filename, profile.UserID)
 
 	// Upload to staging bucket
-	reader := bytes.NewReader(p.File)
-	err = s.storageRepo.UploadFile(ctx, "video-learning-thumbnails-staging", objectName, reader, int64(len(p.File)), "image/jpeg")
+	err = s.storageRepo.UploadFile(ctx, "video-learning-thumbnails-staging", objectName, part, "image/jpeg")
 	if err != nil {
 		return nil, videolearning.UploadFailed("failed to upload thumbnail")
 	}
