@@ -115,7 +115,7 @@ func (s *profilessrvc) GetCompleteProfile(ctx context.Context, payload *profiles
 	userInfo, err := s.authServiceRepo.ValidateUser(ctx, &auth.ValidateUserPayload{
 		SessionToken: payload.SessionToken,
 	})
-	if err != nil {
+	if err != nil || userInfo.User == nil {
 		return nil, profiles.Unauthorized("invalid session token")
 	}
 

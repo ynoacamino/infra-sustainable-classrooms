@@ -1,40 +1,31 @@
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/ui/form';
+'use client';
+
+import { Form, FormField } from '@/ui/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { InferItem } from '@/ui/infer-field';
-import type { Role } from '@/types/auth/role';
-import RoleSelector from '@/components/auth/forms/role-selector';
 import { Button } from '@/ui/button';
-import {
-  registerFormFields,
-  registerFormSchema,
-} from '@/lib/auth/forms/register-form';
-import { Roles } from '@/lib/auth/enums/roles';
+import { authFormFields, authFormSchema } from '@/lib/auth/forms/auth-form';
+import { generateSecretAction } from '@/actions/auth/actions';
+import { toast } from 'sonner';
+import { redirect, RedirectType } from 'next/navigation';
 
 function RegisterForm() {
-  const form = useForm<z.infer<typeof registerFormSchema>>({
-    resolver: zodResolver(registerFormSchema),
+  const form = useForm<z.infer<typeof authFormSchema>>({
+    resolver: zodResolver(authFormSchema),
     defaultValues: {
-      names: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-      role: Roles.Student, // Default to the first role
+      identifier: '',
     },
   });
-  const rolField = registerFormFields.find((field) => field.name === 'role');
-  const onSubmit = (values: z.infer<typeof registerFormSchema>) => {
-    // Handle form submission logic here
-    console.log('Form submitted with values:', values);
+  const onSubmit = async (values: z.infer<typeof authFormSchema>) => {
+    const res = await generateSecretAction(values);
+    if (res.success) {
+      toast.success('Login successful!');
+      redirect('/auth/register/save', RedirectType.push);
+    } else {
+      toast.error(`Login failed. Please try again. ${res.error.message}`);
+    }
   };
   return (
     <Form {...form}>
@@ -42,35 +33,16 @@ function RegisterForm() {
         onSubmit={form.handleSubmit(onSubmit)}
         className="flex flex-col gap-y-4 w-full px-4 sm:px-6 md:px-8 max-w-3xl pb-20"
       >
-        {registerFormFields
-          .filter((field) => field.name !== 'role')
-          .map((field) => (
-            <FormField
-              key={`form-register-${field.name}`}
-              control={form.control}
-              name={field.name}
-              render={({ field: formField }) => (
-                <InferItem {...field} {...formField} />
-              )}
-            />
-          ))}
-        <FormField
-          control={form.control}
-          name="role"
-          render={({ field: formField }) => (
-            <FormItem>
-              <FormLabel>{rolField?.label}</FormLabel>
-              <FormControl>
-                <RoleSelector
-                  value={formField.value as Role}
-                  onChange={formField.onChange}
-                />
-              </FormControl>
-              <FormDescription>{rolField?.description}</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        {authFormFields.map((field) => (
+          <FormField
+            key={`form-register-${field.name}`}
+            control={form.control}
+            name={field.name}
+            render={({ field: formField }) => (
+              <InferItem {...field} {...formField} />
+            )}
+          />
+        ))}
         <Button type="submit" className="self-center">
           Register
         </Button>

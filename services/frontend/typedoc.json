@@ -1,0 +1,40 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": ["./src"],
+  "entryPointStrategy": "expand",
+  "out": "./docs/dist",
+  "name": "Sustainable Classrooms Frontend Documentation",
+  "readme": "./README.md",
+  "tsconfig": "./tsconfig.json",
+
+  "exclude": [
+    "**/app/**",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/.next/**",
+    "**/coverage/**"
+  ],
+
+  "includeVersion": true,
+  "includeHierarchySummary": true,
+  "categorizeByGroup": true,
+  "sort": ["source-order", "alphabetical"],
+
+  "searchInComments": true,
+  "cleanOutputDir": true,
+  "treatWarningsAsErrors": false,
+
+  "validation": {
+    "notExported": true,
+    "invalidLink": true,
+    "notDocumented": false
+  },
+
+  "hideGenerator": false,
+  "githubPages": true
+}

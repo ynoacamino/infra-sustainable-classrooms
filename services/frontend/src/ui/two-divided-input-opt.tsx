@@ -12,10 +12,45 @@ import type {
   FieldValues,
 } from 'react-hook-form';
 
+/**
+ * Props for the TwoDividedInputOpt component
+ */
 interface TwoDividedInputOptProps {
+  /** Maximum length of the OTP input */
   maxLength: number;
 }
 
+/**
+ * TwoDividedInputOpt component
+ *
+ * A specialized OTP input component that divides the input slots into two groups
+ * with a visual separator in between. Automatically calculates the distribution
+ * of slots based on the maximum length.
+ *
+ * @template FieldName - The field name type
+ * @template TFieldValues - Form field values type
+ * @template TName - Field path type
+ * @param props - Combined props from TwoDividedInputOptProps, Field, and ControllerRenderProps
+ * @param props.maxLength - Maximum length of the OTP input
+ * @returns The rendered two-divided OTP input component
+ *
+ * @example
+ * ```tsx
+ * // 6-digit OTP divided into two groups of 3
+ * <TwoDividedInputOpt
+ *   maxLength={6}
+ *   name="verificationCode"
+ *   {...fieldProps}
+ * />
+ *
+ * // 8-digit OTP divided into groups of 4
+ * <TwoDividedInputOpt
+ *   maxLength={8}
+ *   name="securityCode"
+ *   {...fieldProps}
+ * />
+ * ```
+ */
 function TwoDividedInputOpt<
   FieldName extends string,
   TFieldValues extends FieldValues = FieldValues,

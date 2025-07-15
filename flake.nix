@@ -26,6 +26,8 @@
             protobuf
             protoc-gen-go
             protoc-gen-go-grpc
+            pnpm
+            nodejs
           ];
           buildInputs = [ pkgs.bashInteractive ];
           shellHook = ''

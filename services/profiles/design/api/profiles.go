@@ -9,7 +9,7 @@ var _ = Service("profiles", func() {
 
 	// HTTP transport for client communication
 	HTTP(func() {
-		Path("/profiles")
+		Path("/api/profiles")
 	})
 
 	// gRPC transport for inter-service communication
@@ -26,24 +26,25 @@ var _ = Service("profiles", func() {
 	Error("invalid_role", String, "Invalid role specified")
 
 	// === STUDENT PROFILE CREATION ===
+	// DONE in frontend
+	// NOT TESTED
 	Method("CreateStudentProfile", func() {
 		Description("Create a new student profile with basic information")
 
 		Payload(func() {
 			Field(1, "session_token", String, "Authentication session token")
-			Field(2, "user_id", Int64, "User ID from auth service")
-			Field(3, "first_name", String, "First name")
-			Field(4, "last_name", String, "Last name")
-			Field(5, "email", String, "Email address", func() {
+			Field(2, "first_name", String, "First name")
+			Field(3, "last_name", String, "Last name")
+			Field(4, "email", String, "Email address", func() {
 				Format(FormatEmail)
 			})
-			Field(6, "phone", String, "Phone number")
-			Field(7, "avatar_url", String, "Profile picture URL")
-			Field(8, "bio", String, "Biography/description")
-			Field(9, "grade_level", String, "Grade level (1-12, undergraduate, graduate)")
-			Field(10, "major", String, "Major/field of study")
+			Field(5, "phone", String, "Phone number")
+			Field(6, "avatar_url", String, "Profile picture URL")
+			Field(7, "bio", String, "Biography/description")
+			Field(8, "grade_level", String, "Grade level (1-12, undergraduate, graduate)")
+			Field(9, "major", String, "Major/field of study")
 
-			Required("session_token", "user_id", "first_name", "last_name", "email", "grade_level")
+			Required("session_token", "first_name", "last_name", "email", "grade_level")
 		})
 
 		Result(StudentProfileResponse)
@@ -60,23 +61,24 @@ var _ = Service("profiles", func() {
 	})
 
 	// === TEACHER PROFILE CREATION ===
+	// DONE in frontend
+	// NOT TESTED
 	Method("CreateTeacherProfile", func() {
 		Description("Create a new teacher profile with basic information")
 
 		Payload(func() {
 			Field(1, "session_token", String, "Authentication session token")
-			Field(2, "user_id", Int64, "User ID from auth service")
-			Field(3, "first_name", String, "First name")
-			Field(4, "last_name", String, "Last name")
-			Field(5, "email", String, "Email address", func() {
+			Field(1, "first_name", String, "First name")
+			Field(3, "last_name", String, "Last name")
+			Field(4, "email", String, "Email address", func() {
 				Format(FormatEmail)
 			})
-			Field(6, "phone", String, "Phone number")
-			Field(7, "avatar_url", String, "Profile picture URL")
-			Field(8, "bio", String, "Biography/description")
-			Field(9, "position", String, "Position/title")
+			Field(5, "phone", String, "Phone number")
+			Field(6, "avatar_url", String, "Profile picture URL")
+			Field(7, "bio", String, "Biography/description")
+			Field(8, "position", String, "Position/title")
 
-			Required("session_token", "user_id", "first_name", "last_name", "email", "position")
+			Required("session_token", "first_name", "last_name", "email", "position")
 		})
 
 		Result(TeacherProfileResponse)
@@ -93,6 +95,8 @@ var _ = Service("profiles", func() {
 	})
 
 	// === PROFILE RETRIEVAL ===
+	// DONE in frontend
+	// NOT TESTED
 	Method("GetCompleteProfile", func() {
 		Description("Get user's complete profile")
 
@@ -120,6 +124,9 @@ var _ = Service("profiles", func() {
 		})
 	})
 
+	// === PUBLIC PROFILE RETRIEVAL ===
+	// DONE in frontend
+	// NOT TESTED
 	Method("GetPublicProfileById", func() {
 		Description("Get public profile information by user ID")
 
@@ -147,6 +154,8 @@ var _ = Service("profiles", func() {
 	})
 
 	// === PROFILE UPDATES ===
+	// DONE in frontend
+	// NOT TESTED
 	Method("UpdateProfile", func() {
 		Description("Update basic profile information")
 
@@ -180,6 +189,7 @@ var _ = Service("profiles", func() {
 	})
 
 	// === INTER-SERVICE COMMUNICATION (gRPC only) ===
+	// Not used in frontend, only for inter-service communication
 	Method("ValidateUserRole", func() {
 		Description("Validate user role for inter-service communication")
 

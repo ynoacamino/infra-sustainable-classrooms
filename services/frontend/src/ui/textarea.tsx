@@ -1,6 +1,34 @@
 import { cn } from '@/lib/shared/utils';
 import * as React from 'react';
 
+/**
+ * Textarea component
+ *
+ * A styled textarea component with consistent design system integration.
+ * Provides focus states, validation styling, and automatic field sizing.
+ * Supports all standard textarea attributes and behaviors.
+ *
+ * @param props - Textarea component props
+ * @param props.className - Additional CSS classes
+ * @returns The rendered textarea component
+ *
+ * @example
+ * ```tsx
+ * <Textarea placeholder="Enter your message..." />
+ *
+ * <Textarea
+ *   placeholder="Description"
+ *   rows={4}
+ *   aria-invalid={hasError}
+ * />
+ *
+ * <Textarea
+ *   className="custom-textarea"
+ *   defaultValue="Default text content"
+ *   disabled
+ * />
+ * ```
+ */
 function Textarea({ className, ...props }: React.ComponentProps<'textarea'>) {
   return (
     <textarea

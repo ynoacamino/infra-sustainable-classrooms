@@ -83,10 +83,7 @@ func NewConfig() (*Config, error) {
 	sessionDuration := parseDurationOrDefault(SESSION_DURATION, "24h")
 
 	// Setup logging context
-	format := goaLog.FormatJSON
-	if goaLog.IsTerminal() {
-		format = goaLog.FormatTerminal
-	}
+	format := goaLog.FormatTerminal
 
 	ctx := goaLog.Context(context.Background(), goaLog.WithFormat(format))
 
