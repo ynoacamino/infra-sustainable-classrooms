@@ -102,6 +102,25 @@ export function VideoSidebar({ video }: VideoSidebarProps) {
     </div>
   );
 
+  if (isLoading) {
+    return (
+      <div className="space-y-4">
+        <Skeleton className="h-8 w-full mb-4" />
+        {renderLoadingSkeleton()}
+      </div>
+    );
+  }
+
+  if (errors.length > 0 || !similarVideos || !recommendedVideosResult) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-sm text-muted-foreground">
+          Unable to load video data. Please try again later.
+        </p>
+      </div>
+    );
+  }
+
   const recommendedVideos = recommendedVideosResult.videos || [];
 
   return (
