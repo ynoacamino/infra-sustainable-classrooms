@@ -2,10 +2,11 @@
 -- Simple form system: teachers create forms, students submit once and get a score
 
 -- Tests table - stores form metadata (simplified)
-CREATE TABLE IF NOT EXISTS tests (
+DROP TABLE IF EXISTS tests CASCADE;
+CREATE TABLE tests (
     id BIGSERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
-    created_by BIGINT NOT NULL, -- Reference to users.id from auth service
+    created_by BIGINT NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
 );
 
