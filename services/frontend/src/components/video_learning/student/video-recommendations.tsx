@@ -11,7 +11,7 @@ import { useGetRecommendations } from '@/hooks/video_learning/useSWR';
 export function VideoRecommendations() {
   const {
     isLoading,
-    data: [videos],
+    data: [videosResult],
     errors,
     mutateAll,
   } = useSWRAll([useGetRecommendations({ amount: 6 })]);
@@ -32,7 +32,7 @@ export function VideoRecommendations() {
     );
   }
 
-  if (errors.length > 0 || !videos) {
+  if (errors.length > 0 || !videosResult) {
     return (
       <div className="text-center py-12">
         <div className="text-muted-foreground mb-4">
@@ -61,6 +61,8 @@ export function VideoRecommendations() {
       </div>
     );
   }
+
+  const videos = videosResult.videos || [];
 
   if (videos.length === 0) {
     return (

@@ -472,7 +472,7 @@ var _ = Service("video_learning", func() {
 		Result(VideoList)
 
 		HTTP(func() {
-			GET("/category/{category_id}")
+			GET("/videos/category/{category_id}")
 			Params(func() {
 				Param("amount")
 			})

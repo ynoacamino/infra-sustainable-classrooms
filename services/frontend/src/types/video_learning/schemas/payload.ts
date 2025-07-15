@@ -44,10 +44,7 @@ const UploadSchema = z.object({
 });
 
 export const SearchVideosPayloadSchema = PaginationSchema.extend({
-  query: z
-    .string()
-    .min(1, 'Query is required')
-    .max(200, 'Query cannot exceed 200 characters'),
+  query: z.string().max(200, 'Query cannot exceed 200 characters'),
   category_id: VideoCategorySchema.shape.id.optional(),
 });
 

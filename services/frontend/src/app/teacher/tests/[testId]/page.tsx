@@ -53,8 +53,6 @@ export default async function TestPage({ params }: TestPageProps) {
   const test = testResult.data.test;
   const questions = questionsResult.data.questions;
 
-  console.log(questionsResult);
-
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex items-center gap-4 mb-8">

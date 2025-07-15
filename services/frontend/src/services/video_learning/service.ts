@@ -33,7 +33,10 @@ import type {
   UploadVideoPayload,
 } from '@/types/video_learning/payload';
 import type {
+  GetRecommendationsResponse,
+  GetVideosByCategoryResponse,
   GetVideosGroupedByCategoryResponse,
+  SearchVideosResponse,
   UploadResponse,
 } from '@/types/video_learning/responses';
 import {
@@ -63,8 +66,10 @@ class VideoLearningService extends Service {
     super('video_learning');
   }
 
-  async searchVideos(payload: SearchVideosPayload): AsyncResult<Video[]> {
-    return this.get<Video[], typeof SearchVideosPayloadSchema>({
+  async searchVideos(
+    payload: SearchVideosPayload,
+  ): AsyncResult<SearchVideosResponse> {
+    return this.get<SearchVideosResponse, typeof SearchVideosPayloadSchema>({
       endpoint: 'search',
       payload: {
         schema: SearchVideosPayloadSchema,
@@ -76,8 +81,11 @@ class VideoLearningService extends Service {
 
   async getRecommendations(
     payload: GetRecommendationsPayload,
-  ): AsyncResult<Video[]> {
-    return this.get<Video[], typeof GetRecommendationsPayloadSchema>({
+  ): AsyncResult<GetRecommendationsResponse> {
+    return this.get<
+      GetRecommendationsResponse,
+      typeof GetRecommendationsPayloadSchema
+    >({
       endpoint: 'recommendations',
       payload: {
         schema: GetRecommendationsPayloadSchema,
@@ -207,9 +215,12 @@ class VideoLearningService extends Service {
 
   async getVideosByCategory(
     payload: GetVideosByCategoryPayload,
-  ): AsyncResult<Video[]> {
-    return this.get<Video[], typeof GetVideosByCategoryPayloadSchema>({
-      endpoint: ['category', payload.id],
+  ): AsyncResult<GetVideosByCategoryResponse> {
+    return this.get<
+      GetVideosByCategoryResponse,
+      typeof GetVideosByCategoryPayloadSchema
+    >({
+      endpoint: ['videos', 'category', payload.id],
       payload: {
         schema: GetVideosByCategoryPayloadSchema,
         data: payload,
@@ -319,7 +330,7 @@ class VideoLearningService extends Service {
       if (!resVideos.success) {
         return { category, videos: [] };
       }
-      return { category, videos: resVideos.data };
+      return { category, videos: resVideos.data.videos };
     });
     const videosByCategory = await Promise.all(promises);
 

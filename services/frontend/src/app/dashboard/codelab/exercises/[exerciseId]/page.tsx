@@ -55,8 +55,6 @@ export default async function ExercisePage({ params }: ExercisePageProps) {
   const tests = exercise.data.tests;
   const attempts = exercise.data.attempts || [];
 
-  console.log('Exercise Tests:', tests);
-
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex items-center gap-4 mb-8">
