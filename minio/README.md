@@ -7,8 +7,7 @@ MinIO provides high-performance, S3-compatible object storage for the Sustainabl
 MinIO serves as the primary object storage solution for:
 
 - **Video Content** - Educational videos and thumbnails
-- **User Profiles** - Profile pictures and attachments
-- **Text Content** - Documents, images, and file attachments
+- **Image Content** - Video thumbnails
 - **Temporary Files** - Upload processing and staging
 
 ## 📦 Bucket Structure
