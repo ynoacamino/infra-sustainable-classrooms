@@ -50,7 +50,6 @@ WHERE (
         $2::bigint = 0
         OR v.category_id = $2
     )
-ORDER BY (v.likes + v.views) DESC
 LIMIT $3
 OFFSET
     $4;
