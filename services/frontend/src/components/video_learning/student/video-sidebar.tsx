@@ -25,7 +25,7 @@ export function VideoSidebar({ video }: VideoSidebarProps) {
 
   const {
     isLoading,
-    data: [similarVideos, recommendedVideos],
+    data: [similarVideos, recommendedVideosResult],
     errors,
   } = useSWRAll([
     useGetSimilarVideos({ id: video.id, amount: 10 }),
@@ -101,6 +101,8 @@ export function VideoSidebar({ video }: VideoSidebarProps) {
       ))}
     </div>
   );
+
+  const recommendedVideos = recommendedVideosResult.videos || [];
 
   return (
     <div className="space-y-4">

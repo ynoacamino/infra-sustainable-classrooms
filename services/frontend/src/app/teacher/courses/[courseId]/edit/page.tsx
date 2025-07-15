@@ -2,9 +2,9 @@ import { textService } from '@/services/text/service';
 import { cookies } from 'next/headers';
 import Link from 'next/link';
 import { Button } from '@/ui/button';
-import { UpdateCourseForm } from '@/components/text/forms';
 import { ArrowLeft } from 'lucide-react';
 import { notFound } from 'next/navigation';
+import { UpdateCourseForm } from '@/components/text/forms/update-course-form';
 
 interface EditCoursePageProps {
   params: Promise<{ courseId: string }>;

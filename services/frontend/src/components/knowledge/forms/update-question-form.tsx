@@ -24,7 +24,7 @@ function UpdateQuestionForm({ question }: UpdateQuestionFormProps) {
     resolver: zodResolver(updateQuestionFormSchema),
     defaultValues: {
       test_id: question.test_id,
-      question_id: question.id,
+      id: question.id,
       question_text: question.question_text,
       option_a: question.option_a,
       option_b: question.option_b,

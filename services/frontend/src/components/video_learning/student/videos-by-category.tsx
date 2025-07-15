@@ -33,7 +33,7 @@ export function VideosByCategory({ category }: VideosByCategoryProps) {
 
   useEffect(() => {
     if (rawVideos) {
-      setVideos(rawVideos);
+      setVideos(rawVideos.videos || []);
     }
   }, [rawVideos]);
 

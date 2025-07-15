@@ -14,7 +14,4 @@ export {
 } from './update-question-form';
 
 // Student form configurations
-export {
-  submitTestFormSchema,
-  createSubmitTestFormFields,
-} from './submit-test-form';
+export { createSubmitTestFormFields } from './submit-test-form';

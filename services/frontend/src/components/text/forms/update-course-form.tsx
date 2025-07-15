@@ -22,7 +22,7 @@ function UpdateCourseForm({ course }: { course: Course }) {
       title: course.title,
       description: course.description,
       imageUrl: course.imageUrl,
-      course_id: course.id,
+      id: course.id,
     },
   });
 

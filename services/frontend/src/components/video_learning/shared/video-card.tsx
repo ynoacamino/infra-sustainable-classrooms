@@ -64,9 +64,11 @@ export function VideoCard({
     <div className="bg-card border rounded-lg overflow-hidden hover:shadow-md transition-shadow">
       {/* Thumbnail */}
       <div className="relative aspect-video bg-muted">
-        <img
+        <Image
           src={mapToFile(video.thumbnail_url)}
           alt={video.title}
+          width={640}
+          height={360}
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">

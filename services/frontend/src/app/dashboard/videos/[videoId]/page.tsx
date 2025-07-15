@@ -9,15 +9,16 @@ import { videoLearningService } from '@/services/video_learning/service';
 import { cookies } from 'next/headers';
 
 interface VideoDetailPageProps {
-  params: {
+  params: Promise<{
     videoId: string;
-  };
+  }>;
 }
 
 export default async function VideoDetailPage({
   params,
 }: VideoDetailPageProps) {
-  const videoId = parseInt(params.videoId);
+  const asyncParams = await params;
+  const videoId = parseInt(asyncParams.videoId);
   if (isNaN(videoId)) {
     notFound();
   }
