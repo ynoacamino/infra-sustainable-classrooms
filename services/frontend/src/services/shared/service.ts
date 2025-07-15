@@ -99,10 +99,10 @@ export abstract class Service {
     const jsonbodyUnsafe: Record<string, unknown> = {};
     const formDataUnsafe: FormData = new FormData();
     if (multipart) {
-      const arrayBuffer = await payload?.data?.file?.arrayBuffer();
-      const buffer = Buffer.from(arrayBuffer || '');
-      formDataUnsafe.append('file', buffer, payload?.data.filename);
-      formDataUnsafe.append('filename', payload?.data.filename);
+      const file = payload?.data?.file as File;
+      formDataUnsafe.append('file', Buffer.from(await file.arrayBuffer()), {
+        filename: payload?.data.filename,
+      });
     } else {
       Object.keys(payload?.data || {}).forEach((key) => {
         if (
@@ -115,7 +115,7 @@ export abstract class Service {
       });
     }
     const bodySafe = multipart
-      ? formDataUnsafe
+      ? formDataUnsafe.getBuffer()
       : JSON.stringify(jsonbodyUnsafe);
     // Make the request
     try {
@@ -129,7 +129,7 @@ export abstract class Service {
         method,
         headers: multipart
           ? {
-              ...formDataUnsafe.getHeaders(),
+              'Content-Type': formDataUnsafe.getHeaders()['content-type'],
               ...(options?.headers || {}),
             }
           : {
@@ -139,7 +139,6 @@ export abstract class Service {
         body: method !== 'GET' ? bodySafe : undefined,
       };
       const finalReqInit = await this.applyRequestInterceptors(url, reqInit);
-      console.log('finalReqInit', finalReqInit);
       const response = await fetch(url, finalReqInit);
       const finalResponse = await this.applyResponseInterceptors(url, response);
 

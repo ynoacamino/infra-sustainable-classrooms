@@ -16,6 +16,7 @@ import { Skeleton } from '@/ui/skeleton';
 import { useGetOwnVideos } from '@/hooks/video_learning/useSWR';
 import Image from 'next/image';
 import { formatViews } from '@/lib/video_learning/utils';
+import { mapToFile } from '@/lib/shared/files/utils';
 
 interface VideoStats {
   totalVideos: number;
@@ -170,15 +171,11 @@ export function VideoStats() {
           <CardContent>
             <div className="flex gap-4">
               <Image
-                src={stats.topPerformingVideo.thumbnail_url}
+                src={mapToFile(stats.topPerformingVideo.thumbnail_url)}
                 alt={stats.topPerformingVideo.title}
                 width={96}
                 height={64}
                 className="w-24 h-16 object-cover rounded"
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.src = '/placeholder-video.jpg';
-                }}
               />
               <div className="flex-1">
                 <h4 className="font-semibold line-clamp-2 mb-2">

@@ -10,6 +10,7 @@ import { Skeleton } from '@/ui/skeleton';
 import { Link } from '@/ui/link';
 import Image from 'next/image';
 import { useGetVideosByCategory } from '@/hooks/video_learning/useSWR';
+import { mapToFile } from '@/lib/shared/files/utils';
 
 interface VideosByCategoryProps {
   category: VideoCategory;
@@ -207,15 +208,11 @@ export function VideosByCategory({ category }: VideosByCategoryProps) {
                 <div key={video.id} className="border rounded-lg p-4">
                   <div className="flex gap-4">
                     <Image
-                      src={video.thumbnail_url}
+                      src={mapToFile(video.thumbnail_url)}
                       alt={video.title}
                       width={128}
                       height={72}
                       className="w-32 h-20 object-cover rounded flex-shrink-0"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.src = '/placeholder-video.jpg';
-                      }}
                     />
                     <div className="flex-1">
                       <Link href={`/dashboard/videos/${video.id}`}>

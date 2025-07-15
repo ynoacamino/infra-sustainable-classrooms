@@ -15,6 +15,7 @@ import { Button } from '@/ui/button';
 import { Slider } from '@/ui/slider';
 import type { VideoDetails } from '@/types/video_learning/models';
 import { toast } from 'sonner';
+import { mapToFile } from '@/lib/shared/files/utils';
 
 interface VideoPlayerProps {
   video: VideoDetails;
@@ -200,7 +201,7 @@ export function VideoPlayer({ video }: VideoPlayerProps) {
       {/* Video Element */}
       <video
         ref={videoRef}
-        src={video.video_url}
+        src={mapToFile(video.video_url)}
         className="w-full h-full object-contain"
         onClick={togglePlayPause}
         onError={() => toast.error('Failed to load video file')}
