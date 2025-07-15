@@ -6,12 +6,13 @@ import { Button } from '@/ui/button';
 import { Link } from '@/ui/link';
 import type { Video, VideoDetails } from '@/types/video_learning/models';
 import { Skeleton } from '@/ui/skeleton';
-import Image from 'next/image';
 import {
   useGetSimilarVideos,
   useGetRecommendations,
 } from '@/hooks/video_learning/useSWR';
 import { useSWRAll } from '@/lib/shared/swr/utils';
+import Image from 'next/image';
+import { mapToFile } from '@/lib/shared/files/utils';
 
 interface VideoSidebarProps {
   video: VideoDetails;
@@ -53,14 +54,11 @@ export function VideoSidebar({ video }: VideoSidebarProps) {
           {/* Thumbnail */}
           <div className="relative flex-shrink-0 w-24 h-16 bg-muted rounded overflow-hidden">
             <Image
-              src={video.thumbnail_url}
+              src={mapToFile(video.thumbnail_url)}
               alt={video.title}
-              fill
+              width={400}
+              height={225}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.src = '/placeholder-video.jpg';
-              }}
             />
             <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
               <PlayCircle className="h-6 w-6 text-white" />
