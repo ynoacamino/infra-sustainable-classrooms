@@ -33,7 +33,7 @@ SELECT v.* FROM video v WHERE v.category_id = $1;
 SELECT v.*
 FROM video v
 WHERE
-    v.created_at >= NOW() - INTERVAL $1;
+    v.created_at >= NOW() - ($1)::interval;
 
 -- name: SearchVideos :many
 SELECT DISTINCT
