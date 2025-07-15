@@ -1,14 +1,7 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import {
-  Eye,
-  Heart,
-  TrendingUp,
-  Calendar,
-  BarChart3,
-  PieChart,
-} from 'lucide-react';
+import { useState, useMemo } from 'react';
+import { Eye, Heart, TrendingUp, BarChart3, PieChart } from 'lucide-react';
 import {
   Card,
   CardContent,
@@ -18,12 +11,11 @@ import {
 } from '@/ui/card';
 import { Progress } from '@/ui/progress';
 import { Badge } from '@/ui/badge';
-import { videoLearningService } from '@/services/video_learning/service';
-import { cookies } from 'next/headers';
 import type { OwnVideo } from '@/types/video_learning/models';
 import { Skeleton } from '@/ui/skeleton';
-import { toast } from 'sonner';
+import { useGetOwnVideos } from '@/hooks/video_learning/useSWR';
 import Image from 'next/image';
+import { formatViews } from '@/lib/video_learning/utils';
 
 interface VideoStats {
   totalVideos: number;
@@ -31,106 +23,49 @@ interface VideoStats {
   totalLikes: number;
   averageViews: number;
   topPerformingVideo: OwnVideo | null;
-  recentActivity: {
-    date: string;
-    views: number;
-    likes: number;
-  }[];
 }
 
 export function VideoStats() {
-  const [stats, setStats] = useState<VideoStats | null>(null);
-  const [videos, setVideos] = useState<OwnVideo[]>([]);
-  const [loading, setLoading] = useState(true);
   const [timeRange, setTimeRange] = useState<'7d' | '30d' | '90d' | 'all'>(
     '30d',
   );
 
-  const calculateStats = useCallback((videoList: OwnVideo[]) => {
-    const totalVideos = videoList.length;
-    const totalViews = videoList.reduce((sum, video) => sum + video.views, 0);
-    const totalLikes = videoList.reduce((sum, video) => sum + video.likes, 0);
+  const {
+    isLoading,
+    data: videos,
+    error,
+  } = useGetOwnVideos({
+    page: 1,
+    page_size: 100, // Load more videos for better stats
+  });
+
+  const stats = useMemo(() => {
+    if (!videos) return null;
+
+    const totalVideos = videos.length;
+    const totalViews = videos.reduce((sum, video) => sum + video.views, 0);
+    const totalLikes = videos.reduce((sum, video) => sum + video.likes, 0);
     const averageViews =
       totalVideos > 0 ? Math.round(totalViews / totalVideos) : 0;
 
     // Find top performing video
     const topPerformingVideo =
-      videoList.length > 0
-        ? videoList.reduce((prev, current) =>
+      videos.length > 0
+        ? videos.reduce((prev, current) =>
             prev.views > current.views ? prev : current,
           )
         : null;
 
-    // Generate mock recent activity data
-    const recentActivity = generateMockActivity();
-
-    setStats({
+    return {
       totalVideos,
       totalViews,
       totalLikes,
       averageViews,
       topPerformingVideo,
-      recentActivity,
-    });
-  }, []);
+    };
+  }, [videos]);
 
-  const loadStats = useCallback(async () => {
-    try {
-      setLoading(true);
-      const service = await videoLearningService(cookies());
-
-      // Load all videos to calculate stats
-      const result = await service.getOwnVideos({
-        page: 1,
-        page_size: 100, // Load more videos for better stats
-      });
-
-      if (result.success) {
-        setVideos(result.data);
-        calculateStats(result.data);
-      } else {
-        toast.error('Failed to load video statistics');
-      }
-    } catch (error) {
-      console.error('Failed to load stats:', error);
-      toast.error('An error occurred while loading statistics');
-    } finally {
-      setLoading(false);
-    }
-  }, [calculateStats]);
-
-  useEffect(() => {
-    loadStats();
-  }, [loadStats, timeRange]);
-
-  const generateMockActivity = () => {
-    const activity = [];
-    const now = new Date();
-
-    for (let i = 6; i >= 0; i--) {
-      const date = new Date(now);
-      date.setDate(date.getDate() - i);
-
-      activity.push({
-        date: date.toLocaleDateString(),
-        views: Math.floor(Math.random() * 100) + 20,
-        likes: Math.floor(Math.random() * 20) + 5,
-      });
-    }
-
-    return activity;
-  };
-
-  const formatNumber = (num: number) => {
-    if (num >= 1000000) {
-      return `${(num / 1000000).toFixed(1)}M`;
-    } else if (num >= 1000) {
-      return `${(num / 1000).toFixed(1)}K`;
-    }
-    return num.toString();
-  };
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {Array.from({ length: 4 }).map((_, i) => (
@@ -140,11 +75,13 @@ export function VideoStats() {
     );
   }
 
-  if (!stats) {
+  if (error || !videos || !stats) {
     return (
       <div className="text-center py-8">
         <BarChart3 className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-        <p className="text-muted-foreground">No statistics available</p>
+        <p className="text-muted-foreground">
+          {error ? 'Failed to load statistics' : 'No statistics available'}
+        </p>
       </div>
     );
   }
@@ -187,7 +124,7 @@ export function VideoStats() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {formatNumber(stats.totalViews)}
+              {formatViews(stats.totalViews)}
             </div>
             <p className="text-xs text-muted-foreground">Across all videos</p>
           </CardContent>
@@ -200,7 +137,7 @@ export function VideoStats() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {formatNumber(stats.totalLikes)}
+              {formatViews(stats.totalLikes)}
             </div>
             <p className="text-xs text-muted-foreground">Total engagement</p>
           </CardContent>
@@ -213,7 +150,7 @@ export function VideoStats() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {formatNumber(stats.averageViews)}
+              {formatViews(stats.averageViews)}
             </div>
             <p className="text-xs text-muted-foreground">Per video</p>
           </CardContent>
@@ -251,13 +188,13 @@ export function VideoStats() {
                   <div className="flex items-center gap-1">
                     <Eye className="h-4 w-4" />
                     <span>
-                      {formatNumber(stats.topPerformingVideo.views)} views
+                      {formatViews(stats.topPerformingVideo.views)} views
                     </span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Heart className="h-4 w-4" />
                     <span>
-                      {formatNumber(stats.topPerformingVideo.likes)} likes
+                      {formatViews(stats.topPerformingVideo.likes)} likes
                     </span>
                   </div>
                 </div>
@@ -266,41 +203,6 @@ export function VideoStats() {
           </CardContent>
         </Card>
       )}
-
-      {/* Recent Activity */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Calendar className="h-5 w-5" />
-            Recent Activity
-          </CardTitle>
-          <CardDescription>
-            Views and likes over the last 7 days
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {stats.recentActivity.map((activity, index) => (
-              <div key={index} className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-primary rounded-full" />
-                  <span className="text-sm">{activity.date}</span>
-                </div>
-                <div className="flex items-center gap-4 text-sm">
-                  <div className="flex items-center gap-1">
-                    <Eye className="h-3 w-3" />
-                    <span>{activity.views}</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Heart className="h-3 w-3" />
-                    <span>{activity.likes}</span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
 
       {/* Video Performance Distribution */}
       <Card>
@@ -322,7 +224,7 @@ export function VideoStats() {
                 <div key={video.id} className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span className="line-clamp-1">{video.title}</span>
-                    <span>{formatNumber(video.views)} views</span>
+                    <span>{formatViews(video.views)} views</span>
                   </div>
                   <Progress value={percentage} className="h-2" />
                 </div>

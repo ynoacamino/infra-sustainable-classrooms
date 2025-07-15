@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Search, Filter, X } from 'lucide-react';
 import { Button } from '@/ui/button';
 import { Input } from '@/ui/input';
@@ -12,77 +12,55 @@ import {
   SelectValue,
 } from '@/ui/select';
 import { VideoCard } from '@/components/video_learning/shared/video-card';
-import { videoLearningService } from '@/services/video_learning/service';
-import { cookies } from 'next/headers';
-import type { Video, VideoCategory } from '@/types/video_learning/models';
+import { useSWRAll } from '@/lib/shared/swr/utils';
+import {
+  useGetAllCategories,
+  useSearchVideos,
+} from '@/hooks/video_learning/useSWR';
+import { PAGINATION_DEFAULT_SIZE } from '@/config/shared/const';
 
 export function VideoSearch() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('');
-  const [videos, setVideos] = useState<Video[]>([]);
-  const [categories, setCategories] = useState<VideoCategory[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<number | undefined>(
+    undefined,
+  );
   const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
 
-  useEffect(() => {
-    loadCategories();
-  }, []);
-
-  const loadCategories = async () => {
-    try {
-      const service = await videoLearningService(cookies());
-      const result = await service.getAllCategories();
-      if (result.success) {
-        setCategories(result.data);
-      }
-    } catch (error) {
-      console.error('Failed to load categories:', error);
-    }
-  };
-
-  const handleSearch = async (resetPage = true) => {
-    if (resetPage) {
-      setPage(1);
-      setVideos([]);
-    }
-
-    setLoading(true);
-    try {
-      const service = await videoLearningService(cookies());
-      const result = await service.searchVideos({
-        query: searchQuery,
-        category_id: selectedCategory ? parseInt(selectedCategory) : undefined,
-        page: resetPage ? 1 : page,
-        page_size: 12,
-      });
-
-      if (result.success) {
-        if (resetPage) {
-          setVideos(result.data);
-        } else {
-          setVideos((prev) => [...prev, ...result.data]);
-        }
-        setHasMore(result.data.length === 12);
-      }
-    } catch (error) {
-      console.error('Search failed:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const {
+    isLoading,
+    data: [categories, videos],
+    errors,
+    // mutateAll,
+  } = useSWRAll([
+    useGetAllCategories(),
+    useSearchVideos({
+      query: searchQuery,
+      category_id: selectedCategory,
+      page,
+      page_size: PAGINATION_DEFAULT_SIZE,
+    }),
+  ]);
 
   const loadMore = () => {
     setPage((prev) => prev + 1);
-    handleSearch(false);
   };
 
   const clearFilters = () => {
     setSearchQuery('');
-    setSelectedCategory('');
-    setVideos([]);
+    setSelectedCategory(undefined);
     setPage(1);
   };
+
+  if (errors.length > 0 || !categories || !videos) {
+    return (
+      <div className="text-center py-12">
+        <h3 className="text-lg font-semibold mb-2">Error loading data</h3>
+        <p className="text-muted-foreground">
+          Please try again later or contact support
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -95,12 +73,16 @@ export function VideoSearch() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10"
-            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
           />
         </div>
 
         <div className="flex gap-2">
-          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+          <Select
+            value={selectedCategory?.toString() ?? ''}
+            onValueChange={(v) =>
+              setSelectedCategory(v ? parseInt(v) : undefined)
+            }
+          >
             <SelectTrigger className="w-[180px]">
               <Filter className="h-4 w-4 mr-2" />
               <SelectValue placeholder="All Categories" />
@@ -114,10 +96,6 @@ export function VideoSearch() {
               ))}
             </SelectContent>
           </Select>
-
-          <Button onClick={() => handleSearch()} disabled={loading}>
-            Search
-          </Button>
 
           {(searchQuery || selectedCategory) && (
             <Button variant="outline" onClick={clearFilters}>
@@ -143,26 +121,26 @@ export function VideoSearch() {
             ))}
           </div>
 
-          {hasMore && (
-            <div className="flex justify-center pt-4">
-              <Button variant="outline" onClick={loadMore} disabled={loading}>
-                {loading ? 'Loading...' : 'Load More'}
-              </Button>
-            </div>
-          )}
+          <div className="flex justify-center pt-4">
+            <Button variant="outline" onClick={loadMore} disabled={isLoading}>
+              {isLoading ? 'Loading...' : 'Load More'}
+            </Button>
+          </div>
         </div>
       )}
 
       {/* Empty State */}
-      {videos.length === 0 && !loading && (searchQuery || selectedCategory) && (
-        <div className="text-center py-12">
-          <Search className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-          <h3 className="text-lg font-semibold mb-2">No videos found</h3>
-          <p className="text-muted-foreground">
-            Try adjusting your search terms or filters
-          </p>
-        </div>
-      )}
+      {videos.length === 0 &&
+        !isLoading &&
+        (searchQuery || selectedCategory) && (
+          <div className="text-center py-12">
+            <Search className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+            <h3 className="text-lg font-semibold mb-2">No videos found</h3>
+            <p className="text-muted-foreground">
+              Try adjusting your search terms or filters
+            </p>
+          </div>
+        )}
     </div>
   );
 }

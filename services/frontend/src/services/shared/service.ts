@@ -12,6 +12,7 @@ import type { Interceptor } from '@/types/shared/services/interceptors';
 import type { ServiceRequest } from '@/types/shared/services/request';
 import type { AsyncResult, Result } from '@/types/shared/services/result';
 import type { ZodSchema } from 'zod';
+import FormData from 'form-data';
 
 export abstract class Service {
   private apiBaseUrl: string;
@@ -62,6 +63,7 @@ export abstract class Service {
   private async request<T, B extends ZodSchema = ZodSchema>({
     endpoint,
     payload,
+    multipart,
     query,
     options,
   }: ServiceRequest<B>): AsyncResult<T> {
@@ -94,16 +96,27 @@ export abstract class Service {
     const queryString = queryParams.toString();
 
     // Handle body payload
-    const bodyUnsafe: Record<string, unknown> = {};
-    Object.keys(payload?.data || {}).forEach((key) => {
-      if (
-        !queryParams.has(key) &&
-        payload?.data &&
-        payload.data[key] !== undefined
-      ) {
-        bodyUnsafe[key] = payload.data[key];
-      }
-    });
+    const jsonbodyUnsafe: Record<string, unknown> = {};
+    const formDataUnsafe: FormData = new FormData();
+    if (multipart) {
+      const arrayBuffer = await payload?.data?.file?.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer || '');
+      formDataUnsafe.append('file', buffer, payload?.data.filename);
+      formDataUnsafe.append('filename', payload?.data.filename);
+    } else {
+      Object.keys(payload?.data || {}).forEach((key) => {
+        if (
+          !queryParams.has(key) &&
+          payload?.data &&
+          payload.data[key] !== undefined
+        ) {
+          jsonbodyUnsafe[key] = payload.data[key];
+        }
+      });
+    }
+    const bodySafe = multipart
+      ? formDataUnsafe
+      : JSON.stringify(jsonbodyUnsafe);
     // Make the request
     try {
       const url = `${this.apiBaseUrl}/${safeEndpointPrefix}${safeEndpoint}${queryString ? `?${queryString}` : ''}`;
@@ -114,16 +127,19 @@ export abstract class Service {
       const reqInit: RequestInit = {
         ...options,
         method,
-        headers: {
-          'Content-Type': 'application/json',
-          ...(options?.headers || {}),
-        },
-        body:
-          method !== 'GET' && Object.keys(bodyUnsafe).length >= 0
-            ? JSON.stringify(bodyUnsafe)
-            : undefined,
+        headers: multipart
+          ? {
+              ...formDataUnsafe.getHeaders(),
+              ...(options?.headers || {}),
+            }
+          : {
+              'Content-Type': 'application/json',
+              ...(options?.headers || {}),
+            },
+        body: method !== 'GET' ? bodySafe : undefined,
       };
       const finalReqInit = await this.applyRequestInterceptors(url, reqInit);
+      console.log('finalReqInit', finalReqInit);
       const response = await fetch(url, finalReqInit);
       const finalResponse = await this.applyResponseInterceptors(url, response);
 
@@ -209,6 +225,7 @@ export abstract class Service {
   protected async post<T, B extends ZodSchema = ZodSchema>({
     endpoint,
     payload,
+    multipart,
     query,
     options,
   }: ServiceRequest<B>): AsyncResult<T> {
@@ -216,6 +233,7 @@ export abstract class Service {
       endpoint,
       payload,
       query,
+      multipart,
       options: {
         ...options,
         method: 'POST',
@@ -227,12 +245,14 @@ export abstract class Service {
     endpoint,
     payload,
     query,
+    multipart,
     options,
   }: ServiceRequest<B>): AsyncResult<T> {
     return this.request<T>({
       endpoint,
       payload,
       query,
+      multipart,
       options: {
         ...options,
         method: 'PUT',

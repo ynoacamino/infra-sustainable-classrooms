@@ -1,56 +1,35 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
 import { PlayCircle, Clock, Eye, TrendingUp } from 'lucide-react';
 import { Button } from '@/ui/button';
 import { Link } from '@/ui/link';
-import { videoLearningService } from '@/services/video_learning/service';
-import { cookies } from 'next/headers';
-import type { Video } from '@/types/video_learning/models';
+import type { Video, VideoDetails } from '@/types/video_learning/models';
 import { Skeleton } from '@/ui/skeleton';
-import { toast } from 'sonner';
 import Image from 'next/image';
+import {
+  useGetSimilarVideos,
+  useGetRecommendations,
+} from '@/hooks/video_learning/useSWR';
+import { useSWRAll } from '@/lib/shared/swr/utils';
 
 interface VideoSidebarProps {
-  videoId: number;
+  video: VideoDetails;
 }
 
-export function VideoSidebar({ videoId }: VideoSidebarProps) {
-  const [similarVideos, setSimilarVideos] = useState<Video[]>([]);
-  const [recommendedVideos, setRecommendedVideos] = useState<Video[]>([]);
-  const [loading, setLoading] = useState(true);
+export function VideoSidebar({ video }: VideoSidebarProps) {
   const [activeTab, setActiveTab] = useState<'similar' | 'recommended'>(
     'similar',
   );
 
-  const loadSidebarVideos = useCallback(async () => {
-    try {
-      setLoading(true);
-      const service = await videoLearningService(cookies());
-
-      const [similarResult, recommendedResult] = await Promise.all([
-        service.getSimilarVideos({ id: videoId, amount: 10 }),
-        service.getRecommendations({ amount: 10 }),
-      ]);
-
-      if (similarResult.success) {
-        setSimilarVideos(similarResult.data);
-      }
-
-      if (recommendedResult.success) {
-        setRecommendedVideos(recommendedResult.data);
-      }
-    } catch (error) {
-      console.error('Failed to load sidebar videos:', error);
-      toast.error('Failed to load related videos');
-    } finally {
-      setLoading(false);
-    }
-  }, [videoId]);
-
-  useEffect(() => {
-    loadSidebarVideos();
-  }, [loadSidebarVideos, videoId]);
+  const {
+    isLoading,
+    data: [similarVideos, recommendedVideos],
+    errors,
+  } = useSWRAll([
+    useGetSimilarVideos({ id: video.id, amount: 10 }),
+    useGetRecommendations({ amount: 10 }),
+  ]);
 
   const formatViews = (views: number) => {
     if (views >= 1000000) {
@@ -151,13 +130,13 @@ export function VideoSidebar({ videoId }: VideoSidebarProps) {
 
       {/* Video List */}
       <div className="max-h-[600px] overflow-y-auto">
-        {loading ? (
+        {isLoading || errors.length > 0 ? (
           renderLoadingSkeleton()
         ) : (
           <div className="space-y-2">
             {activeTab === 'similar' && (
               <>
-                {similarVideos.length > 0 ? (
+                {similarVideos && similarVideos.length > 0 ? (
                   <div className="space-y-1">
                     {similarVideos.map(renderVideoItem)}
                   </div>
@@ -174,7 +153,7 @@ export function VideoSidebar({ videoId }: VideoSidebarProps) {
 
             {activeTab === 'recommended' && (
               <>
-                {recommendedVideos.length > 0 ? (
+                {recommendedVideos && recommendedVideos.length > 0 ? (
                   <div className="space-y-1">
                     {recommendedVideos.map(renderVideoItem)}
                   </div>

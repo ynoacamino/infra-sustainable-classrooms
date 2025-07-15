@@ -1,62 +1,28 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { VideoCard } from '@/components/video_learning/shared/video-card';
-import { videoLearningService } from '@/services/video_learning/service';
-import { cookies } from 'next/headers';
-import type { Video } from '@/types/video_learning/models';
 import { Skeleton } from '@/ui/skeleton';
 import { Button } from '@/ui/button';
 import { RefreshCw } from 'lucide-react';
+import { useSWRAll } from '@/lib/shared/swr/utils';
+import { useGetRecommendations } from '@/hooks/video_learning/useSWR';
 
 export function VideoRecommendations() {
-  const [videos, setVideos] = useState<Video[]>([]);
-  const [loading, setLoading] = useState(true);
+  const {
+    isLoading,
+    data: [videos],
+    errors,
+    mutateAll,
+  } = useSWRAll([useGetRecommendations({ amount: 6 })]);
   const [refreshing, setRefreshing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    loadRecommendations();
-  }, []);
-
-  const loadRecommendations = async () => {
-    try {
-      setError(null);
-      const service = await videoLearningService(cookies());
-      const result = await service.getRecommendations({
-        amount: 6,
-      });
-
-      if (result.success) {
-        setVideos(result.data);
-      } else {
-        setError('Failed to load recommendations');
-      }
-    } catch (error) {
-      console.error('Failed to load recommendations:', error);
-      setError('An error occurred while loading recommendations');
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  };
 
   const handleRefresh = async () => {
     setRefreshing(true);
-    await loadRecommendations();
+    mutateAll();
   };
 
-  const handleLike = async (videoId: number) => {
-    try {
-      const service = await videoLearningService(cookies());
-      await service.toogleVideoLike({ id: videoId });
-    } catch (error) {
-      console.error('Failed to like video:', error);
-      throw error;
-    }
-  };
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {Array.from({ length: 6 }).map((_, i) => (
@@ -66,10 +32,10 @@ export function VideoRecommendations() {
     );
   }
 
-  if (error) {
+  if (errors.length > 0 || !videos) {
     return (
       <div className="text-center py-12">
-        <div className="text-destructive mb-4">
+        <div className="text-muted-foreground mb-4">
           <svg
             className="h-12 w-12 mx-auto mb-4"
             fill="none"
@@ -80,14 +46,17 @@ export function VideoRecommendations() {
               strokeLinecap="round"
               strokeLinejoin="round"
               strokeWidth={2}
-              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+              d="M12 9v3m0 0v3m0-3h3m-3 0H9m6.364 7.364a9 9 0 11-12.728-12.728l1.414 1.414a7 7 0 009.9 9.9l1.414 1.414z"
             />
           </svg>
-          <p className="text-sm">{error}</p>
+          <h3 className="text-lg font-semibold mb-2">
+            Error loading recommendations
+          </h3>
+          <p className="text-sm">Please try refreshing the page</p>
         </div>
         <Button onClick={handleRefresh} variant="outline">
           <RefreshCw className="h-4 w-4 mr-2" />
-          Try Again
+          Refresh
         </Button>
       </div>
     );
@@ -144,12 +113,7 @@ export function VideoRecommendations() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {videos.map((video) => (
-          <VideoCard
-            key={video.id}
-            video={video}
-            onLike={handleLike}
-            showActions={true}
-          />
+          <VideoCard key={video.id} video={video} showActions={true} />
         ))}
       </div>
     </div>

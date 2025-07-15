@@ -1,8 +1,7 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
 import {
-  Send,
   Heart,
   User,
   Calendar,
@@ -11,102 +10,32 @@ import {
   Reply,
 } from 'lucide-react';
 import { Button } from '@/ui/button';
-import { Textarea } from '@/ui/textarea';
-import { Input } from '@/ui/input';
 import { Separator } from '@/ui/separator';
-import { videoLearningService } from '@/services/video_learning/service';
-import { cookies } from 'next/headers';
-import type { Comment } from '@/types/video_learning/models';
 import { Skeleton } from '@/ui/skeleton';
 import { toast } from 'sonner';
+import { useGetComments } from '@/hooks/video_learning/useSWR';
+import { CreateCommentForm } from '@/components/video_learning/forms/create-comment-form';
+import { deleteCommentAction } from '@/actions/video_learning/actions';
+import { useSWRAll } from '@/lib/shared/swr/utils';
+import type { VideoDetails } from '@/types/video_learning/models';
 
 interface VideoCommentsProps {
-  videoId: number;
+  video: VideoDetails;
 }
 
-export function VideoComments({ videoId }: VideoCommentsProps) {
-  const [comments, setComments] = useState<Comment[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [newComment, setNewComment] = useState({ title: '', body: '' });
-  const [isSubmitting, setIsSubmitting] = useState(false);
+export function VideoComments({ video }: VideoCommentsProps) {
   const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
-
-  const loadComments = useCallback(
-    async (resetPage = true) => {
-      try {
-        if (resetPage) {
-          setLoading(true);
-          setPage(1);
-        } else {
-          setLoadingMore(true);
-        }
-
-        const service = await videoLearningService(cookies());
-        const result = await service.getComments({
-          video_id: videoId,
-          page: resetPage ? 1 : page,
-          page_size: 10,
-        });
-
-        if (result.success) {
-          if (resetPage) {
-            setComments(result.data as unknown as Comment[]);
-          } else {
-            setComments((prev) => [...prev, ...result.data] as Comment[]);
-          }
-          setHasMore(result.data.length === 10);
-        } else {
-          toast.error('Failed to load comments');
-        }
-      } catch (error) {
-        console.error('Failed to load comments:', error);
-        toast.error('An error occurred while loading comments');
-      } finally {
-        setLoading(false);
-        setLoadingMore(false);
-      }
-    },
-    [page, videoId],
-  );
-
-  useEffect(() => {
-    loadComments();
-  }, [loadComments, videoId]);
-
-  const handleSubmitComment = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!newComment.title.trim() || !newComment.body.trim()) {
-      toast.error('Please fill in both title and comment');
-      return;
-    }
-
-    setIsSubmitting(true);
-    try {
-      const service = await videoLearningService(cookies());
-      const result = await service.createComment({
-        video_id: videoId,
-        title: newComment.title,
-        body: newComment.body,
-      });
-
-      if (result.success) {
-        setNewComment({ title: '', body: '' });
-        toast.success('Comment posted successfully');
-        // Reload comments to show the new one
-        loadComments();
-      } else {
-        toast.error('Failed to post comment');
-      }
-    } catch (error) {
-      console.error('Failed to post comment:', error);
-      toast.error('An error occurred while posting comment');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  const {
+    isLoading,
+    errors,
+    data: [comments],
+    mutateAll: mutateComments,
+  } = useSWRAll([
+    useGetComments({
+      video_id: video.id,
+      page,
+    }),
+  ]);
 
   const handleDeleteComment = async (commentId: number) => {
     const confirmed = window.confirm(
@@ -114,40 +43,22 @@ export function VideoComments({ videoId }: VideoCommentsProps) {
     );
     if (!confirmed) return;
 
-    try {
-      const service = await videoLearningService(cookies());
-      const result = await service.deleteComment({ id: commentId });
+    const result = await deleteCommentAction({ id: commentId });
 
-      if (result.success) {
-        setComments((prev) =>
-          prev.filter((comment) => comment.id !== commentId),
-        );
-        toast.success('Comment deleted successfully');
-      } else {
-        toast.error('Failed to delete comment');
-      }
-    } catch (error) {
-      console.error('Failed to delete comment:', error);
-      toast.error('An error occurred while deleting comment');
+    if (!result.success) {
+      toast.error(result.error.message);
+      return;
     }
+
+    mutateComments();
+    toast.success('Comment deleted successfully');
   };
 
   const handleLoadMore = () => {
     setPage((prev) => prev + 1);
-    loadComments(false);
   };
 
-  const formatDate = (timestamp: number) => {
-    return new Date(timestamp * 1000).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="space-y-6">
         <div className="flex items-center gap-2 mb-4">
@@ -171,6 +82,17 @@ export function VideoComments({ videoId }: VideoCommentsProps) {
     );
   }
 
+  if (errors.length > 0 || !comments) {
+    return (
+      <div className="text-center py-12">
+        <MessageCircle className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+        <h3 className="text-lg font-semibold mb-2">Error loading comments</h3>
+        <p className="text-sm text-muted-foreground">
+          Please try again later or contact support.
+        </p>
+      </div>
+    );
+  }
   return (
     <div className="space-y-6">
       {/* Comments Header */}
@@ -180,44 +102,7 @@ export function VideoComments({ videoId }: VideoCommentsProps) {
       </div>
 
       {/* New Comment Form */}
-      <form
-        onSubmit={handleSubmitComment}
-        className="space-y-4 p-4 bg-muted/30 rounded-lg"
-      >
-        <h4 className="font-medium">Add a comment</h4>
-
-        <div className="space-y-3">
-          <Input
-            placeholder="Comment title"
-            value={newComment.title}
-            onChange={(e) =>
-              setNewComment((prev) => ({ ...prev, title: e.target.value }))
-            }
-            disabled={isSubmitting}
-          />
-
-          <Textarea
-            placeholder="Write your comment..."
-            value={newComment.body}
-            onChange={(e) =>
-              setNewComment((prev) => ({ ...prev, body: e.target.value }))
-            }
-            disabled={isSubmitting}
-            rows={3}
-          />
-        </div>
-
-        <div className="flex justify-end">
-          <Button
-            type="submit"
-            disabled={isSubmitting}
-            className="flex items-center gap-2"
-          >
-            <Send className="h-4 w-4" />
-            {isSubmitting ? 'Posting...' : 'Post Comment'}
-          </Button>
-        </div>
-      </form>
+      <CreateCommentForm video={video} onSuccess={() => mutateComments()} />
 
       <Separator />
 
@@ -244,7 +129,9 @@ export function VideoComments({ videoId }: VideoCommentsProps) {
                     </div>
                     <div className="flex items-center gap-1 text-sm text-muted-foreground">
                       <Calendar className="h-4 w-4" />
-                      <span>{formatDate(comment.date)}</span>
+                      <span>
+                        {new Date(comment.date * 1000).toLocaleDateString()}
+                      </span>
                     </div>
                   </div>
 
@@ -292,14 +179,14 @@ export function VideoComments({ videoId }: VideoCommentsProps) {
             ))}
 
             {/* Load More Button */}
-            {hasMore && (
+            {comments.length > 0 && comments.length % 10 === 0 && (
               <div className="flex justify-center pt-4">
                 <Button
                   variant="outline"
                   onClick={handleLoadMore}
-                  disabled={loadingMore}
+                  disabled={isLoading}
                 >
-                  {loadingMore ? 'Loading...' : 'Load More Comments'}
+                  {isLoading ? 'Loading...' : 'Load More Comments'}
                 </Button>
               </div>
             )}

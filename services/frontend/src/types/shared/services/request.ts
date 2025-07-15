@@ -6,5 +6,6 @@ export interface ServiceRequest<B extends ZodSchema = ZodSchema> {
   endpoint: (string | number) | (string | number)[];
   payload?: ServicePayload<B>;
   query?: (keyof ServicePayload<B>['data'])[];
+  multipart?: boolean;
   options?: RequestInit;
 }

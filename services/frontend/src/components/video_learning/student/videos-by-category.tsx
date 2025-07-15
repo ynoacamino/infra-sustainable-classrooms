@@ -5,62 +5,37 @@ import { ArrowLeft, Filter, Grid, List, SortAsc, SortDesc } from 'lucide-react';
 import { Button } from '@/ui/button';
 import { Badge } from '@/ui/badge';
 import { VideoCard } from '@/components/video_learning/shared/video-card';
-import { videoLearningService } from '@/services/video_learning/service';
-import { cookies } from 'next/headers';
 import type { Video, VideoCategory } from '@/types/video_learning/models';
 import { Skeleton } from '@/ui/skeleton';
 import { Link } from '@/ui/link';
-import { toast } from 'sonner';
 import Image from 'next/image';
+import { useGetVideosByCategory } from '@/hooks/video_learning/useSWR';
 
 interface VideosByCategoryProps {
-  categoryId: number;
+  category: VideoCategory;
 }
 
 type SortOption = 'title' | 'views' | 'likes' | 'upload_date';
 type SortDirection = 'asc' | 'desc';
 
-export function VideosByCategory({ categoryId }: VideosByCategoryProps) {
+export function VideosByCategory({ category }: VideosByCategoryProps) {
   const [videos, setVideos] = useState<Video[]>([]);
-  const [category, setCategory] = useState<VideoCategory | null>(null);
-  const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState<SortOption>('views');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [hasMore, setHasMore] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
 
-  const loadCategoryAndVideos = useCallback(async () => {
-    try {
-      setLoading(true);
-      const service = await videoLearningService(cookies());
-
-      const [categoryResult, videosResult] = await Promise.all([
-        service.getCategory({ id: categoryId }),
-        service.getVideosByCategory({ id: categoryId, amount: 12 }),
-      ]);
-
-      if (categoryResult.success) {
-        setCategory(categoryResult.data);
-      }
-
-      if (videosResult.success) {
-        setVideos(videosResult.data);
-        setHasMore(videosResult.data.length === 12);
-      } else {
-        toast.error('Failed to load videos');
-      }
-    } catch (error) {
-      console.error('Failed to load category videos:', error);
-      toast.error('An error occurred while loading videos');
-    } finally {
-      setLoading(false);
-    }
-  }, [categoryId]);
+  const {
+    isLoading,
+    data: rawVideos,
+    error,
+  } = useGetVideosByCategory({ id: category.id, amount: 12 });
 
   useEffect(() => {
-    loadCategoryAndVideos();
-  }, [categoryId, loadCategoryAndVideos]);
+    if (rawVideos) {
+      setVideos(rawVideos);
+    }
+  }, [rawVideos]);
+
   const sortVideos = useCallback(() => {
     setVideos((prev) => {
       const sorted = [...prev].sort((a, b) => {
@@ -105,45 +80,11 @@ export function VideosByCategory({ categoryId }: VideosByCategoryProps) {
     sortVideos();
   }, [sortBy, sortDirection, sortVideos]);
 
-  const loadMoreVideos = async () => {
-    if (loadingMore || !hasMore) return;
-
-    try {
-      setLoadingMore(true);
-      const service = await videoLearningService(cookies());
-      const result = await service.getVideosByCategory({
-        id: categoryId,
-        amount: 12,
-        // Note: This endpoint might need pagination support
-      });
-
-      if (result.success) {
-        setVideos((prev) => [...prev, ...result.data]);
-        setHasMore(result.data.length === 12);
-      }
-    } catch (error) {
-      console.error('Failed to load more videos:', error);
-      toast.error('Failed to load more videos');
-    } finally {
-      setLoadingMore(false);
-    }
-  };
-
-  const handleLike = async (videoId: number) => {
-    try {
-      const service = await videoLearningService(cookies());
-      await service.toogleVideoLike({ id: videoId });
-    } catch (error) {
-      console.error('Failed to like video:', error);
-      throw error;
-    }
-  };
-
   const toggleSortDirection = () => {
     setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'));
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="space-y-6">
         <div className="flex items-center justify-between">
@@ -155,6 +96,14 @@ export function VideosByCategory({ categoryId }: VideosByCategoryProps) {
             <Skeleton key={i} className="h-64 w-full" />
           ))}
         </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-muted-foreground">Failed to load videos</p>
       </div>
     );
   }
@@ -249,12 +198,7 @@ export function VideosByCategory({ categoryId }: VideosByCategoryProps) {
           {viewMode === 'grid' ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {videos.map((video) => (
-                <VideoCard
-                  key={video.id}
-                  video={video}
-                  onLike={handleLike}
-                  showActions={true}
-                />
+                <VideoCard key={video.id} video={video} showActions={true} />
               ))}
             </div>
           ) : (
@@ -290,19 +234,6 @@ export function VideosByCategory({ categoryId }: VideosByCategoryProps) {
                   </div>
                 </div>
               ))}
-            </div>
-          )}
-
-          {/* Load More Button */}
-          {hasMore && viewMode === 'grid' && (
-            <div className="flex justify-center">
-              <Button
-                variant="outline"
-                onClick={loadMoreVideos}
-                disabled={loadingMore}
-              >
-                {loadingMore ? 'Loading...' : 'Load More Videos'}
-              </Button>
             </div>
           )}
         </div>

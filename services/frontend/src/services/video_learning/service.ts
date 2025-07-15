@@ -3,6 +3,7 @@ import type { SimpleResponse } from '@/services/shared/response';
 import { Service } from '@/services/shared/service';
 import type { AsyncResult } from '@/types/shared/services/result';
 import type {
+  Comment,
   OwnVideo,
   Video,
   VideoCategory,
@@ -22,14 +23,19 @@ import type {
   GetRecommendationsPayload,
   GetSimilarVideosPayload,
   GetTagPayload,
+  GetTagsByVideoPayload,
   GetVideoPayload,
   GetVideosByCategoryPayload,
+  GetVideosGroupedByCategoryPayload,
   SearchVideosPayload,
   ToggleVideoLikePayload,
   UploadThumbnailPayload,
   UploadVideoPayload,
 } from '@/types/video_learning/payload';
-import type { UploadResponse } from '@/types/video_learning/responses';
+import type {
+  GetVideosGroupedByCategoryResponse,
+  UploadResponse,
+} from '@/types/video_learning/responses';
 import {
   CompleteUploadPayloadSchema,
   CreateCategoryPayloadSchema,
@@ -136,6 +142,7 @@ class VideoLearningService extends Service {
         schema: UploadVideoPayloadSchema,
         data: payload,
       },
+      multipart: true,
     });
   }
 
@@ -160,6 +167,7 @@ class VideoLearningService extends Service {
         schema: UploadThumbnailPayloadSchema,
         data: payload,
       },
+      multipart: true,
     });
   }
 
@@ -175,7 +183,7 @@ class VideoLearningService extends Service {
     });
   }
 
-  async toogleVideoLike(
+  async toggleVideoLike(
     payload: ToggleVideoLikePayload,
   ): AsyncResult<SimpleResponse> {
     return this.post<SimpleResponse>({
@@ -275,6 +283,47 @@ class VideoLearningService extends Service {
         data: payload,
       },
     });
+  }
+
+  async getTagsByVideo(
+    payload: GetTagsByVideoPayload,
+  ): AsyncResult<VideoTag[]> {
+    const resTags = await this.getAllTags();
+    if (!resTags.success) {
+      return resTags;
+    }
+    const resVideo = await this.getVideo(payload);
+    if (!resVideo.success) {
+      return resVideo;
+    }
+    const videoTags = resTags.data.filter((tag) =>
+      resVideo.data.tags_ids.includes(tag.id),
+    );
+    return this.result(videoTags);
+  }
+
+  async getVideosGroupedByCategory(
+    payload: GetVideosGroupedByCategoryPayload,
+  ): AsyncResult<GetVideosGroupedByCategoryResponse> {
+    const resCategories = await this.getAllCategories();
+    if (!resCategories.success) {
+      return resCategories;
+    }
+
+    const categories = resCategories.data;
+    const promises = categories.map(async (category) => {
+      const resVideos = await this.getVideosByCategory({
+        id: category.id,
+        amount: payload.amount || 10,
+      });
+      if (!resVideos.success) {
+        return { category, videos: [] };
+      }
+      return { category, videos: resVideos.data };
+    });
+    const videosByCategory = await Promise.all(promises);
+
+    return this.result(videosByCategory);
   }
 }
 
