@@ -23,7 +23,7 @@ function UpdateTestForm({ test }: UpdateTestFormProps) {
   const form = useForm<z.infer<typeof updateTestFormSchema>>({
     resolver: zodResolver(updateTestFormSchema),
     defaultValues: {
-      test_id: test.id,
+      id: test.id,
       title: test.title,
     },
   });

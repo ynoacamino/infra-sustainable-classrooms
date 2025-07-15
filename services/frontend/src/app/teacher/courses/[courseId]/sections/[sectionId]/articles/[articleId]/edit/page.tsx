@@ -2,9 +2,9 @@ import { textService } from '@/services/text/service';
 import { cookies } from 'next/headers';
 import Link from 'next/link';
 import { Button } from '@/ui/button';
-import { UpdateArticleForm } from '@/components/text/forms';
 import { ArrowLeft } from 'lucide-react';
 import { notFound } from 'next/navigation';
+import { UpdateArticleForm } from '@/components/text/forms/update-article-form';
 
 interface EditArticlePageProps {
   params: Promise<{ courseId: string; sectionId: string; articleId: string }>;

@@ -8,13 +8,14 @@ import { videoLearningService } from '@/services/video_learning/service';
 import { cookies } from 'next/headers';
 
 interface CategoryPageProps {
-  params: {
+  params: Promise<{
     categoryId: string;
-  };
+  }>;
 }
 
 export default async function CategoryPage({ params }: CategoryPageProps) {
-  const categoryId = parseInt(params.categoryId);
+  const asyncParams = await params;
+  const categoryId = parseInt(asyncParams.categoryId);
 
   if (isNaN(categoryId)) {
     return notFound();

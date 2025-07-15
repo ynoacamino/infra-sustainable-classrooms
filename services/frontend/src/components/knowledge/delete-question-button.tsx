@@ -34,7 +34,10 @@ export function DeleteQuestionButton({
   const handleDelete = async () => {
     try {
       setIsLoading(true);
-      const result = await deleteQuestionAction(testId, questionId);
+      const result = await deleteQuestionAction({
+        test_id: testId,
+        id: questionId,
+      });
 
       if (result.success) {
         toast.success('Question deleted successfully');

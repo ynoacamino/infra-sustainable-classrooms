@@ -26,7 +26,7 @@ function UpdateSectionForm({ section }: UpdateSectionFormProps) {
       title: section.title,
       description: section.description,
       order: section.order,
-      section_id: section.id,
+      id: section.id,
     },
   });
 

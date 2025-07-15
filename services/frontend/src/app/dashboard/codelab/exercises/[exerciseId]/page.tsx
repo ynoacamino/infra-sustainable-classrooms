@@ -23,13 +23,14 @@ import { notFound } from 'next/navigation';
 import { CodeEditor } from '@/components/codelab/code-editor';
 
 interface ExercisePageProps {
-  params: {
+  params: Promise<{
     exerciseId: string;
-  };
+  }>;
 }
 
 export default async function ExercisePage({ params }: ExercisePageProps) {
-  const exerciseId = parseInt(params.exerciseId);
+  const asyncParams = await params;
+  const exerciseId = parseInt(asyncParams.exerciseId);
 
   if (isNaN(exerciseId)) {
     notFound();
