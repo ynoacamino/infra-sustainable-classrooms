@@ -67,6 +67,7 @@ services:
       - infrastructure-network
     volumes:
       - ./minio/init_buckets.sh:/init_buckets.sh:ro
+      - ./minio/init_media:/init_media:ro
     entrypoint: sh /init_buckets.sh
 
   redis:
