@@ -28,7 +28,7 @@ func handleHTTPServer(ctx context.Context, u *url.URL, videoLearningEndpoints *v
 
 	var videoLearningServer *videolearningsvr.Server
 	eh := errorHandler(ctx)
-	videoLearningServer = videolearningsvr.New(videoLearningEndpoints, mux, dec, enc, eh, nil, nil, nil)
+	videoLearningServer = videolearningsvr.New(videoLearningEndpoints, mux, dec, enc, eh, nil)
 
 	videolearningsvr.Mount(mux, videoLearningServer)
 
