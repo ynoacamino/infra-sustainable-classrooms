@@ -137,7 +137,7 @@ class VideoLearningService extends Service {
     payload: UploadVideoPayload,
   ): AsyncResult<UploadResponse> {
     return this.post<UploadResponse>({
-      endpoint: ['upload', 'video'],
+      endpoint: ['upload', 'video', encodeURIComponent(payload.filename)],
       payload: {
         schema: UploadVideoPayloadSchema,
         data: payload,
@@ -162,7 +162,7 @@ class VideoLearningService extends Service {
     payload: UploadThumbnailPayload,
   ): AsyncResult<UploadResponse> {
     return this.post<UploadResponse>({
-      endpoint: ['upload', 'thumbnail'],
+      endpoint: ['upload', 'thumbnail', encodeURIComponent(payload.filename)],
       payload: {
         schema: UploadThumbnailPayloadSchema,
         data: payload,
