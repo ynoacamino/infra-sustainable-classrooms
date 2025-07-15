@@ -1,6 +1,7 @@
 services:
   kong:
     image: kong/kong-gateway:3.10.0.2
+    container_name: kong
     depends_on:
       - auth-service
     volumes:
@@ -187,7 +188,7 @@ services:
         condition: service_started
     networks:
       - infrastructure-network
-    
+
   codelab-service:
     build:
       context: .

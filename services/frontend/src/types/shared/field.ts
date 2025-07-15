@@ -18,6 +18,7 @@ export type Field<T extends string> = BaseField<T> &
           | typeof SupportedFields.EMAIL
           | typeof SupportedFields.PASSWORD
           | typeof SupportedFields.TEXTAREA
+          | typeof SupportedFields.HTML_EDITOR
           | typeof SupportedFields.TEXT
           | typeof SupportedFields.NUMBER
           | typeof SupportedFields.FILE;

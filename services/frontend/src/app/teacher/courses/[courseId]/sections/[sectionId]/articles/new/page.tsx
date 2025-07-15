@@ -7,19 +7,20 @@ import { ArrowLeft } from 'lucide-react';
 import { notFound } from 'next/navigation';
 
 interface NewArticlePageProps {
-  params: { courseId: string; sectionId: string };
+  params: Promise<{ courseId: string; sectionId: string }>;
 }
 
 export default async function NewArticlePage({ params }: NewArticlePageProps) {
-  const courseId = parseInt(params.courseId);
-  const sectionId = parseInt(params.sectionId);
+  const asyncParams = await params;
+  const courseId = parseInt(asyncParams.courseId);
+  const sectionId = parseInt(asyncParams.sectionId);
 
   if (isNaN(courseId) || isNaN(sectionId)) {
     notFound();
   }
 
   const text = await textService(cookies());
-  const sectionResult = await text.getSection({ section_id: sectionId });
+  const sectionResult = await text.getSection({ id: sectionId });
 
   if (!sectionResult.success) {
     if (sectionResult.error.status === 404) {
@@ -41,9 +42,7 @@ export default async function NewArticlePage({ params }: NewArticlePageProps) {
     <div className="container mx-auto px-4 py-8">
       <div className="flex items-center gap-4 mb-8">
         <Button variant="outline" size="sm" asChild>
-          <Link
-            href={`/teacher/courses/${courseId}/sections/${sectionId}/articles`}
-          >
+          <Link href={`/teacher/courses/${courseId}/sections/${sectionId}`}>
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Articles
           </Link>

@@ -57,3 +57,83 @@ CREATE INDEX IF NOT EXISTS idx_attempts_answer_id ON attempts(answer_id);
 CREATE INDEX IF NOT EXISTS idx_attempts_success ON attempts(success);
 CREATE INDEX IF NOT EXISTS idx_attempts_created_at ON attempts(created_at);
 
+-- Seed data for exercises
+DO $$
+DECLARE
+  i INT;
+  exercise_id BIGINT;
+  answer_id BIGINT;
+  titles TEXT[] := ARRAY[
+    'Sumar números desde un string',
+    'Restar dos números',
+    'Multiplicar dos números',
+    'Dividir dos números',
+    'Potencia de un número'
+  ];
+  descriptions TEXT[] := ARRAY[
+    'Dado un string como "2,3", devuelve la suma como string.',
+    'Dado un string como "10,4", devuelve la resta como string.',
+    'Dado un string como "3,5", devuelve la multiplicación como string.',
+    'Dado un string como "20,4", devuelve la división como string.',
+    'Dado un string como "2,4", devuelve la potencia como string.'
+  ];
+  difficulties TEXT[] := ARRAY[
+    'easy', 'easy', 'medium', 'medium', 'hard'
+  ];
+  solutions TEXT[] := ARRAY[
+    'function solution(input) { const [a, b] = input.split(",").map(Number); return String(a + b); }',
+    'function solution(input) { const [a, b] = input.split(",").map(Number); return String(a - b); }',
+    'function solution(input) { const [a, b] = input.split(",").map(Number); return String(a * b); }',
+    'function solution(input) { const [a, b] = input.split(",").map(Number); return String(a / b); }',
+    'function solution(input) { const [a, b] = input.split(",").map(Number); return String(Math.pow(a, b)); }'
+  ];
+  incorrect_solutions TEXT[] := ARRAY[
+    'function solution(input) { return "incorrecto"; }',
+    'function solution(input) { return input; }',
+    'function solution(input) { return "42"; }',
+    'function solution(input) { return null; }',
+    'function solution(input) { return ""; }'
+  ];
+BEGIN
+  FOR i IN 1..5 LOOP
+    -- Insertar ejercicio
+    INSERT INTO exercises (
+      title, description, initial_code, solution, difficulty, created_by
+    ) VALUES (
+      titles[i],
+      descriptions[i],
+      'function solution(input) {\n  // tu código aquí\n}',
+      solutions[i],
+      difficulties[i],
+      1
+    ) RETURNING id INTO exercise_id;
+
+    -- Insertar tests
+    INSERT INTO tests (input, output, public, exercise_id) VALUES
+      ('2,3', '5', TRUE, exercise_id),
+      ('10,20', '30', TRUE, exercise_id),
+      ('-5,5', '0', FALSE, exercise_id);
+
+    -- Insertar respuesta
+    INSERT INTO answers (exercise_id, user_id, completed)
+    VALUES (exercise_id, 1, TRUE)
+    RETURNING id INTO answer_id;
+
+    -- Insertar intento exitoso
+    INSERT INTO attempts (answer_id, code, success)
+    VALUES (
+      answer_id,
+      solutions[i],
+      TRUE
+    );
+
+    -- Insertar intento fallido
+    INSERT INTO attempts (answer_id, code, success)
+    VALUES (
+      answer_id,
+      incorrect_solutions[i],
+      FALSE
+    );
+  END LOOP;
+END;
+$$;

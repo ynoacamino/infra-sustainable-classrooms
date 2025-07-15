@@ -3,6 +3,7 @@ export const SupportedFields = {
   EMAIL: 'email',
   PASSWORD: 'password',
   TEXTAREA: 'textarea',
+  HTML_EDITOR: 'html_editor',
   SELECT: 'select',
   NUMBER: 'number',
   OTP: 'otp',

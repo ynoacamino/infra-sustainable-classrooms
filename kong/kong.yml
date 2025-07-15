@@ -9,12 +9,12 @@ services:
     routes:
       - name: login-route
         paths:
-          - /auth
+          - /api/auth
         strip_path: false
         methods:
           - GET
           - POST
-          
+
   - name: profiles-service
     host: profiles-service
     port: 8080
@@ -22,7 +22,7 @@ services:
     routes:
       - name: profiles-route
         paths:
-          - /profiles
+          - /api/profiles
         strip_path: false
         methods:
           - GET
@@ -36,7 +36,7 @@ services:
     routes:
       - name: text-route
         paths:
-          - /text
+          - /api/text
         strip_path: false
         methods:
           - GET
@@ -52,7 +52,7 @@ services:
     routes:
       - name: video_learning-route
         paths:
-          - /video_learning
+          - /api/video_learning
         strip_path: false
         methods:
           - GET
@@ -68,7 +68,7 @@ services:
     routes:
       - name: mailing-route
         paths:
-          - /mailing
+          - /api/mailing
         strip_path: false
         methods:
           - POST
@@ -80,7 +80,7 @@ services:
     routes:
       - name: knowledge-route
         paths:
-          - /knowledge
+          - /api/knowledge
         strip_path: false
         methods:
           - GET
@@ -88,7 +88,7 @@ services:
           - PUT
           - DELETE
           - PATCH
-  
+
   - name: codelab-service
     host: codelab-service
     port: 8080
@@ -96,7 +96,7 @@ services:
     routes:
       - name: codelab-route
         paths:
-          - /codelab
+          - /api/codelab
         strip_path: false
         methods:
           - GET

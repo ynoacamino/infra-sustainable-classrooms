@@ -17,7 +17,7 @@ export const createArticleFormFields: Field<
   {
     name: 'content',
     label: 'Article Content',
-    type: 'textarea',
+    type: 'html_editor',
     placeholder: 'e.g. JavaScript is a programming language...',
     description: 'Enter the content of the article (minimum 10 characters).',
   },

@@ -8,7 +8,7 @@ var _ = Service("mailing", func() {
 	Description("Mailing microservice for sending emails")
 
 	HTTP(func() {
-		Path("/mailing")
+		Path("/api/mailing")
 	})
 
 	GRPC(func() {

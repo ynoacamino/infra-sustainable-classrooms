@@ -22,6 +22,15 @@ import {
 import { Textarea } from '@/ui/textarea';
 import { Input } from '@/ui/input';
 import { TwoDividedInputOpt } from '@/ui/two-divided-input-opt';
+import dynamic from 'next/dynamic';
+// import QuillEditor from '@/components/text/editor/quill-editor';
+
+const JoditEditor = dynamic(
+  () => import('@/components/text/editor/joddit-editor'),
+  {
+    ssr: false,
+  },
+);
 
 /**
  * InferItem component
@@ -101,6 +110,14 @@ function InferItem<
             );
           } else if (props.type === SupportedFields.TEXTAREA) {
             return <Textarea {...props} />;
+          } else if (props.type === SupportedFields.HTML_EDITOR) {
+            return (
+              <JoditEditor
+                content={props.value as string}
+                setContent={props.onChange as (content: string) => void}
+                placeholder={props.placeholder}
+              />
+            );
           } else if (props.type === SupportedFields.OTP) {
             return <TwoDividedInputOpt {...props} />;
           } else if (props.type === SupportedFields.FILE) {

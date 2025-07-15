@@ -7,18 +7,19 @@ import { ArrowLeft } from 'lucide-react';
 import { notFound } from 'next/navigation';
 
 interface EditCoursePageProps {
-  params: { courseId: string };
+  params: Promise<{ courseId: string }>;
 }
 
 export default async function EditCoursePage({ params }: EditCoursePageProps) {
-  const courseId = parseInt(params.courseId);
+  const asyncParams = await params;
+  const courseId = parseInt(asyncParams.courseId);
 
   if (isNaN(courseId)) {
     notFound();
   }
 
   const text = await textService(cookies());
-  const courseResult = await text.getCourse({ course_id: courseId });
+  const courseResult = await text.getCourse({ id: courseId });
 
   if (!courseResult.success) {
     if (courseResult.error.status === 404) {
