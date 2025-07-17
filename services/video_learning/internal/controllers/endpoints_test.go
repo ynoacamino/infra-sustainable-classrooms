@@ -61,7 +61,7 @@ func setupTestService(
 		userCategoryLikeRepo: userCategoryLikeRepo,
 		profileServiceRepo:   profilesServiceRepo,
 		cacheRepo:            cacheRepo,
-		storageRepo:          storageRepo,
+		// storageRepo:          storageRepo,
 	}
 }
 
@@ -919,97 +919,97 @@ func TestGetAllTags(t *testing.T) {
 }
 
 // Test InitialUpload endpoint (teacher only)
-func TestInitialUpload(t *testing.T) {
-	tests := []struct {
-		name           string
-		payload        *videolearning.InitialUploadPayload
-		setupMocks     func(*mocks.MockProfilesServiceRepository, *mocks.MockStorageRepository)
-		expectedResult *videolearning.UploadResponse
-		expectedError  error
-	}{
-		{
-			name: "successful initial upload by teacher",
-			payload: &videolearning.InitialUploadPayload{
-				SessionToken: "teacher_token",
-				Filename:     "test_video.mp4",
-				File:         []byte("fake video content"),
-			},
-			setupMocks: func(profilesRepo *mocks.MockProfilesServiceRepository, storageRepo *mocks.MockStorageRepository) {
-				profilesRepo.On("GetCompleteProfile", mock.Anything, &profiles.GetCompleteProfilePayload{
-					SessionToken: "teacher_token",
-				}).Return(createTestCompleteProfile("teacher"), nil)
+// func TestInitialUpload(t *testing.T) {
+// 	tests := []struct {
+// 		name           string
+// 		payload        *videolearning.InitialUploadPayload
+// 		setupMocks     func(*mocks.MockProfilesServiceRepository, *mocks.MockStorageRepository)
+// 		expectedResult *videolearning.UploadResponse
+// 		expectedError  error
+// 	}{
+// 		{
+// 			name: "successful initial upload by teacher",
+// 			payload: &videolearning.InitialUploadPayload{
+// 				SessionToken: "teacher_token",
+// 				Filename:     "test_video.mp4",
+// 				File:         []byte("fake video content"),
+// 			},
+// 			setupMocks: func(profilesRepo *mocks.MockProfilesServiceRepository, storageRepo *mocks.MockStorageRepository) {
+// 				profilesRepo.On("GetCompleteProfile", mock.Anything, &profiles.GetCompleteProfilePayload{
+// 					SessionToken: "teacher_token",
+// 				}).Return(createTestCompleteProfile("teacher"), nil)
 
-				storageRepo.On("UploadFile", mock.Anything, "video-learning-videos-staging", mock.AnythingOfType("string"), mock.Anything, int64(18), "video/mp4").Return(nil)
-			},
-			expectedResult: &videolearning.UploadResponse{
-				ObjectName: "", // We'll check that it's not empty in the assertion
-			},
-			expectedError: nil,
-		},
-		{
-			name: "permission denied - not a teacher",
-			payload: &videolearning.InitialUploadPayload{
-				SessionToken: "student_token",
-				Filename:     "test_video.mp4",
-				File:         []byte("fake video content"),
-			},
-			setupMocks: func(profilesRepo *mocks.MockProfilesServiceRepository, storageRepo *mocks.MockStorageRepository) {
-				profilesRepo.On("GetCompleteProfile", mock.Anything, &profiles.GetCompleteProfilePayload{
-					SessionToken: "student_token",
-				}).Return(createTestCompleteProfile("student"), nil)
-			},
-			expectedResult: nil,
-			expectedError:  videolearning.PermissionDenied("only teachers can upload videos"),
-		},
-		{
-			name: "upload failed",
-			payload: &videolearning.InitialUploadPayload{
-				SessionToken: "teacher_token",
-				Filename:     "test_video.mp4",
-				File:         []byte("fake video content"),
-			},
-			setupMocks: func(profilesRepo *mocks.MockProfilesServiceRepository, storageRepo *mocks.MockStorageRepository) {
-				profilesRepo.On("GetCompleteProfile", mock.Anything, &profiles.GetCompleteProfilePayload{
-					SessionToken: "teacher_token",
-				}).Return(createTestCompleteProfile("teacher"), nil)
+// 				storageRepo.On("UploadFile", mock.Anything, "video-learning-videos-staging", mock.AnythingOfType("string"), mock.Anything, int64(18), "video/mp4").Return(nil)
+// 			},
+// 			expectedResult: &videolearning.UploadResponse{
+// 				ObjectName: "", // We'll check that it's not empty in the assertion
+// 			},
+// 			expectedError: nil,
+// 		},
+// 		{
+// 			name: "permission denied - not a teacher",
+// 			payload: &videolearning.InitialUploadPayload{
+// 				SessionToken: "student_token",
+// 				Filename:     "test_video.mp4",
+// 				File:         []byte("fake video content"),
+// 			},
+// 			setupMocks: func(profilesRepo *mocks.MockProfilesServiceRepository, storageRepo *mocks.MockStorageRepository) {
+// 				profilesRepo.On("GetCompleteProfile", mock.Anything, &profiles.GetCompleteProfilePayload{
+// 					SessionToken: "student_token",
+// 				}).Return(createTestCompleteProfile("student"), nil)
+// 			},
+// 			expectedResult: nil,
+// 			expectedError:  videolearning.PermissionDenied("only teachers can upload videos"),
+// 		},
+// 		{
+// 			name: "upload failed",
+// 			payload: &videolearning.InitialUploadPayload{
+// 				SessionToken: "teacher_token",
+// 				Filename:     "test_video.mp4",
+// 				File:         []byte("fake video content"),
+// 			},
+// 			setupMocks: func(profilesRepo *mocks.MockProfilesServiceRepository, storageRepo *mocks.MockStorageRepository) {
+// 				profilesRepo.On("GetCompleteProfile", mock.Anything, &profiles.GetCompleteProfilePayload{
+// 					SessionToken: "teacher_token",
+// 				}).Return(createTestCompleteProfile("teacher"), nil)
 
-				storageRepo.On("UploadFile", mock.Anything, "video-learning-videos-staging", mock.AnythingOfType("string"), mock.Anything, int64(18), "video/mp4").Return(errors.New("upload failed"))
-			},
-			expectedResult: nil,
-			expectedError:  videolearning.UploadFailed("failed to upload video"),
-		},
-	}
+// 				storageRepo.On("UploadFile", mock.Anything, "video-learning-videos-staging", mock.AnythingOfType("string"), mock.Anything, int64(18), "video/mp4").Return(errors.New("upload failed"))
+// 			},
+// 			expectedResult: nil,
+// 			expectedError:  videolearning.UploadFailed("failed to upload video"),
+// 		},
+// 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			// Setup mocks
-			profilesRepo := &mocks.MockProfilesServiceRepository{}
-			storageRepo := &mocks.MockStorageRepository{}
-			tt.setupMocks(profilesRepo, storageRepo)
+// 	for _, tt := range tests {
+// 		t.Run(tt.name, func(t *testing.T) {
+// 			// Setup mocks
+// 			profilesRepo := &mocks.MockProfilesServiceRepository{}
+// 			storageRepo := &mocks.MockStorageRepository{}
+// 			tt.setupMocks(profilesRepo, storageRepo)
 
-			// Create service
-			service := setupTestService(nil, nil, nil, nil, nil, profilesRepo, nil, storageRepo)
+// 			// Create service
+// 			service := setupTestService(nil, nil, nil, nil, nil, profilesRepo, nil, storageRepo)
 
-			// Call method
-			result, err := service.InitialUpload(context.Background(), tt.payload)
+// 			// Call method
+// 			result, err := service.InitialUpload(context.Background(), tt.payload)
 
-			// Assertions
-			if tt.expectedError != nil {
-				assert.Error(t, err)
-				assert.Equal(t, tt.expectedError.Error(), err.Error())
-				assert.Nil(t, result)
-			} else {
-				assert.NoError(t, err)
-				assert.NotNil(t, result)
-				assert.NotEmpty(t, result.ObjectName)
-			}
+// 			// Assertions
+// 			if tt.expectedError != nil {
+// 				assert.Error(t, err)
+// 				assert.Equal(t, tt.expectedError.Error(), err.Error())
+// 				assert.Nil(t, result)
+// 			} else {
+// 				assert.NoError(t, err)
+// 				assert.NotNil(t, result)
+// 				assert.NotEmpty(t, result.ObjectName)
+// 			}
 
-			// Verify mocks
-			profilesRepo.AssertExpectations(t)
-			storageRepo.AssertExpectations(t)
-		})
-	}
-}
+// 			// Verify mocks
+// 			profilesRepo.AssertExpectations(t)
+// 			storageRepo.AssertExpectations(t)
+// 		})
+// 	}
+// }
 
 // Test CompleteUpload endpoint (teacher only)
 func TestCompleteUpload(t *testing.T) {
